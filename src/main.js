@@ -4,7 +4,8 @@ import './style.css'
 const APP_DIR = '/src'
 const VIEWS = {
   HOME: 'home',
-  PROJECTS: 'projects'
+  PROJECTS: 'projects',
+  COURSE: 'course'
 }
 
 // --- STATE ---
@@ -20,7 +21,7 @@ function getTemplate(view) {
       <div class="logo premium-text" style="font-size: 1.5rem; cursor: pointer;">Vũ An</div>
       <nav style="display: flex; gap: 2rem; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">
         <a href="#projects">Dự án</a>
-        <a href="#course">Khóa học</a>
+        <a href="#course-page">Khóa học</a>
         <a href="#contact">Liên hệ</a>
       </nav>
     </header>
@@ -90,6 +91,46 @@ function getTemplate(view) {
     `
   }
 
+  if (view === VIEWS.COURSE) {
+    return `
+      ${commonHeader}
+      <main>
+        <section class="container" style="padding-top: 15vh;">
+          <div class="reveal">
+            <h1 style="font-size: clamp(3rem, 10vw, 8rem); line-height: 0.9;">
+              Mastering<br>
+              <span class="highlight">Visual Storytelling</span>
+            </h1>
+            <p style="max-width: 600px; margin-top: 2rem; font-size: 1.1rem; color: var(--color-subtle);">
+              Khóa học chuyên sâu dành cho những ai muốn nâng tầm kỹ năng dựng phim từ cơ bản đến nghệ thuật kể chuyện đỉnh cao.
+            </p>
+          </div>
+
+          <div style="margin-top: 5vh; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+            <div class="card glass reveal" style="padding: 2.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
+              <h3 class="highlight">01. Tư duy hình ảnh</h3>
+              <p style="font-size: 0.9rem; color: var(--color-subtle);">Khám phá cách sắp đặt khung hình để dẫn dắt cảm xúc người xem một cách tinh tế.</p>
+            </div>
+            <div class="card glass reveal" style="padding: 2.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
+              <h3 class="highlight">02. Kỹ thuật A24 Style</h3>
+              <p style="font-size: 0.9rem; color: var(--color-subtle);">Học cách tạo ra màu sắc và nhịp điệu đặc trưng của những bộ phim nghệ thuật đương đại.</p>
+            </div>
+            <div class="card glass reveal" style="padding: 2.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
+              <h3 class="highlight">03. Hậu kỳ chuyên sâu</h3>
+              <p style="font-size: 0.9rem; color: var(--color-subtle);">Làm chủ các công cụ mạnh mẽ và quy trình làm việc của một editor chuyên nghiệp.</p>
+            </div>
+          </div>
+
+          <div class="reveal" style="margin-top: 5vh; text-align: center; padding: 5rem 2rem; background: #0a0a0a; border: 1px solid #111;">
+            <h2 style="font-size: 2rem; margin-bottom: 2rem;">Sẵn sàng để bắt đầu hành trình?</h2>
+            <a href="https://t.me/vuanedit" target="_blank" style="background: var(--color-accent); color: #000; padding: 1.5rem 3rem; display: inline-block; font-weight: 900; text-transform: uppercase;">Nhận tư vấn ngay</a>
+          </div>
+        </section>
+      </main>
+      ${footer}
+    `
+  }
+
   // Home view
   return `
     ${commonHeader}
@@ -145,7 +186,7 @@ function getTemplate(view) {
                     <li style="margin-bottom: 1rem; border-left: 2px solid var(--color-accent); padding-left: 1rem;">Kỹ thuật Data Visualization</li>
                     <li style="margin-bottom: 1rem; border-left: 2px solid var(--color-accent); padding-left: 1rem;">Quy trình sản xuất A24 Style</li>
                  </ul>
-                 <a href="#" style="background: var(--color-accent); color: #000; padding: 1rem 2rem; display: inline-block; font-weight: 900; text-transform: uppercase;">Đăng ký ngay</a>
+                 <a href="#course-page" style="background: var(--color-accent); color: #000; padding: 1rem 2rem; display: inline-block; font-weight: 900; text-transform: uppercase;">Tìm hiểu thêm</a>
               </div>
               <div class="glass" style="padding: 1rem;">
                  <div style="aspect-ratio: 4/5; background: #111; display: flex; align-items: center; justify-content: center; overflow: hidden;">
@@ -172,7 +213,13 @@ function getTemplate(view) {
 // --- LOGIC ---
 function render() {
   const hash = window.location.hash
-  currentView = hash === '#projects' ? VIEWS.PROJECTS : VIEWS.HOME
+  if (hash === '#projects') {
+    currentView = VIEWS.PROJECTS
+  } else if (hash === '#course-page') {
+    currentView = VIEWS.COURSE
+  } else {
+    currentView = VIEWS.HOME
+  }
 
   const app = document.querySelector('#app')
   app.classList.add('fade-out')
