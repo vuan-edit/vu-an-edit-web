@@ -18,7 +18,9 @@ function getTemplate(view) {
     <div class="cursor-outline"></div>
 
     <header class="container reveal" style="padding: 2rem 2rem; display: flex; justify-content: space-between; align-items: baseline;">
-      <div class="logo premium-text" style="font-size: 1.5rem; cursor: pointer;">Vũ An</div>
+      <div class="logo" style="cursor: pointer; display: flex; align-items: center;">
+        <img src="/logo.png" alt="Vũ An" style="height: 35px; width: auto; object-fit: contain;">
+      </div>
       <nav style="display: flex; gap: 2rem; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">
         <a href="#projects">Dự án</a>
         <a href="#course-page">Khóa học</a>
