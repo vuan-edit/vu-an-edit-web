@@ -1,0 +1,13 @@
+<svg width="200" height="60" viewBox="0 0 160 60" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .logo-text {
+      font-family: 'Arial Black', sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      fill: #B4FD00;
+      font-size: 45px;
+      letter-spacing: -3px;
+    }
+  </style>
+  <text x="0" y="45" class="logo-text">VUAN</text>
+</svg>

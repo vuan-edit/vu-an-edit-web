@@ -5,7 +5,8 @@ const APP_DIR = '/src'
 const VIEWS = {
   HOME: 'home',
   PROJECTS: 'projects',
-  COURSE: 'course'
+  COURSE: 'course',
+  CONTACT: 'contact'
 }
 
 // --- STATE ---
@@ -19,12 +20,12 @@ function getTemplate(view) {
 
     <header class="container reveal" style="padding: 2rem 2rem; display: flex; justify-content: space-between; align-items: baseline;">
       <div class="logo" style="cursor: pointer; display: flex; align-items: center;">
-        <img src="/logo.png" alt="Vũ An" style="height: 35px; width: auto; object-fit: contain;">
+        <img src="/logo_brand.svg" alt="Vũ An" style="height: 35px; width: auto; object-fit: contain;">
       </div>
       <nav style="display: flex; gap: 2rem; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">
         <a href="#projects">Dự án</a>
         <a href="#course-page">Khóa học</a>
-        <a href="#contact">Liên hệ</a>
+        <a href="#contact-page">Liên hệ</a>
       </nav>
     </header>
   `
@@ -54,9 +55,9 @@ function getTemplate(view) {
             <!-- Project 1 -->
             <div class="project-item reveal">
               <div class="comparison-container" data-project="1">
-                <img src="https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&q=80&w=2000" class="comparison-image image-before" alt="Before">
-                <div class="image-after" style="background-image: url('https://images.unsplash.com/photo-1542204113-e93526276ef1?auto=format&fit=crop&q=80&w=2000'); background-size: cover; background-position: center; position: absolute; top:0; left:0; width:100%; height:100%;"></div>
-                <div class="comparison-handle"></div>
+                <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=2000" class="comparison-image image-before" alt="Before">
+                <div class="image-after" style="background-image: url('https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=2000'); background-size: cover; background-position: center; position: absolute; top:0; left:0; width:100%; height:100%;"></div>
+                <div class="comparison-handle" style="left: 50%;"></div>
                 <div class="label-before">Gốc</div>
                 <div class="label-after">Đã Edit</div>
               </div>
@@ -74,7 +75,7 @@ function getTemplate(view) {
               <div class="comparison-container" data-project="2">
                 <img src="https://images.unsplash.com/photo-1492691523567-673e0165c36b?auto=format&fit=crop&q=80&w=2000" class="comparison-image image-before" alt="Before">
                 <div class="image-after" style="background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=2000'); background-size: cover; background-position: center; position: absolute; top:0; left:0; width:100%; height:100%;"></div>
-                <div class="comparison-handle"></div>
+                <div class="comparison-handle" style="left: 50%;"></div>
                 <div class="label-before">Gốc</div>
                 <div class="label-after">Đã Edit</div>
               </div>
@@ -126,6 +127,66 @@ function getTemplate(view) {
           <div class="reveal" style="margin-top: 5vh; text-align: center; padding: 5rem 2rem; background: #0a0a0a; border: 1px solid #111;">
             <h2 style="font-size: 2rem; margin-bottom: 2rem;">Sẵn sàng để bắt đầu hành trình?</h2>
             <a href="https://t.me/vuanedit" target="_blank" style="background: var(--color-accent); color: #000; padding: 1.5rem 3rem; display: inline-block; font-weight: 900; text-transform: uppercase;">Nhận tư vấn ngay</a>
+          </div>
+        </section>
+      </main>
+      ${footer}
+    `
+  }
+
+  if (view === VIEWS.CONTACT) {
+    return `
+      ${commonHeader}
+      <main>
+        <section class="container" style="padding-top: 15vh;">
+          <div class="reveal" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 6rem;">
+            <div>
+              <h1 style="font-size: clamp(3rem, 10vw, 6rem); line-height: 0.9; margin-bottom: 2rem;">
+                Liên hệ &<br>
+                <span class="highlight">Hợp tác</span>
+              </h1>
+              <p style="color: var(--color-subtle); margin-bottom: 3rem; max-width: 400px;">
+                Bạn có ý tưởng? Hãy cùng nhau biến nó thành hiện thực. Tôi sẽ phản hồi sớm nhất có thể.
+              </p>
+              
+              <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div>
+                  <div style="font-size: 0.7rem; color: var(--color-accent); font-weight: 800; margin-bottom: 0.5rem;">EMAIL</div>
+                  <a href="mailto:vuan.edit@gmail.com" class="premium-text" style="font-size: 1.1rem; text-transform: none;">vuan.edit@gmail.com</a>
+                </div>
+                <div>
+                  <div style="font-size: 0.7rem; color: var(--color-accent); font-weight: 800; margin-bottom: 0.5rem;">SOCIAL</div>
+                  <div style="display: flex; gap: 1.5rem;">
+                    <a href="#" class="premium-text" style="font-size: 0.9rem;">Facebook</a>
+                    <a href="#" class="premium-text" style="font-size: 0.9rem;">Instagram</a>
+                    <a href="https://t.me/vuanedit" class="premium-text" style="font-size: 0.9rem;">Telegram</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass reveal" style="padding: 3rem;">
+              <form action="https://formspree.io/f/xvuanedit" method="POST">
+                <input type="hidden" name="_to" value="vuan.edit@gmail.com">
+                <div class="form-group">
+                  <label class="form-label">Họ và tên</label>
+                  <input type="text" name="name" class="form-input" placeholder="Ví dụ: Nguyễn Văn A" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Số điện thoại (Zalo)</label>
+                  <input type="tel" name="phone" class="form-input" placeholder="090 123 4567" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Email</label>
+                  <input type="email" name="email" class="form-input" placeholder="name@example.com" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Lời nhắn</label>
+                  <textarea name="message" class="form-input" placeholder="Chia sẻ về dự án của bạn..." required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Gửi yêu cầu</button>
+              </form>
+            </div>
           </div>
         </section>
       </main>
@@ -219,6 +280,8 @@ function render() {
     currentView = VIEWS.PROJECTS
   } else if (hash === '#course-page') {
     currentView = VIEWS.COURSE
+  } else if (hash === '#contact-page') {
+    currentView = VIEWS.CONTACT
   } else {
     currentView = VIEWS.HOME
   }
@@ -280,8 +343,9 @@ function initEffects() {
 
     const updateSlider = (e) => {
       const rect = container.getBoundingClientRect()
-      const x = e.clientX || (e.touches && e.touches[0].clientX) - rect.left
-      let position = ((e.clientX - rect.left) / rect.width) * 100
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX)
+      let position = ((clientX - rect.left) / rect.width) * 100
+
       if (position < 0) position = 0
       if (position > 100) position = 100
 

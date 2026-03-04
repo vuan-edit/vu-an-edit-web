@@ -131,19 +131,55 @@ section {
 }
 
 /* Comparison Components */
+.comparison-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  border: 1px solid #111;
+  user-select: none;
+}
+
+.comparison-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.image-after {
+  z-index: 2;
+  clip-path: inset(0 0 0 50%);
+}
+
+.comparison-handle {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-accent);
+  z-index: 3;
+  pointer-events: none;
+}
+
 .comparison-handle::after {
   content: '';
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border: 2px solid var(--color-accent);
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-radius: 50%;
+  box-shadow: 0 0 20px rgba(180, 253, 0, 0.3);
 }
 
 .label-before,
@@ -199,6 +235,64 @@ section {
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Contact Form Styles */
+.form-group {
+  margin-bottom: 2rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.1em;
+}
+
+.form-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: none;
+  border-bottom: 1px solid #333;
+  padding: 1rem 0;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.form-input:focus {
+  border-bottom-color: var(--color-accent);
+  background: rgba(180, 253, 0, 0.02);
+}
+
+textarea.form-input {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.submit-btn {
+  background: var(--color-accent);
+  color: #000;
+  border: none;
+  padding: 1.2rem 3rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 2rem;
+  width: 100%;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+}
+
+.submit-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(180, 253, 0, 0.2);
 }
 
 /* Hide default cursor on desktop */
