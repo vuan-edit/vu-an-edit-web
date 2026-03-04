@@ -130,6 +130,37 @@ section {
   transition: transform 0.15s ease-out;
 }
 
+/* Comparison Components */
+.comparison-handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--color-accent);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 50%;
+}
+
+.label-before,
+.label-after {
+  position: absolute;
+  bottom: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  z-index: 4;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
 /* Glassmorphism */
 .glass {
   background: rgba(255, 255, 255, 0.03);
