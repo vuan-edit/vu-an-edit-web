@@ -23,6 +23,7 @@ function getTemplate(view) {
         <img src="/logo_brand.svg" alt="Vũ An" style="height: 35px; width: auto; object-fit: contain;">
       </div>
       <nav style="display: flex; gap: 2rem; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">
+        <a href="#">Trang chủ</a>
         <a href="#projects">Dự án</a>
         <a href="#course-page">Khóa học</a>
         <a href="#contact-page">Liên hệ</a>
@@ -126,7 +127,7 @@ function getTemplate(view) {
 
           <div class="reveal" style="margin-top: 5vh; text-align: center; padding: 5rem 2rem; background: #0a0a0a; border: 1px solid #111;">
             <h2 style="font-size: 2rem; margin-bottom: 2rem;">Sẵn sàng để bắt đầu hành trình?</h2>
-            <a href="https://t.me/vuanedit" target="_blank" style="background: var(--color-accent); color: #000; padding: 1.5rem 3rem; display: inline-block; font-weight: 900; text-transform: uppercase;">Nhận tư vấn ngay</a>
+            <a href="https://t.me/vuanedit" target="_blank" class="premium-btn" style="padding: 1.5rem 3rem; display: inline-block; font-weight: 900; text-transform: uppercase;">Nhận tư vấn ngay</a>
           </div>
         </section>
       </main>
@@ -157,9 +158,10 @@ function getTemplate(view) {
                 <div>
                   <div style="font-size: 0.7rem; color: var(--color-accent); font-weight: 800; margin-bottom: 0.5rem;">SOCIAL</div>
                   <div style="display: flex; gap: 1.5rem;">
-                    <a href="#" class="premium-text" style="font-size: 0.9rem;">Facebook</a>
-                    <a href="#" class="premium-text" style="font-size: 0.9rem;">Instagram</a>
-                    <a href="https://t.me/vuanedit" class="premium-text" style="font-size: 0.9rem;">Telegram</a>
+                    <a href="https://facebook.com/vuanedit" target="_blank" class="premium-text" style="font-size: 0.9rem;">Facebook</a>
+                    <a href="https://instagram.com/vuanedit" target="_blank" class="premium-text" style="font-size: 0.9rem;">Instagram</a>
+                    <a href="https://tiktok.com/@vuanedit" target="_blank" class="premium-text" style="font-size: 0.9rem;">TikTok</a>
+                    <a href="https://t.me/vuanedit" target="_blank" class="premium-text" style="font-size: 0.9rem;">Telegram</a>
                   </div>
                 </div>
               </div>
@@ -235,6 +237,15 @@ function getTemplate(view) {
              </div>
              <h3 style="font-size: 1.5rem;">Ngôn ngữ màu sắc</h3>
           </div>
+
+          <!-- Featured Project Placeholder -->
+          <div class="card glass reveal" style="position: relative; aspect-ratio: 16/9; overflow: hidden; border: none;">
+             <img src="https://images.unsplash.com/photo-1493612276216-ee3925520721?auto=format&fit=crop&q=80&w=2000" style="width:100%; height:100%; object-fit:cover; opacity:0.6;" alt="Featured">
+             <div style="position: absolute; bottom: 2rem; left: 2rem;">
+                <div style="font-size: 0.7rem; color: var(--color-accent); font-weight:800; margin-bottom:0.5rem;">[ FEATURED ]</div>
+                <h3 style="font-size: 1.5rem;">Dự Án Nổi Bật</h3>
+             </div>
+          </div>
         </div>
       </section>
 
@@ -263,9 +274,10 @@ function getTemplate(view) {
       <section id="contact" class="container" style="padding: 15vh 2rem;">
          <h2 class="premium-text reveal" style="font-size: 0.8rem; color: var(--color-subtle); margin-bottom: 2rem;">Bắt đầu dự án</h2>
          <div class="reveal">
-            <a href="mailto:hello@vuan.com" class="contact-link">hello@vuan.com</a>
-            <a href="#" class="contact-link">Facebook</a>
-            <a href="#" class="contact-link">Instagram</a>
+            <a href="mailto:vuan.edit@gmail.com" class="contact-link">vuan.edit@gmail.com</a>
+            <a href="https://facebook.com/vuanedit" target="_blank" class="contact-link">Facebook</a>
+            <a href="https://instagram.com/vuanedit" target="_blank" class="contact-link">Instagram</a>
+            <a href="https://tiktok.com/@vuanedit" target="_blank" class="contact-link">TikTok</a>
          </div>
       </section>
     </main>
