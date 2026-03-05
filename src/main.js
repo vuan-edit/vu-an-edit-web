@@ -168,7 +168,7 @@ function getTemplate(view) {
             </div>
 
             <div class="glass reveal" style="padding: 3rem;">
-              <form action="https://formspree.io/f/xvuanedit" method="POST">
+              <form action="https://formspree.io/f/maqpweyd" method="POST">
                 <input type="hidden" name="_to" value="vuan.edit@gmail.com">
                 <div class="form-group">
                   <label class="form-label">Họ và tên</label>
