@@ -43,6 +43,10 @@ function getStoreNav() {
       <div class="store-nav-brand" data-store-nav="">
         Geo<span>Data</span>
       </div>
+      <button class="mobile-menu-btn" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+      </button>
       <nav class="site-nav" style="gap: 1.5rem;">
         <a href="#store" data-store-nav="">Trang chủ Store</a>
         <a href="#store-catalog">Dữ liệu</a>
@@ -562,6 +566,28 @@ export function initStoreEffects() {
   document.querySelectorAll('[data-store-nav]').forEach(el => {
     el.onclick = () => { window.location.hash = '#store' }
   })
+
+  // Mobile menu toggle for Store
+  const menuBtn = document.querySelector('.mobile-menu-btn')
+  const nav = document.querySelector('.site-nav')
+  if (menuBtn && nav) {
+    menuBtn.onclick = () => {
+      menuBtn.classList.toggle('active')
+      nav.classList.toggle('active')
+    }
+    // Close menu when clicking a link
+    nav.querySelectorAll('a').forEach(link => {
+      link.onclick = (e) => {
+        // If it's a store nav brand, don't prevent hash change
+        if (link.hasAttribute('data-store-nav')) {
+           window.location.hash = '#store'
+        }
+        menuBtn.classList.remove('active')
+        nav.classList.remove('active')
+      }
+    })
+  }
+
   const filters = document.getElementById('store-filters')
   if (filters) {
     const btns = filters.querySelectorAll('.filter-btn'); const cards = document.querySelectorAll('#catalog-grid .product-card');

@@ -158,7 +158,7 @@ button {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
 }
 
 section {
@@ -171,10 +171,10 @@ section {
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
   background: #000;
   border-bottom: 1.5px solid #222;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -202,6 +202,33 @@ section {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+/* Mobile Menu Button */
+.mobile-menu-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  width: 30px;
+  height: 30px;
+  z-index: 1001;
+}
+
+.mobile-menu-btn span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-btn.active span:nth-child(1) {
+  transform: translateY(4px) rotate(45deg);
+}
+
+.mobile-menu-btn.active span:nth-child(2) {
+  transform: translateY(-4px) rotate(-45deg);
 }
 
 .site-nav a {
@@ -257,7 +284,7 @@ section {
   background: #000;
   border-right: 1.5px solid #222;
   border-bottom: none;
-  padding: 3rem 2.5rem;
+  padding: 3rem 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -781,41 +808,107 @@ textarea.form-input {
    RESPONSIVE
    ============================================================ */
 @media (max-width: 768px) {
+  .container {
+    padding: 0 1.25rem;
+  }
+
+  .site-header {
+    padding: 0 1.25rem;
+  }
+
+  .mobile-menu-btn {
+    display: flex;
+  }
+
+  .site-nav {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 64px);
+    background: #000;
+    flex-direction: column;
+    padding: 3rem 2rem;
+    gap: 2rem;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 999;
+    border-top: 1.5px solid #222;
+  }
+
+  .site-nav.active {
+    transform: translateX(0);
+  }
+
+  .site-nav a {
+    font-size: 1.5rem;
+    letter-spacing: 0;
+  }
+
   .hero-section {
     grid-template-columns: repeat(2, 1fr);
+    min-height: 40vh;
   }
 
   .hero-text-cell {
     grid-column: 1 / -1;
+    padding: 4rem 1.25rem 2rem;
+  }
+
+  .hero-text-cell h1 {
+    font-size: clamp(2rem, 8vw, 3rem);
   }
 
   .about-inner {
     grid-template-columns: 1fr;
+    gap: 2.5rem;
   }
 
-  .site-nav {
-    gap: 1.2rem;
-    font-size: 0.7rem;
+  .about-text h2 {
+    font-size: 1.8rem;
+  }
+
+  .data-section h2,
+  .practice-section h2,
+  .course-cta h2,
+  .contact-info h1 {
+    font-size: 2.2rem;
   }
 
   .course-cards {
     grid-template-columns: 1fr;
+    margin-top: 2vh;
   }
 
   .course-card {
+    padding: 2rem 1.25rem;
     border-right: none;
   }
 
   .course-cta {
+    padding: 3rem 1.25rem;
     flex-direction: column;
     align-items: flex-start;
+    gap: 1.5rem;
   }
 
   .contact-inner {
     grid-template-columns: 1fr;
+    gap: 3rem;
   }
 
   .contact-form-wrap {
-    padding: 2rem;
+    padding: 2rem 1.25rem;
+  }
+
+  .contact-link {
+    font-size: clamp(1.8rem, 8vw, 2.5rem);
+    padding: 1.5rem 1.25rem;
+  }
+
+  .site-footer {
+    padding: 2rem 1.25rem;
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

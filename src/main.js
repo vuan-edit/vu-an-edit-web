@@ -36,6 +36,10 @@ function getHeader() {
       <div class="logo" data-nav="">
         <img src="/logo_brand.svg" alt="Vũ An">
       </div>
+      <button class="mobile-menu-btn" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+      </button>
       <nav class="site-nav">
         <a href="#" data-nav="">Trang chủ</a>
         <a href="#projects">Dự án</a>
@@ -347,12 +351,34 @@ function initEffects() {
     })
   }
 
+  // Mobile menu toggle
+  const menuBtn = document.querySelector('.mobile-menu-btn')
+  const nav = document.querySelector('.site-nav')
+  if (menuBtn && nav) {
+    menuBtn.onclick = () => {
+      menuBtn.classList.toggle('active')
+      nav.classList.toggle('active')
+    }
+    // Close menu when clicking a link
+    nav.querySelectorAll('a').forEach(link => {
+      link.onclick = () => {
+        menuBtn.classList.remove('active')
+        nav.classList.remove('active')
+      }
+    })
+  }
+
   // Logo click → home
   document.querySelectorAll('[data-nav]').forEach(el => {
     el.style.cursor = 'pointer'
     el.onclick = () => {
       window.location.hash = ''
       if (currentView !== VIEWS.HOME) render()
+      // Also close mobile menu on logo click
+      if (menuBtn && nav) {
+        menuBtn.classList.remove('active')
+        nav.classList.remove('active')
+      }
     }
   })
 

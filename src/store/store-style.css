@@ -213,8 +213,40 @@
 }
 
 @media (max-width: 768px) {
-  .dashboard-grid {
+  .store-hero {
+    padding: 6vh 0 3vh;
+  }
+
+  .store-hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .store-hero p {
+    font-size: 1rem;
+    padding: 0 1rem;
+  }
+
+  .store-stats {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .product-grid,
+  .pricing-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .plan-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .store-footer {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    padding: 2rem 1rem;
   }
 }
 
