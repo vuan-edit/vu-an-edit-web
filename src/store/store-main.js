@@ -1,8 +1,32 @@
 import './store-style.css'
-import { products } from './data/products.js'
 import { supabase, getCurrentUser, signIn, signUp, signOut } from './supabase.js'
 
-// Helper: wrap words like main.js
+let allProducts = []
+let isLoadingProducts = false
+let hasInitialFetched = false
+
+async function fetchProductsFromSupabase() {
+  if (isLoadingProducts) return
+  isLoadingProducts = true
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: false })
+    
+    if (error) throw error
+    allProducts = data || []
+  } catch (err) {
+    console.error('Error fetching products:', err.message)
+  } finally {
+    isLoadingProducts = false
+    hasInitialFetched = true
+    if (typeof window.render === 'function') {
+      window.render()
+    }
+  }
+}
+
 function wrapWords(text) {
   return text.split(' ').map(word => `<span class="word">${word}</span>`).join(' ')
 }
@@ -17,7 +41,7 @@ function getStoreNav() {
 
     <header class="site-header reveal">
       <div class="store-nav-brand" data-store-nav="">
-        Vũ An <span>MapData</span>
+        Geo<span>Data</span>
       </div>
       <nav class="site-nav" style="gap: 1.5rem;">
         <a href="#store" data-store-nav="">Trang chủ Store</a>
@@ -33,7 +57,7 @@ function getStoreNav() {
 function getStoreFooter() {
   return `
     <footer class="site-footer" style="border-color: #222;">
-      <p>© 2026 Vũ An MapData. Dữ liệu bản đồ cho Video Editor.</p>
+      <p>© 2026 GeoData. Dữ liệu bản đồ cho Video Editor.</p>
       <div style="display:flex; gap:1.5rem; font-size:0.75rem; font-weight:700; text-transform:uppercase;">
         <a href="#store-pricing">Gói cước</a>
         <a href="mailto:vuan.edit@gmail.com">Hỗ trợ</a>
@@ -42,27 +66,30 @@ function getStoreFooter() {
   `
 }
 
-// ------------------------------------------------------------------
-// VIEWS
-// ------------------------------------------------------------------
-
 function getStoreHomeTemplate() {
-  const featured = products.filter(p => p.featured).slice(0, 3)
+  const featured = allProducts.filter(p => p.featured).slice(0, 3)
   
-  const productCards = featured.map(p => `
+  const productCards = featured.map(p => {
+    const accessTag = p.access === 'free'
+      ? `<span style="background:#2ecc71; color:#000; font-size:0.65rem; font-weight:900; padding:0.2rem 0.5rem; text-transform:uppercase; letter-spacing:0.06em;">FREE</span>`
+      : `<span style="background:#333; color:#aaa; font-size:0.65rem; font-weight:900; padding:0.2rem 0.5rem; text-transform:uppercase; letter-spacing:0.06em;">PAID</span>`
+    return `
     <a href="#store-product-${p.id}" class="product-card reveal">
       <img src="${p.thumb}" alt="${p.title}" class="product-thumb">
       <div class="product-content">
-        <span class="badge badge-${p.format}">${p.format}</span>
-        <h3 class="product-title hover-word" style="margin-top:0.75rem;">${wrapWords(p.title)}</h3>
-        <p class="product-desc">${p.desc}</p>
+        <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem;">
+          <span class="badge badge-${p.format}">${p.format}</span>
+          ${accessTag}
+        </div>
+        <h3 class="product-title hover-word" style="margin-top:0.5rem;">${wrapWords(p.title)}</h3>
+        <p class="product-desc">${p.description || ''}</p>
         <div class="product-footer">
           <span style="font-size:0.8rem; font-weight:700;">${p.size}</span>
           <span style="font-size:0.85rem; color:var(--color-accent); font-weight:700;">Xem chi tiết &rarr;</span>
         </div>
       </div>
     </a>
-  `).join('')
+  `}).join('')
 
   return `
     ${getStoreNav()}
@@ -115,20 +142,28 @@ function getStoreHomeTemplate() {
 }
 
 function getStoreCatalogTemplate() {
-  const productCards = products.map(p => `
-    <a href="#store-product-${p.id}" class="product-card reveal" data-format="${p.format}">
+  const productCards = allProducts.map(p => {
+    const accessTag = p.access === 'free'
+      ? `<span style="background:#2ecc71; color:#000; font-size:0.65rem; font-weight:900; padding:0.2rem 0.5rem; text-transform:uppercase; letter-spacing:0.06em;">FREE</span>`
+      : `<span style="background:#333; color:#aaa; font-size:0.65rem; font-weight:900; padding:0.2rem 0.5rem; text-transform:uppercase; letter-spacing:0.06em;">PAID</span>`
+    return `
+    <a href="#store-product-${p.id}" class="product-card reveal" data-format="${p.format}" data-access="${p.access}">
       <img src="${p.thumb}" alt="${p.title}" class="product-thumb">
       <div class="product-content">
-        <span class="badge badge-${p.format}">${p.format}</span>
-        <h3 class="product-title hover-word" style="margin-top:0.75rem;">${wrapWords(p.title)}</h3>
-        <p class="product-desc">${p.desc}</p>
+        <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem;">
+          <span class="badge badge-${p.format}">${p.format}</span>
+          ${accessTag}
+        </div>
+        <h3 class="product-title hover-word" style="margin-top:0.5rem;">${wrapWords(p.title)}</h3>
+        <p class="product-desc">${p.description || ''}</p>
         <div class="product-footer">
           <span style="font-size:0.8rem; font-weight:700;">${p.size}</span>
           <span style="font-size:0.85rem; color:var(--color-accent); font-weight:700;">Xem chi tiết &rarr;</span>
         </div>
       </div>
     </a>
-  `).join('')
+  `
+  }).join('')
 
   return `
     ${getStoreNav()}
@@ -139,6 +174,7 @@ function getStoreCatalogTemplate() {
 
         <div class="filter-tabs reveal" id="store-filters">
           <button class="filter-btn active" data-filter="all">Tất cả</button>
+          <button class="filter-btn" data-filter="free">Miễn phí</button>
           <button class="filter-btn" data-filter="geojson">GeoJSON</button>
           <button class="filter-btn" data-filter="kml">KML Files</button>
           <button class="filter-btn" data-filter="plugin">Plugins</button>
@@ -163,7 +199,6 @@ function getStorePricingTemplate() {
         </div>
 
         <div class="pricing-grid reveal">
-          <!-- Monthly -->
           <div class="plan-card">
             <h3 class="plan-name">Monthly</h3>
             <div class="plan-price">79K<span>/tháng</span></div>
@@ -172,10 +207,9 @@ function getStorePricingTemplate() {
               <li>Sử dụng trong mọi dự án</li>
               <li>Hỗ trợ cơ bản</li>
             </ul>
-            <a href="#store-login" class="plan-btn">Đăng ký ngay</a>
+            <a href="#" class="plan-btn btn-subscribe" data-plan="monthly">Đăng ký ngay</a>
           </div>
 
-          <!-- Yearly -->
           <div class="plan-card popular">
             <div class="plan-badge">Phổ Biến Nhất</div>
             <h3 class="plan-name">Yearly</h3>
@@ -186,10 +220,9 @@ function getStorePricingTemplate() {
               <li>Cập nhật file hằng tuần</li>
               <li>Hỗ trợ ưu tiên (Zalo 1-kèm-1)</li>
             </ul>
-            <a href="#store-login" class="plan-btn">Đăng ký ngay</a>
+            <a href="#" class="plan-btn btn-subscribe" data-plan="yearly">Đăng ký ngay</a>
           </div>
 
-          <!-- Lifetime -->
           <div class="plan-card">
             <h3 class="plan-name">Lifetime</h3>
             <div class="plan-price">1.299K<span>/mãi mãi</span></div>
@@ -198,7 +231,7 @@ function getStorePricingTemplate() {
               <li>Luôn có toàn bộ file mới nhất</li>
               <li>Thêm file theo yêu cầu (max 2/tháng)</li>
             </ul>
-            <a href="#store-login" class="plan-btn">Đăng ký ngay</a>
+            <a href="#" class="plan-btn btn-subscribe" data-plan="lifetime">Đăng ký ngay</a>
           </div>
         </div>
       </section>
@@ -208,7 +241,7 @@ function getStorePricingTemplate() {
 }
 
 function getStoreProductTemplate(productId) {
-  const p = products.find(x => x.id === productId)
+  const p = allProducts.find(x => x.id === productId)
   if (!p) return `
     ${getStoreNav()}
     <main><div class="container" style="padding: 8vh 2rem; text-align:center;"><h2>Không tìm thấy sản phẩm</h2></div></main>
@@ -230,10 +263,10 @@ function getStoreProductTemplate(productId) {
               <div style="max-width: 600px;">
                 <span class="badge badge-${p.format}">${p.format}</span>
                 <h1 class="hover-word" style="font-size:2.5rem; margin-top:1rem;">${wrapWords(p.title)}</h1>
-                <p style="color:var(--color-subtle); margin-top:1rem; line-height:1.7;">${p.desc}</p>
+                <p style="color:var(--color-subtle); margin-top:1rem; line-height:1.7;">${p.description || ''}</p>
                 <div style="margin-top:1.5rem; font-size:0.85rem; font-weight:700; color:#888;">
                   <span style="display:inline-block; margin-right:2rem;">Kích thước: <span style="color:#fff">${p.size}</span></span>
-                  <span>Định dạng: <span style="color:#fff text-transform:uppercase;">${p.format}</span></span>
+                  <span>Định dạng: <span style="color:#fff; text-transform:uppercase;">${p.format}</span></span>
                 </div>
               </div>
               
@@ -261,7 +294,7 @@ function getStoreAuthTemplate() {
       <div class="auth-container reveal">
         <div class="auth-header">
           <h2 class="hover-word" style="font-size:2rem; margin-bottom:0.5rem;" id="auth-title">${wrapWords('Đăng nhập')}</h2>
-          <p style="color:var(--color-subtle); font-size:0.9rem;" id="auth-subtitle">Chào mừng trở lại Vũ An MapData</p>
+          <p style="color:var(--color-subtle); font-size:0.9rem;" id="auth-subtitle">Chào mừng trở lại GeoData</p>
         </div>
 
         <form id="store-auth-form">
@@ -305,7 +338,7 @@ function getStoreDashboardTemplate() {
             </div>
             <div style="margin-bottom:2rem;">
               <div style="font-weight:700; color:var(--color-subtle); text-transform:uppercase; font-size:0.75rem; margin-bottom:0.8rem;">Gói hiện tại</div>
-              <div style="display:inline-block; background:#222; color:#fff; padding:0.4rem 0.8rem; font-size:0.8rem; font-weight:700; border:1px solid #444;">MIỄN PHÍ</div>
+              <div class="plan-badge-current" style="display:inline-block; background:#222; color:#fff; padding:0.4rem 0.8rem; font-size:0.8rem; font-weight:700; border:1px solid #444;">MIỄN PHÍ</div>
               <div style="margin-top:1rem;">
                 <a href="#store-pricing" style="font-size:0.8rem; color:var(--color-accent); text-decoration:underline;">Nâng cấp gói</a>
               </div>
@@ -317,6 +350,7 @@ function getStoreDashboardTemplate() {
             <h3 style="margin-bottom:1.5rem; font-size:1.2rem; border-bottom:1.5px solid var(--color-border); padding-bottom:1rem;">Lịch sử tải xuống</h3>
             <p style="color:var(--color-subtle); font-size:0.9rem;">Bạn chưa tải xuống tệp nào.</p>
             <a href="#store-catalog" class="plan-btn" style="display:inline-block; width:auto; padding:0.8rem 1.5rem; margin-top:2rem;">Duyệt sản phẩm</a>
+            <div id="dashboard-admin-link"></div>
           </div>
         </div>
       </section>
@@ -325,14 +359,198 @@ function getStoreDashboardTemplate() {
   `
 }
 
-// ------------------------------------------------------------------
-// ROUTER LOGIC FOR STORE
-// ------------------------------------------------------------------
+function getStoreCheckoutTemplate() {
+  const planId = sessionStorage.getItem('store-auth-plan') || 'Không rõ gói'
+  let price = 'Liên hệ'; let planName = 'Gói Chưa Xác Định';
+  if(planId === 'monthly') { price = '79.000 VNĐ'; planName = 'Monthly'; }
+  if(planId === 'yearly') { price = '599.000 VNĐ'; planName = 'Yearly'; }
+  if(planId === 'lifetime') { price = '1.299.000 VNĐ'; planName = 'Lifetime'; }
+
+  return `
+    ${getStoreNav()}
+    <main>
+      <section class="container reveal" style="padding: 8vh 2rem;">
+        <div style="max-width: 600px; margin: 0 auto; background: #111; border: 1.5px solid var(--color-border); padding: 3rem;">
+          <h1 class="hover-word" style="font-size: 2rem; margin-bottom: 2rem; text-align: center;">${wrapWords('Thanh Toán')}</h1>
+          <div style="margin-bottom: 2rem; border-bottom: 1.5px solid var(--color-border); padding-bottom: 1.5rem;">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 0.5rem;">
+              <span style="color:var(--color-subtle);">Gói đã chọn:</span>
+              <span style="font-weight:700;">${planName}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size: 1.2rem;">
+              <span style="color:var(--color-subtle);">Tổng tiền:</span>
+              <span style="font-weight:900; color:var(--color-accent);">${price}</span>
+            </div>
+          </div>
+          <div style="margin-bottom: 2rem;">
+            <h3 style="font-size:1.1rem; margin-bottom: 1rem;">Hướng dẫn thanh toán</h3>
+            <p style="color:var(--color-subtle); font-size:0.9rem; line-height: 1.6; margin-bottom: 1rem;">
+              Vui lòng chuyển khoản vào tài khoản dưới đây hoặc quét mã QR. 
+              Ghi rõ nội dung chuyển khoản là <strong>Email + ${planName}</strong>.
+            </p>
+            <div style="background: #000; border: 1.5px solid var(--color-border); padding: 1.5rem; border-radius: 4px; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+              <div style="flex:1;">
+                <div style="margin-bottom: 0.8rem;">
+                  <span style="font-size:0.75rem; color:var(--color-subtle); text-transform:uppercase;">Ngân hàng</span>
+                  <div style="font-weight:700;">Vietcombank</div>
+                </div>
+                <div style="margin-bottom: 0.8rem;">
+                  <span style="font-size:0.75rem; color:var(--color-subtle); text-transform:uppercase;">Số tài khoản</span>
+                  <div style="font-weight:700; font-size:1.2rem; color:var(--color-accent);">1234567890</div>
+                </div>
+                <div>
+                  <span style="font-size:0.75rem; color:var(--color-subtle); text-transform:uppercase;">Chủ tài khoản</span>
+                  <div style="font-weight:700;">VŨ AN</div>
+                </div>
+              </div>
+              <div style="width: 120px; height: 120px; background: #fff; display: flex; align-items: center; justify-content: center;">
+                <span style="color:#000; font-weight:700; font-size:0.8rem;">Fake QR Code</span>
+              </div>
+            </div>
+          </div>
+          <p style="color:var(--color-subtle); font-size:0.85rem; text-align:center; margin-bottom: 2rem;">
+            Sau khi chuyển khoản thành công, hãy nhấn nút bên dưới để gửi tin nhắn kèm biên lai chụp màn hình cho Admin qua Telegram.
+          </p>
+          <a href="https://t.me/vuanedit" target="_blank" class="plan-btn" style="background:var(--color-accent); color:#000; border-color:var(--color-accent); text-align:center;">Đã chuyển khoản - Liên hệ Admin</a>
+          <div style="margin-top: 1.5rem; text-align:center;">
+            <a href="#store-pricing" style="color:var(--color-subtle); font-size:0.85rem; text-decoration:underline;">&larr; Đổi gói khác</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    ${getStoreFooter()}
+  `
+}
+
+function getStoreAdminTemplate() {
+  return `
+    ${getStoreNav()}
+    <main>
+      <section class="container reveal" style="padding: 8vh 2rem;">
+        <div style="max-width: 800px; margin: 0 auto;">
+          <h1 class="hover-word" style="font-size: 2.5rem; margin-bottom: 1rem;">${wrapWords('Quản Lý Dữ Liệu')}</h1>
+          <p style="color:var(--color-subtle); margin-bottom: 2rem;">Thêm và quản lý dữ liệu trên Store.</p>
+          
+          <div class="filter-tabs reveal" id="admin-tabs" style="margin-bottom: 2rem;">
+            <button class="filter-btn active" data-target="admin-tab-upload" id="btn-tab-upload">Thêm Dữ Liệu</button>
+            <button class="filter-btn" data-target="admin-tab-products">Danh Sách Dữ Liệu</button>
+            <button class="filter-btn" data-target="admin-tab-users">Thành Viên</button>
+          </div>
+          
+          <div id="admin-tab-upload" class="admin-tab-content active" style="background: #111; border: 1.5px solid var(--color-border); padding: 3rem;">
+            <form id="admin-upload-form">
+              <input type="hidden" id="admin-id">
+              <div class="form-group">
+                <label class="form-label" id="form-mode-title">Thêm sản phẩm mới</label>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tên sản phẩm</label>
+                <input type="text" id="admin-title" class="form-input" placeholder="Ví dụ: Bản đồ Giao thông Hà Nội" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mô tả tóm tắt</label>
+                <textarea id="admin-desc" class="form-input" placeholder="Mô tả về dữ liệu này..." style="min-height: 80px;" required></textarea>
+              </div>
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                <div>
+                  <label class="form-label">Định dạng</label>
+                  <select id="admin-format" class="form-input" style="background:transparent; color:#fff;" required>
+                    <option value="geojson" style="color:#000">GeoJSON</option>
+                    <option value="kml" style="color:#000">KML</option>
+                    <option value="plugin" style="color:#000">Plugin</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label">Kích thước file</label>
+                  <input type="text" id="admin-size" class="form-input" placeholder="Ví dụ: 15.2 MB" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Ảnh Thumbnail (URL)</label>
+                <input type="url" id="admin-thumb" class="form-input" placeholder="https://example.com/image.jpg" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">File Dữ Liệu (URL Download)</label>
+                <input type="url" id="admin-file" class="form-input" placeholder="https://drive.google.com/..." required>
+              </div>
+              <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                <input type="checkbox" id="admin-featured" style="width: 18px; height: 18px;">
+                <label for="admin-featured" style="font-size: 0.85rem; font-weight: 700;">Đánh dấu Nổi Bật (xuất hiện ở Trang Chủ)</label>
+              </div>
+              
+              <div id="form-actions" style="display:flex; gap:1rem;">
+                <button type="submit" id="btn-admin-submit" class="plan-btn" style="background:var(--color-accent); color:#000; border-color:var(--color-accent); padding: 1rem 3rem; flex:1;">Tải Lên Store</button>
+                <button type="button" id="btn-admin-cancel" class="plan-btn" style="display:none; background:#333; color:#fff; border-color:#444; padding: 1rem 2rem;">Hủy</button>
+              </div>
+            </form>
+          </div>
+
+          <div id="admin-tab-products" class="admin-tab-content" style="display: none; background: #111; border: 1.5px solid var(--color-border); padding: 3rem;">
+            <div style="margin-bottom: 2rem;"><h2 style="font-size: 1.5rem;">Dữ liệu hiện có</h2></div>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 1.5px solid var(--color-border);">
+                    <th style="padding: 1rem 0; font-size: 0.85rem; color: var(--color-subtle); text-transform: uppercase;">Sản phẩm</th>
+                    <th style="padding: 1rem 0; font-size: 0.85rem; color: var(--color-subtle); text-transform: uppercase;">Loại</th>
+                    <th style="padding: 1rem 0; font-size: 0.85rem; color: var(--color-subtle); text-transform: uppercase;">Quyền</th>
+                    <th style="padding: 1rem 0; font-size: 0.85rem; color: var(--color-subtle); text-transform: uppercase; text-align: right;">Hành Động</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-products-tbody">
+                  <tr><td colspan="4" style="padding: 2rem 0; text-align: center; color: var(--color-subtle);">Đang tải danh sách...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="admin-tab-users" class="admin-tab-content" style="display: none; background: #111; border: 1.5px solid var(--color-border); padding: 3rem;">
+            <div style="margin-bottom: 2rem;"><h2 style="font-size: 1.5rem;">Cấp Quyền Hội Viên</h2></div>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 1.5px solid var(--color-border);">
+                    <th style="padding: 1rem 0; font-size: 0.85rem; color: var(--color-subtle); text-transform: uppercase;">Email</th>
+                    <th style="padding: 1rem 0; font-size: 0.85rem; color: var(--color-subtle); text-transform: uppercase;">Ngày Đăng Ký</th>
+                    <th style="padding: 1rem 0; font-size: 0.85rem; color: var(--color-subtle); text-transform: uppercase;">Gói Cước</th>
+                    <th style="padding: 1rem 0; font-size: 0.85rem; color: var(--color-subtle); text-transform: uppercase; text-align: right;">Hành Động</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-tbody">
+                  <tr><td colspan="4" style="padding: 2rem 0; text-align: center; color: var(--color-subtle);">Đang tải danh sách thành viên...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div style="margin-top: 2rem;">
+            <a href="#store-dashboard" style="color:var(--color-subtle); text-decoration:underline; font-size:0.85rem;">&larr; Về Dashboard</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    ${getStoreFooter()}
+  `
+}
+
 export function getStoreTemplate(view) {
+  if (!hasInitialFetched && !isLoadingProducts) {
+    fetchProductsFromSupabase()
+  }
+  
+  if (isLoadingProducts && allProducts.length === 0) {
+    return `
+      ${getStoreNav()}
+      <main><div class="container" style="padding: 10vh 2rem; text-align:center;"><p style="letter-spacing:0.1em; color:#888;">ĐANG TẢI DỮ LIỆU...</p></div></main>
+      ${getStoreFooter()}
+    `
+  }
   if (view === 'store-catalog') return getStoreCatalogTemplate()
   if (view === 'store-pricing') return getStorePricingTemplate()
   if (view === 'store-login') return getStoreAuthTemplate()
   if (view === 'store-dashboard') return getStoreDashboardTemplate()
+  if (view === 'store-checkout') return getStoreCheckoutTemplate()
+  if (view === 'store-admin') return getStoreAdminTemplate()
   if (view.startsWith('store-product-')) {
     const id = view.replace('store-product-', '')
     return getStoreProductTemplate(id)
@@ -341,161 +559,216 @@ export function getStoreTemplate(view) {
 }
 
 export function initStoreEffects() {
-  // Store navigation home redirect
   document.querySelectorAll('[data-store-nav]').forEach(el => {
-    el.style.cursor = 'pointer'
-    el.onclick = () => {
-      window.location.hash = '#store'
-    }
+    el.onclick = () => { window.location.hash = '#store' }
   })
-
-  // Catalog Filters
   const filters = document.getElementById('store-filters')
   if (filters) {
-    const btns = filters.querySelectorAll('.filter-btn')
-    const cards = document.querySelectorAll('#catalog-grid .product-card')
-    
+    const btns = filters.querySelectorAll('.filter-btn'); const cards = document.querySelectorAll('#catalog-grid .product-card');
     btns.forEach(btn => {
       btn.onclick = () => {
-        btns.forEach(b => b.classList.remove('active'))
-        btn.classList.add('active')
-        const t = btn.dataset.filter
+        btns.forEach(b => b.classList.remove('active')); btn.classList.add('active');
+        const t = btn.dataset.filter;
         cards.forEach(card => {
-          if (t === 'all' || card.dataset.format === t) {
-            card.style.display = 'flex'
-          } else {
-            card.style.display = 'none'
-          }
+          const formatMatch = (t === card.dataset.format)
+          const accessMatch = (t === card.dataset.access)
+          card.style.display = (t === 'all' || formatMatch || accessMatch) ? 'flex' : 'none'
         })
       }
     })
   }
-
-  // Auth Layout Logic
-  const authForm = document.getElementById('store-auth-form')
-  if (authForm) {
-    initAuthLogic()
-  }
-
-  // Dashboard Logic
-  const dashEmail = document.getElementById('dashboard-email')
-  if (dashEmail) {
-    initDashboardLogic()
-  }
-
-  // Check auth for Account link
+  if (document.getElementById('store-auth-form')) initAuthLogic()
+  if (document.getElementById('dashboard-email')) initDashboardLogic()
   checkAuthForNav()
+  if (document.getElementById('admin-upload-form')) initAdminLogic()
+  document.querySelectorAll('.btn-subscribe').forEach(btn => {
+    btn.onclick = async (e) => {
+      e.preventDefault(); const planId = btn.dataset.plan; const user = await getCurrentUser();
+      if (user) { sessionStorage.setItem('store-auth-plan', planId); window.location.hash = '#store-checkout'; }
+      else { sessionStorage.setItem('store-auth-mode', 'signup'); sessionStorage.setItem('store-auth-plan', planId); window.location.hash = '#store-login'; }
+    }
+  })
 }
 
-// Auth State Check
 async function checkAuthForNav() {
   const user = await getCurrentUser()
   const navAcc = document.getElementById('nav-account-link')
   if (navAcc) {
-    if (user) {
-      navAcc.textContent = 'Dashboard'
-      navAcc.href = '#store-dashboard'
-    } else {
-      navAcc.textContent = 'Đăng nhập'
-      navAcc.href = '#store-login'
-    }
+    navAcc.textContent = user ? 'Dashboard' : 'Đăng nhập'
+    navAcc.href = user ? '#store-dashboard' : '#store-login'
   }
-
-  // Product page download button
   const dlArea = document.getElementById('product-download-area')
-  if (dlArea) {
-    if (user) {
-      dlArea.innerHTML = `
-        <button class="plan-btn" style="background:var(--color-accent); color:#000; border-color:var(--color-accent); font-size:1rem;">Tải Xuống Ngay</button>
-        <p style="font-size:0.75rem; color:var(--color-subtle); margin-top:1rem; text-align:center;">Tệp sẽ được nén dưới định dạng .ZIP</p>
-      `
+  if (dlArea && user) {
+    let canDownload = false; const currentHash = window.location.hash; const prodId = currentHash.replace('#store-product-', '');
+    const product = allProducts.find(p => p.id === prodId)
+    if (product && product.access === 'free') { canDownload = true }
+    else {
+      try {
+        const { data: profile } = await supabase.from('profiles').select('plan_id').eq('id', user.id).maybeSingle()
+        if (profile && profile.plan_id !== 'free') canDownload = true
+      } catch (_) {}
+    }
+    if (canDownload) {
+      dlArea.innerHTML = `<button class="plan-btn" style="background:var(--color-accent); color:#000; border-color:var(--color-accent); font-size:1rem;">Tải Xuống Ngay</button><p style="font-size:0.75rem; color:var(--color-subtle); margin-top:1rem; text-align:center;">Tệp sẽ được nén dưới định dạng .ZIP</p>`
+    } else {
+      dlArea.innerHTML = `<p style="font-size:0.85rem; margin-bottom:1.5rem; color:var(--color-subtle);">Bạn cần gói Hội Viên đang hoạt động để tải xuống tệp này.</p><a href="#store-pricing" class="plan-btn" style="background:var(--color-accent); color:#000; border-color:var(--color-accent); margin-bottom:1rem;">Nâng cấp Hội Viên</a><a href="#store-login" style="display:block; text-align:center; font-size:0.85rem; text-decoration:underline; font-weight:700;">Tài khoản của tôi</a>`
     }
   }
 }
 
 let isLoginMode = true;
-
 function initAuthLogic() {
-  const toggleBtn = document.getElementById('auth-toggle-btn')
-  const title = document.getElementById('auth-title')
-  const subtitle = document.getElementById('auth-subtitle')
-  const submitBtn = document.getElementById('auth-submit-btn')
-  const toggleText = document.getElementById('auth-toggle-text')
-  const form = document.getElementById('store-auth-form')
+  const toggleBtn = document.getElementById('auth-toggle-btn'); const title = document.getElementById('auth-title'); const subtitle = document.getElementById('auth-subtitle');
+  const submitBtn = document.getElementById('auth-submit-btn'); const toggleText = document.getElementById('auth-toggle-text'); const form = document.getElementById('store-auth-form');
   const errorAlert = document.getElementById('auth-error')
-
-  toggleBtn.onclick = (e) => {
-    e.preventDefault()
-    isLoginMode = !isLoginMode
-    if (isLoginMode) {
-      title.innerHTML = wrapWords('Đăng nhập')
-      subtitle.textContent = 'Chào mừng trở lại Vũ An MapData'
-      submitBtn.textContent = 'Đăng nhập'
-      toggleText.textContent = 'Chưa có tài khoản?'
-      toggleBtn.textContent = 'Đăng ký ngay'
-    } else {
-      title.innerHTML = wrapWords('Tạo tài khoản')
-      subtitle.textContent = 'Tham gia để tải xuống ngay'
-      submitBtn.textContent = 'Đăng ký'
-      toggleText.textContent = 'Đã có tài khoản?'
-      toggleBtn.textContent = 'Đăng nhập'
-    }
-    errorAlert.style.display = 'none'
+  const performToggle = (mode) => {
+    isLoginMode = mode;
+    title.innerHTML = wrapWords(isLoginMode ? 'Đăng nhập' : 'Tạo tài khoản')
+    subtitle.textContent = isLoginMode ? 'Chào mừng trở lại GeoData' : 'Tham gia để tải xuống ngay'
+    submitBtn.textContent = isLoginMode ? 'Đăng nhập' : 'Đăng ký'
+    toggleText.textContent = isLoginMode ? 'Chưa có tài khoản?' : 'Đã có tài khoản?'
+    toggleBtn.textContent = isLoginMode ? 'Đăng ký ngay' : 'Đăng nhập'
   }
-
+  if (sessionStorage.getItem('store-auth-mode') === 'signup') { performToggle(false); sessionStorage.removeItem('store-auth-mode'); }
+  toggleBtn.onclick = (e) => { e.preventDefault(); performToggle(!isLoginMode); errorAlert.style.display = 'none'; }
   form.onsubmit = async (e) => {
-    e.preventDefault()
-    const email = document.getElementById('auth-email').value
-    const pass = document.getElementById('auth-password').value
-    errorAlert.style.display = 'none'
-    submitBtn.textContent = 'Đang xử lý...'
-
+    e.preventDefault(); const email = document.getElementById('auth-email').value; const pass = document.getElementById('auth-password').value;
+    errorAlert.style.display = 'none'; submitBtn.textContent = 'Đang xử lý...';
     try {
-      // NOTE: We check if supabase config exists, if it's placeholder it will throw
-      if (supabase.supabaseUrl.includes('YOUR_SUPABASE_PROJECT_ID')) {
-         throw new Error('Supabase chưa được cấu hình. Vui lòng thêm Project ID và Anon Key vào src/store/supabase.js')
-      }
-
-      let result;
-      if (isLoginMode) {
-        result = await signIn(email, pass)
-      } else {
-        result = await signUp(email, pass)
-      }
-
+      if (supabase.supabaseUrl.includes('YOUR_SUPABASE_PROJECT_ID')) throw new Error('Supabase chưa được cấu hình.')
+      const result = isLoginMode ? await signIn(email, pass) : await signUp(email, pass)
       if (result.error) throw result.error
-
       if (!isLoginMode && result.data?.user && !result.data?.session) {
-        errorAlert.textContent = 'Kiểm tra email của bạn để xác thực tài khoản.'
-        errorAlert.style.color = 'var(--color-accent)'
-        errorAlert.style.display = 'block'
-      } else {
-        window.location.hash = '#store-dashboard'
-      }
-    } catch (err) {
-      errorAlert.textContent = err.message
-      errorAlert.style.color = '#e74c3c'
-      errorAlert.style.display = 'block'
-    } finally {
-      submitBtn.textContent = isLoginMode ? 'Đăng nhập' : 'Đăng ký'
-    }
+        errorAlert.textContent = 'Kiểm tra email của bạn để xác thực tài khoản.'; errorAlert.style.color = 'var(--color-accent)'; errorAlert.style.display = 'block'
+      } else { window.location.hash = '#store-dashboard' }
+    } catch (err) { errorAlert.textContent = err.message; errorAlert.style.color = '#e74c3c'; errorAlert.style.display = 'block'
+    } finally { submitBtn.textContent = isLoginMode ? 'Đăng nhập' : 'Đăng ký' }
   }
 }
 
 async function initDashboardLogic() {
-  const dashEmail = document.getElementById('dashboard-email')
-  const btnLogout = document.getElementById('btn-logout')
-  
+  const dashEmail = document.getElementById('dashboard-email'); const btnLogout = document.getElementById('btn-logout'); const adminLinkContainer = document.getElementById('dashboard-admin-link');
   const user = await getCurrentUser()
-  if (!user) {
-    window.location.hash = '#store-login'
-    return
-  }
-
+  if (!user) { window.location.hash = '#store-login'; return; }
   dashEmail.textContent = user.email
-
-  btnLogout.onclick = async () => {
-    await signOut()
-    window.location.hash = '#store'
+  const planLabels = { free: 'MIỄN PHÍ', monthly: 'MONTHLY', yearly: 'YEARLY', lifetime: 'LIFETIME' }
+  const planColors = { free: '#444', monthly: '#2ecc71', yearly: 'var(--color-accent)', lifetime: 'var(--color-accent)' }
+  const planBadge = document.querySelector('.plan-badge-current')
+  try {
+    const { data: profile, error } = await supabase.from('profiles').select('plan_id').eq('id', user.id).maybeSingle()
+    if (error) throw error
+    if (profile && planBadge) {
+      planBadge.textContent = planLabels[profile.plan_id] || 'MIỄN PHÍ'
+      planBadge.style.background = planColors[profile.plan_id] || '#444'
+      planBadge.style.color = profile.plan_id === 'free' ? '#fff' : '#000'
+    }
+  } catch (err) { console.error('Plan fetch error:', err.message) }
+  if (user.email === 'vuan.edit@gmail.com' && adminLinkContainer) {
+    adminLinkContainer.innerHTML = '<a href="#store-admin" style="display:block; margin-top:1.5rem; font-size:0.85rem; color:var(--color-accent); font-weight: 700;">&rarr; Trang Quản Trị Admin (Quản lý dữ liệu)</a>'
   }
+  btnLogout.onclick = async () => { await signOut(); window.location.hash = '#store' }
+}
+
+async function initAdminLogic() {
+  const user = await getCurrentUser()
+  if (!user || user.email !== 'vuan.edit@gmail.com') { window.location.hash = '#store-dashboard'; return; }
+  const tabBtns = document.querySelectorAll('#admin-tabs .filter-btn'); const tabContents = document.querySelectorAll('.admin-tab-content');
+  tabBtns.forEach(btn => {
+    btn.onclick = () => {
+      tabBtns.forEach(b => b.classList.remove('active')); btn.classList.add('active');
+      const target = btn.dataset.target; tabContents.forEach(tab => { tab.style.display = tab.id === target ? 'block' : 'none' })
+      if (target === 'admin-tab-users') loadUserList()
+      if (target === 'admin-tab-products') loadAdminProductList()
+    }
+  })
+  const form = document.getElementById('admin-upload-form'); const btnCancel = document.getElementById('btn-admin-cancel');
+  const formModeTitle = document.getElementById('form-mode-title'); const btnSubmit = document.getElementById('btn-admin-submit');
+  btnCancel.onclick = () => {
+    form.reset(); document.getElementById('admin-id').value = '';
+    formModeTitle.textContent = 'Thêm sản phẩm mới'; btnSubmit.textContent = 'Tải Lên Store'; btnCancel.style.display = 'none';
+  }
+  form.onsubmit = async (e) => {
+    e.preventDefault(); const id = document.getElementById('admin-id').value;
+    const productData = {
+      title: document.getElementById('admin-title').value,
+      description: document.getElementById('admin-desc').value,
+      format: document.getElementById('admin-format').value,
+      size: document.getElementById('admin-size').value,
+      thumb: document.getElementById('admin-thumb').value,
+      file_url: document.getElementById('admin-file').value,
+      featured: document.getElementById('admin-featured').checked,
+      access: 'paid'
+    }
+    btnSubmit.textContent = 'Đang lưu...';
+    try {
+      let error = id ? (await supabase.from('products').update(productData).eq('id', id)).error : (await supabase.from('products').insert([productData])).error
+      if (error) throw error
+      alert(id ? 'Cập nhật thành công!' : 'Thêm sản phẩm thành công!')
+      form.reset(); document.getElementById('admin-id').value = ''; formModeTitle.textContent = 'Thêm sản phẩm mới';
+      btnSubmit.textContent = 'Tải Lên Store'; btnCancel.style.display = 'none';
+      fetchProductsFromSupabase()
+    } catch (err) { alert('Lỗi: ' + err.message); btnSubmit.textContent = id ? 'Cập nhật' : 'Tải Lên Store'; }
+  }
+}
+
+async function loadAdminProductList() {
+  const tbody = document.getElementById('admin-products-tbody'); if (!tbody) return
+  tbody.innerHTML = '<tr><td colspan="4" style="padding:2rem 0; text-align:center; color:#888;">Đang tải...</td></tr>'
+  try {
+    const { data: prods, error } = await supabase.from('products').select('*').order('created_at', { ascending: false })
+    if (error) throw error
+    if (!prods || prods.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="padding:2rem 0; text-align:center; color:#888;">Chưa có sản phẩm nào.</td></tr>'; return; }
+    tbody.innerHTML = prods.map(p => `
+      <tr style="border-bottom: 1px solid #222;">
+        <td style="padding: 1rem 0;"><div style="font-weight:700;">${p.title}</div><div style="font-size:0.75rem; color:#666;">${p.size}</div></td>
+        <td style="padding: 1rem 0; text-transform:uppercase; font-size:0.8rem;">${p.format}</td>
+        <td style="padding: 1rem 0;"><span style="font-size:0.7rem; font-weight:900; padding:0.2rem 0.4rem; background:${p.access === 'free' ? '#2ecc71' : '#333'}; color:${p.access === 'free' ? '#000' : '#aaa'};">${p.access.toUpperCase()}</span></td>
+        <td style="padding: 1rem 0; text-align:right;"><button class="btn-edit-prod" data-id="${p.id}" style="color:var(--color-accent); font-weight:700; margin-right:1rem; font-size:0.85rem;">Sửa</button><button class="btn-delete-prod" data-id="${p.id}" style="color:#e74c3c; font-weight:700; font-size:0.85rem;">Xóa</button></td>
+      </tr>
+    `).join('')
+    tbody.querySelectorAll('.btn-edit-prod').forEach(btn => {
+      btn.onclick = () => {
+        const p = prods.find(x => x.id === btn.dataset.id); if (!p) return
+        document.getElementById('btn-tab-upload').click(); document.getElementById('admin-id').value = p.id;
+        document.getElementById('admin-title').value = p.title; document.getElementById('admin-desc').value = p.description || '';
+        document.getElementById('admin-format').value = p.format; document.getElementById('admin-size').value = p.size;
+        document.getElementById('admin-thumb').value = p.thumb; document.getElementById('admin-file').value = p.file_url;
+        document.getElementById('admin-featured').checked = p.featured;
+        document.getElementById('form-mode-title').textContent = 'Chỉnh sửa: ' + p.title; document.getElementById('btn-admin-submit').textContent = 'Cập nhật'; document.getElementById('btn-admin-cancel').style.display = 'block';
+      }
+    })
+    tbody.querySelectorAll('.btn-delete-prod').forEach(btn => {
+      btn.onclick = async () => {
+        if (!confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) return
+        const { error } = await supabase.from('products').delete().eq('id', btn.dataset.id)
+        if (error) { alert('Lỗi: ' + error.message) } else { alert('Đã xóa thành công!'); fetchProductsFromSupabase(); loadAdminProductList(); }
+      }
+    })
+  } catch (err) { tbody.innerHTML = `<tr><td colspan="4" style="padding:2rem 0; text-align:center; color:#e74c3c;">Lỗi: ${err.message}</td></tr>` }
+}
+
+async function loadUserList() {
+  const tbody = document.getElementById('admin-users-tbody'); if (!tbody) return
+  tbody.innerHTML = '<tr><td colspan="4" style="padding:2rem 0; text-align:center; color:var(--color-subtle);">Đang tải...</td></tr>'
+  try {
+    const { data: profiles, error } = await supabase.from('profiles').select('id, email, plan_id, created_at').order('created_at', { ascending: false })
+    if (error || !profiles) throw error || new Error('Không lấy được dữ liệu')
+    if (profiles.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="padding:2rem 0; text-align:center; color:var(--color-subtle);">Chưa có thành viên nào.</td></tr>'; return; }
+    tbody.innerHTML = profiles.map(p => `
+      <tr style="border-bottom: 1px solid #222;" data-user-id="${p.id}">
+        <td style="padding: 1rem 0; word-break:break-all;">${p.email}</td>
+        <td style="padding: 1rem 0; color:var(--color-subtle);">${new Date(p.created_at).toLocaleDateString('vi-VN')}</td>
+        <td style="padding: 1rem 0;"><select class="plan-select form-input" style="background:#000; color:#fff; width:auto; padding:0.4rem 0.8rem;" data-user-id="${p.id}"><option value="free" ${p.plan_id === 'free' ? 'selected' : ''}>Miễn phí</option><option value="monthly" ${p.plan_id === 'monthly' ? 'selected' : ''}>Monthly</option><option value="yearly" ${p.plan_id === 'yearly' ? 'selected' : ''}>Yearly</option><option value="lifetime" ${p.plan_id === 'lifetime' ? 'selected' : ''}>Lifetime</option></select></td>
+        <td style="padding: 1rem 0; text-align:right;"><button class="btn-update-plan" data-user-id="${p.id}" style="background:var(--color-accent); color:#000; font-weight:700; font-size:0.8rem; padding:0.5rem 1rem; border:none; cursor:pointer;">Lưu</button></td>
+      </tr>
+    `).join('')
+    tbody.querySelectorAll('.btn-update-plan').forEach(btn => {
+      btn.onclick = async () => {
+        const userId = btn.dataset.userId; const newPlan = tbody.querySelector(`tr[data-user-id="${userId}"] .plan-select`).value;
+        btn.textContent = '...'; const { error } = await supabase.from('profiles').update({ plan_id: newPlan, updated_at: new Date().toISOString() }).eq('id', userId)
+        if (error) { btn.textContent = 'Lỗi!'; btn.style.background = '#e74c3c' }
+        else { btn.textContent = '✓ Xong'; btn.style.background = '#2ecc71'; setTimeout(() => { btn.textContent = 'Lưu'; btn.style.background = 'var(--color-accent)' }, 2000) }
+      }
+    })
+  } catch (err) { tbody.innerHTML = `<tr><td colspan="4" style="padding:2rem 0; text-align:center; color:#e74c3c;">Lỗi: ${err.message}<br><small>Hãy chạy SQL trong Supabase Dashboard để tạo bảng profiles.</small></td></tr>` }
 }

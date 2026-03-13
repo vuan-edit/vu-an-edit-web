@@ -40,7 +40,7 @@ function getHeader() {
         <a href="#" data-nav="">Trang chủ</a>
         <a href="#projects">Dự án</a>
         <a href="#course-page">Khóa học</a>
-        <a href="#store">Store</a>
+        <a href="#store">Cửa hàng</a>
         <a href="#blog">Blog</a>
         <a href="#contact-page">Liên hệ</a>
       </nav>
@@ -312,6 +312,7 @@ function render() {
     window.scrollTo(0, 0)
   }, 400)
 }
+window.render = render
 
 // --- EFFECTS ---
 function initEffects() {
