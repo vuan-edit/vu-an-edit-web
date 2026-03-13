@@ -1,11 +1,13 @@
 import './style.css'
+import { getStoreTemplate, initStoreEffects } from './store/store-main.js'
 
 // --- CONSTANTS ---
 const VIEWS = {
   HOME: 'home',
   PROJECTS: 'projects',
   COURSE: 'course',
-  CONTACT: 'contact'
+  CONTACT: 'contact',
+  STORE: 'store'
 }
 
 // --- STATE ---
@@ -38,6 +40,7 @@ function getHeader() {
         <a href="#" data-nav="">Trang chủ</a>
         <a href="#projects">Dự án</a>
         <a href="#course-page">Khóa học</a>
+        <a href="#store">Store</a>
         <a href="#blog">Blog</a>
         <a href="#contact-page">Liên hệ</a>
       </nav>
@@ -280,6 +283,7 @@ function getTemplate(view) {
   if (view === VIEWS.PROJECTS) return getProjectsTemplate()
   if (view === VIEWS.COURSE) return getCourseTemplate()
   if (view === VIEWS.CONTACT) return getContactTemplate()
+  if (view.startsWith(VIEWS.STORE)) return getStoreTemplate(view)
   return getHomeTemplate()
 }
 
@@ -292,6 +296,8 @@ function render() {
     currentView = VIEWS.COURSE
   } else if (hash === '#contact-page') {
     currentView = VIEWS.CONTACT
+  } else if (hash.startsWith('#store')) {
+    currentView = hash.substring(1) || VIEWS.STORE
   } else {
     currentView = VIEWS.HOME
   }
@@ -375,6 +381,11 @@ function initEffects() {
     container.onmousemove = updateSlider
     container.ontouchmove = updateSlider
   })
+
+  // Store Effects
+  if (currentView.startsWith(VIEWS.STORE)) {
+    initStoreEffects()
+  }
 }
 
 // --- INIT ---
