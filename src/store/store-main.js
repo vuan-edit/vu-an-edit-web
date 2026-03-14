@@ -64,7 +64,7 @@ function getStoreFooter() {
       <p>© 2026 GeoData. Dữ liệu bản đồ cho Video Editor.</p>
       <div style="display:flex; gap:1.5rem; font-size:0.75rem; font-weight:700; text-transform:uppercase;">
         <a href="#store-pricing">Gói cước</a>
-        <a href="mailto:vuan.edit@gmail.com">Hỗ trợ</a>
+        <a href="https://zalo.me/0967575313" target="_blank">Hỗ trợ Zalo</a>
       </div>
     </footer>
   `
@@ -150,12 +150,17 @@ function getStoreCatalogTemplate() {
     const accessTag = p.access === 'free'
       ? `<span style="background:#2ecc71; color:#000; font-size:0.65rem; font-weight:900; padding:0.2rem 0.5rem; text-transform:uppercase; letter-spacing:0.06em;">FREE</span>`
       : `<span style="background:#333; color:#aaa; font-size:0.65rem; font-weight:900; padding:0.2rem 0.5rem; text-transform:uppercase; letter-spacing:0.06em;">PAID</span>`
+    
+    const lifetimeBadge = p.is_lifetime 
+      ? `<span class="badge badge-lifetime">LIFETIME</span>` 
+      : `<span class="badge badge-${p.format}">${p.format}</span>`
+
     return `
-    <a href="#store-product-${p.id}" class="product-card reveal" data-format="${p.format}" data-access="${p.access}">
+    <a href="#store-product-${p.id}" class="product-card reveal" data-format="${p.format}" data-access="${p.access}" data-lifetime="${p.is_lifetime || false}" data-title="${p.title.toLowerCase()}">
       <img src="${p.thumb}" alt="${p.title}" class="product-thumb">
       <div class="product-content">
         <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem;">
-          <span class="badge badge-${p.format}">${p.format}</span>
+          ${lifetimeBadge}
           ${accessTag}
         </div>
         <h3 class="product-title hover-word" style="margin-top:0.5rem;">${wrapWords(p.title)}</h3>
@@ -176,12 +181,20 @@ function getStoreCatalogTemplate() {
         <h1 class="reveal hover-word" style="font-size: 3rem;">${wrapWords('Kho Dữ Liệu')}</h1>
         <p class="reveal" style="color:var(--color-subtle); margin-top:1rem; max-width:600px;">Tìm kiếm và tải xuống các layer bản đồ phù hợp nhất cho dự án video của bạn.</p>
 
-        <div class="filter-tabs reveal" id="store-filters">
-          <button class="filter-btn active" data-filter="all">Tất cả</button>
-          <button class="filter-btn" data-filter="free">Miễn phí</button>
-          <button class="filter-btn" data-filter="geojson">GeoJSON</button>
-          <button class="filter-btn" data-filter="kml">KML Files</button>
-          <button class="filter-btn" data-filter="plugin">Plugins</button>
+        <div class="store-tools reveal">
+          <div class="search-wrapper">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="store-search" class="search-input" placeholder="Tìm tên sản phẩm hoặc nội dung...">
+          </div>
+          
+          <div class="filter-tabs" id="store-filters">
+            <button class="filter-btn active" data-filter="all">Tất cả</button>
+            <button class="filter-btn" data-filter="free">Miễn phí</button>
+            <button class="filter-btn" data-filter="geojson">GeoJSON</button>
+            <button class="filter-btn" data-filter="kml">KML Files</button>
+            <button class="filter-btn" data-filter="plugin">Plugins</button>
+            <button class="filter-btn" data-filter="lifetime" style="border-color:var(--color-accent); color:var(--color-accent);">PRO Lifetime</button>
+          </div>
         </div>
 
         <div class="product-grid" id="catalog-grid">
@@ -397,7 +410,7 @@ function getStoreCheckoutTemplate() {
           <div id="payment-status-message" style="text-align:center; margin-bottom: 1rem; display:none;">
             <p style="color:var(--color-accent); font-weight:700;">✓ Đã nhận thanh toán! Đang chuyển hướng...</p>
           </div>
-          <a href="https://t.me/vuanedit" target="_blank" class="plan-btn" style="background:transparent; color:#fff; border-color:#444; text-align:center; font-size:0.8rem;">Gặp sự cố? Liên hệ Admin</a>
+          <a href="https://zalo.me/0967575313" target="_blank" class="plan-btn" style="background:transparent; color:#fff; border-color:#444; text-align:center; font-size:0.8rem;">Gặp sự cố? Liên hệ Admin qua Zalo</a>
           <div style="margin-top: 1.5rem; text-align:center;">
             <a href="#store-pricing" style="color:var(--color-subtle); font-size:0.85rem; text-decoration:underline;">&larr; Đổi gói khác</a>
           </div>
@@ -460,8 +473,11 @@ function getStoreAdminTemplate() {
                 <input type="url" id="admin-file" class="form-input" placeholder="https://drive.google.com/..." required>
               </div>
               <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
-                <input type="checkbox" id="admin-featured" style="width: 18px; height: 18px;">
                 <label for="admin-featured" style="font-size: 0.85rem; font-weight: 700;">Đánh dấu Nổi Bật (xuất hiện ở Trang Chủ)</label>
+              </div>
+              <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                <input type="checkbox" id="admin-lifetime" style="width: 18px; height: 18px;">
+                <label for="admin-lifetime" style="font-size: 0.85rem; font-weight: 700; color: var(--color-accent);">Sản phẩm PRO Lifetime (Bắt buộc gói Lifetime)</label>
               </div>
               
               <div id="form-actions" style="display:flex; gap:1rem;">
@@ -571,19 +587,43 @@ export function initStoreEffects() {
   }
 
   const filters = document.getElementById('store-filters')
-  if (filters) {
-    const btns = filters.querySelectorAll('.filter-btn'); const cards = document.querySelectorAll('#catalog-grid .product-card');
+  const searchInput = document.getElementById('store-search')
+  
+  if (filters && searchInput) {
+    const btns = filters.querySelectorAll('.filter-btn')
+    const cards = document.querySelectorAll('#catalog-grid .product-card')
+    let currentFilter = 'all'
+
+    const refreshFilters = () => {
+      const query = searchInput.value.toLowerCase().trim()
+      cards.forEach(card => {
+        const title = card.dataset.title || ''
+        const format = card.dataset.format
+        const access = card.dataset.access
+        const isLifetime = card.dataset.lifetime === 'true'
+
+        const matchesQuery = title.includes(query)
+        let matchesFilter = false
+        
+        if (currentFilter === 'all') matchesFilter = true
+        else if (currentFilter === 'free') matchesFilter = (access === 'free')
+        else if (currentFilter === 'lifetime') matchesFilter = isLifetime
+        else matchesFilter = (format === currentFilter)
+
+        card.style.display = (matchesQuery && matchesFilter) ? 'flex' : 'none'
+      })
+    }
+
     btns.forEach(btn => {
       btn.onclick = () => {
-        btns.forEach(b => b.classList.remove('active')); btn.classList.add('active');
-        const t = btn.dataset.filter;
-        cards.forEach(card => {
-          const formatMatch = (t === card.dataset.format)
-          const accessMatch = (t === card.dataset.access)
-          card.style.display = (t === 'all' || formatMatch || accessMatch) ? 'flex' : 'none'
-        })
+        btns.forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        currentFilter = btn.dataset.filter
+        refreshFilters()
       }
     })
+
+    searchInput.oninput = refreshFilters
   }
   if (document.getElementById('store-auth-form')) initAuthLogic()
   if (document.getElementById('dashboard-email')) initDashboardLogic()
@@ -784,6 +824,7 @@ async function initAdminLogic() {
       thumb: document.getElementById('admin-thumb').value,
       file_url: document.getElementById('admin-file').value,
       featured: document.getElementById('admin-featured').checked,
+      is_lifetime: document.getElementById('admin-lifetime').checked,
       access: 'paid'
     }
     btnSubmit.textContent = 'Đang lưu...';

@@ -22,6 +22,9 @@ create policy "Admins can view all payment history." on payment_history
     auth.jwt() ->> 'email' = 'vuan.edit@gmail.com'
   );
 
+create policy "Users can insert their own payment history." on payment_history
+  for insert with check (auth.uid() = user_id);
+
 -- Create updated_at trigger
 create or replace function handle_updated_at()
 returns trigger as $$

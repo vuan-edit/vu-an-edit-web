@@ -55,6 +55,7 @@ create table products (
   thumb text,
   file_url text,
   featured boolean default false,
+  is_lifetime boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
