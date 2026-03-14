@@ -386,36 +386,18 @@ function getStoreCheckoutTemplate() {
               <span style="font-weight:900; color:var(--color-accent);">${price}</span>
             </div>
           </div>
-          <div style="margin-bottom: 2rem;">
-            <h3 style="font-size:1.1rem; margin-bottom: 1rem;">Hướng dẫn thanh toán</h3>
-            <p style="color:var(--color-subtle); font-size:0.9rem; line-height: 1.6; margin-bottom: 1rem;">
-              Vui lòng chuyển khoản vào tài khoản dưới đây hoặc quét mã QR. 
-              Ghi rõ nội dung chuyển khoản là <strong>Email + ${planName}</strong>.
-            </p>
-            <div style="background: #000; border: 1.5px solid var(--color-border); padding: 1.5rem; border-radius: 4px; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
-              <div style="flex:1;">
-                <div style="margin-bottom: 0.8rem;">
-                  <span style="font-size:0.75rem; color:var(--color-subtle); text-transform:uppercase;">Ngân hàng</span>
-                  <div style="font-weight:700;">Vietcombank</div>
-                </div>
-                <div style="margin-bottom: 0.8rem;">
-                  <span style="font-size:0.75rem; color:var(--color-subtle); text-transform:uppercase;">Số tài khoản</span>
-                  <div style="font-weight:700; font-size:1.2rem; color:var(--color-accent);">1234567890</div>
-                </div>
-                <div>
-                  <span style="font-size:0.75rem; color:var(--color-subtle); text-transform:uppercase;">Chủ tài khoản</span>
-                  <div style="font-weight:700;">VŨ AN</div>
-                </div>
-              </div>
-              <div style="width: 120px; height: 120px; background: #fff; display: flex; align-items: center; justify-content: center;">
-                <span style="color:#000; font-weight:700; font-size:0.8rem;">Fake QR Code</span>
-              </div>
+          <div id="checkout-qr-container" style="margin-bottom: 2rem;">
+            <div style="background: #000; border: 1.5px solid var(--color-border); padding: 1.5rem; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1.5rem;">
+              <p style="text-align:center; color:var(--color-accent); font-weight:700;">Đang tạo mã thanh toán...</p>
             </div>
           </div>
           <p style="color:var(--color-subtle); font-size:0.85rem; text-align:center; margin-bottom: 2rem;">
-            Sau khi chuyển khoản thành công, hãy nhấn nút bên dưới để gửi tin nhắn kèm biên lai chụp màn hình cho Admin qua Telegram.
+            Hệ thống sẽ tự động kích hoạt gói ngay sau khi bạn hoàn tất chuyển khoản.
           </p>
-          <a href="https://t.me/vuanedit" target="_blank" class="plan-btn" style="background:var(--color-accent); color:#000; border-color:var(--color-accent); text-align:center;">Đã chuyển khoản - Liên hệ Admin</a>
+          <div id="payment-status-message" style="text-align:center; margin-bottom: 1rem; display:none;">
+            <p style="color:var(--color-accent); font-weight:700;">✓ Đã nhận thanh toán! Đang chuyển hướng...</p>
+          </div>
+          <a href="https://t.me/vuanedit" target="_blank" class="plan-btn" style="background:transparent; color:#fff; border-color:#444; text-align:center; font-size:0.8rem;">Gặp sự cố? Liên hệ Admin</a>
           <div style="margin-top: 1.5rem; text-align:center;">
             <a href="#store-pricing" style="color:var(--color-subtle); font-size:0.85rem; text-decoration:underline;">&larr; Đổi gói khác</a>
           </div>
@@ -614,6 +596,85 @@ export function initStoreEffects() {
       else { sessionStorage.setItem('store-auth-mode', 'signup'); sessionStorage.setItem('store-auth-plan', planId); window.location.hash = '#store-login'; }
     }
   })
+  if (window.location.hash === '#store-checkout') initCheckoutLogic()
+}
+
+async function initCheckoutLogic() {
+  const container = document.getElementById('checkout-qr-container')
+  if (!container) return
+
+  const user = await getCurrentUser()
+  if (!user) { window.location.hash = '#store-login'; return; }
+
+  const planId = sessionStorage.getItem('store-auth-plan')
+  const prices = { monthly: 79000, yearly: 599000, lifetime: 1299000 }
+  const amount = prices[planId] || 0
+  const orderCode = Math.floor(100000 + Math.random() * 900000) // Generate 6-digit code
+  const memo = `VCK ${orderCode}`
+
+  try {
+    // 1. Save pending transaction to Supabase
+    const { error } = await supabase.from('payment_history').insert([{
+      user_id: user.id,
+      order_code: orderCode.toString(),
+      amount: amount,
+      plan_id: planId,
+      status: 'pending'
+    }])
+    if (error) throw error
+
+    // 2. Render real QR from SePay
+    // Template: compact, amount: X, des: MEMO, account: BIDV - 8808162732 - VU AN
+    const qrUrl = `https://qr.sepay.vn/img?bank=BIDV&acc=8808162732&template=compact&amount=${amount}&des=${encodeURIComponent(memo)}`
+    
+    container.innerHTML = `
+      <div style="background: #000; border: 1.5px solid var(--color-border); padding: 1.5rem; border-radius: 4px; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+        <div style="flex:1;">
+          <h3 style="font-size:1rem; margin-bottom: 1rem;">Hướng dẫn thanh toán</h3>
+          <div style="margin-bottom: 0.8rem;">
+            <span style="font-size:0.7rem; color:var(--color-subtle); text-transform:uppercase;">Ngân hàng</span>
+            <div style="font-weight:700;">BIDV</div>
+          </div>
+          <div style="margin-bottom: 0.8rem;">
+            <span style="font-size:0.7rem; color:var(--color-subtle); text-transform:uppercase;">Số tài khoản</span>
+            <div style="font-weight:700; font-size:1.1rem; color:var(--color-accent);">8808162732</div>
+          </div>
+          <div style="margin-bottom: 0.8rem;">
+            <span style="font-size:0.7rem; color:var(--color-subtle); text-transform:uppercase;">Chủ tài khoản</span>
+            <div style="font-weight:700;">VŨ THANH AN</div>
+          </div>
+          <div>
+            <span style="font-size:0.7rem; color:var(--color-subtle); text-transform:uppercase;">Nội dung chuyển khoản</span>
+            <div style="font-weight:900; font-size:1.2rem; color:var(--color-accent); letter-spacing:1px; border:1px dashed #444; padding:0.5rem; text-align:center; margin-top:0.5rem; background:#111;">${memo}</div>
+          </div>
+        </div>
+        <div style="width: 180px; height: 180px; background: #fff; padding: 10px; border-radius: 8px;">
+          <img src="${qrUrl}" alt="Payment QR" style="width:100%; height:100%;">
+        </div>
+      </div>
+    `
+
+    // 3. Listen for Realtime update on profiles table
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on('postgres_changes', { 
+        event: 'UPDATE', 
+        schema: 'public', 
+        table: 'profiles',
+        filter: `id=eq.${user.id}` 
+      }, (payload) => {
+        if (payload.new.plan_id === planId) {
+          const statusMsg = document.getElementById('payment-status-message')
+          if (statusMsg) statusMsg.style.display = 'block'
+          setTimeout(() => { window.location.hash = '#store-dashboard' }, 3000)
+          supabase.removeChannel(channel)
+        }
+      })
+      .subscribe()
+
+  } catch (err) {
+    container.innerHTML = `<p style="color:#e74c3c;">Lỗi: ${err.message}</p>`
+  }
 }
 
 async function checkAuthForNav() {
