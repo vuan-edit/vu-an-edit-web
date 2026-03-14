@@ -65,27 +65,45 @@ function getFooter() {
   `
 }
 
+import { videoData } from './video_data.js'
+
 // --- VIEWS ---
 function getHomeTemplate() {
+  const videoCards = videoData.map(item => `
+    <div class="hero-item">
+      <div class="hero-video-item">
+        <video src="${item.src}" muted autoplay loop playsinline></video>
+        <div class="video-stats-overlay">
+          <p class="video-summary">${item.summary}</p>
+          <div class="stats-grid">
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> ${item.views}</span>
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 000-7.78v0z"/></svg> ${item.likes}</span>
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg> ${item.comments}</span>
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> ${item.shares}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('')
+
   return `
     ${getHeader()}
     <main>
 
-      <!-- HERO: Grid mosaic inspired by reference image -->
-      <div class="hero-section">
-        <!-- Row 1 - 4 black cells -->
-        <div class="hero-cell"></div>
-        <div class="hero-cell"></div>
-        <div class="hero-cell"></div>
-        <div class="hero-cell" style="border-right:none;"></div>
-        <!-- Row 2 - text left, 2 black right -->
-        <div class="hero-text-cell reveal">
-          <h1 class="hover-word">${wrapWords('Làm chủ hình ảnh,')}<br>${wrapWords('kể chuyện cuốn hút.')}</h1>
+      <!-- HERO: Horizontal Sticky Scroll Section -->
+      <section class="hero-scroll-container">
+        <div class="hero-sticky-wrapper">
+          <div class="hero-horizontal-strip" id="hero-strip">
+            <!-- First Item: Centered Title -->
+            <div class="hero-item hero-text-item">
+              <h1 class="hover-word">${wrapWords('Làm chủ hình ảnh,')}<br>${wrapWords('kể chuyện cuốn hút.')}</h1>
+            </div>
+            <!-- Subsequent Items: Local Videos -->
+            ${videoCards}
+            <div class="hero-item" style="width: 20vw;"></div> <!-- Spacer at end -->
+          </div>
         </div>
-        <div class="hero-cell" style="border-left:none;"></div>
-        <div class="hero-cell"></div>
-        <div class="hero-cell" style="border-right:none;"></div>
-      </div>
+      </section>
 
       <!-- ABOUT -->
       <section class="about-section">
@@ -93,7 +111,18 @@ function getHomeTemplate() {
           <div class="about-inner">
             <div class="about-text reveal">
               <h2 class="hover-word">${wrapWords('Chào bạn, mình là Vũ An.')}</h2>
-              <p style="margin-top:1.5rem; line-height:1.8;">${hw('Trong 4 năm làm content, mình đã xây dựng hai kênh TikTok "Tình Báo Chứng Khoán" và "Người Quan Sát" đạt hàng trăm triệu lượt xem. Bí mật chính là cách biến dữ liệu khô khan thành video cuốn hút qua bố cục và infographic.')}</p>
+              <p style="margin-top:1.5rem; line-height:1.8; max-width: 600px;">${hw('Trong 4 năm làm content, mình đã xây dựng hai kênh TikTok "Tình Báo Chứng Khoán" và "Người Quan Sát" đạt hàng trăm triệu lượt xem. Bí mật chính là cách biến dữ liệu khô khan thành video cuốn hút qua bố cục và infographic.')}</p>
+              
+              <div class="project-icon-group">
+                <a href="#projects" class="project-icon-btn">
+                  <span class="project-icon-label">Dự án 01</span>
+                  <span class="project-icon-name">Finpath</span>
+                </a>
+                <a href="#projects" class="project-icon-btn">
+                  <span class="project-icon-label">Dự án 02</span>
+                  <span class="project-icon-name">Người quan sát</span>
+                </a>
+              </div>
             </div>
             <div class="about-portrait reveal" style="animation-delay:0.15s; border:3px solid #fff; background:#000;">
               <img src="/Me (0-00-00-00).png" alt="Vũ An" style="width:100%;height:100%;object-fit:cover;display:block;">
@@ -148,39 +177,39 @@ function getProjectsTemplate() {
       </section>
 
       <div class="container">
-        <!-- Project 1 -->
+        <!-- Project 1: Finpath -->
         <div class="project-item reveal">
           <div class="comparison-container" data-project="1">
-            <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=2000" class="comparison-image image-before" alt="Before">
-            <div class="image-after" style="background-image:url('https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=2000'); background-size:cover; background-position:center; position:absolute; top:0; left:0; width:100%; height:100%;"></div>
+            <img src="https://images.unsplash.com/photo-1611974717424-362447c2763a?auto=format&fit=crop&q=80&w=2000" class="comparison-image image-before" alt="Before">
+            <div class="image-after" style="background-image:url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2000'); background-size:cover; background-position:center; position:absolute; top:0; left:0; width:100%; height:100%;"></div>
             <div class="comparison-handle" style="left:50%;"></div>
-            <div class="label-before">Gốc</div>
-            <div class="label-after">Đã Edit</div>
+            <div class="label-before">Concept</div>
+            <div class="label-after">Infographic</div>
           </div>
           <div class="project-meta">
             <div>
-              <h3 class="project-title hover-word">${wrapWords('Urban Cyberpunk Mood')}</h3>
-              <div class="project-collab">Collaboration with @AestheticVibes</div>
+              <h3 class="project-title hover-word">${wrapWords('Finpath - Tình Báo Chứng Khoán')}</h3>
+              <div class="project-collab">Data Visualization & Motion Branding</div>
             </div>
-            <div style="font-size:0.8rem;color:#555;font-weight:700;text-transform:uppercase;">Color Grading / Sound Design</div>
+            <div style="font-size:0.8rem;color:#555;font-weight:700;text-transform:uppercase;">BIẾN DỮ LIỆU KHÔ KHAN THÀNH CÂU CHUYỆN CUỐN HÚT</div>
           </div>
         </div>
 
-        <!-- Project 2 -->
+        <!-- Project 2: Người Quan Sát -->
         <div class="project-item reveal">
           <div class="comparison-container" data-project="2">
-            <img src="https://images.unsplash.com/photo-1492691523567-673e0165c36b?auto=format&fit=crop&q=80&w=2000" class="comparison-image image-before" alt="Before">
-            <div class="image-after" style="background-image:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=2000'); background-size:cover; background-position:center; position:absolute; top:0; left:0; width:100%; height:100%;"></div>
+            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=2000" class="comparison-image image-before" alt="Before">
+            <div class="image-after" style="background-image:url('https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&q=80&w=2000'); background-size:cover; background-position:center; position:absolute; top:0; left:0; width:100%; height:100%;"></div>
             <div class="comparison-handle" style="left:50%;"></div>
-            <div class="label-before">Gốc</div>
-            <div class="label-after">Đã Edit</div>
+            <div class="label-before">Draft</div>
+            <div class="label-after">Final Story</div>
           </div>
           <div class="project-meta">
             <div>
-              <h3 class="project-title hover-word">${wrapWords('Cinematic Nature Narrative')}</h3>
-              <div class="project-collab">Collaboration with @NatureDoc</div>
+              <h3 class="project-title hover-word">${wrapWords('Người Quan Sát')}</h3>
+              <div class="project-collab">Analysis & Visual Narrative</div>
             </div>
-            <div style="font-size:0.8rem;color:#555;font-weight:700;text-transform:uppercase;">Visual Storytelling / VFX</div>
+            <div style="font-size:0.8rem;color:#555;font-weight:700;text-transform:uppercase;">KỂ CHUYỆN QUA NHỮNG GÓC NHÌN SÂU SẮC</div>
           </div>
         </div>
       </div>
@@ -382,13 +411,38 @@ function initEffects() {
     }
   })
 
+  // Horizontal Scroll Effect for Hero
+  const heroContainer = document.querySelector('.hero-scroll-container')
+  const heroStrip = document.getElementById('hero-strip')
+  
+  if (heroContainer && heroStrip) {
+    const handleHeroScroll = () => {
+      const rect = heroContainer.getBoundingClientRect()
+      const scrollHeight = rect.height - window.innerHeight
+      const scrolled = -rect.top
+      
+      let progress = scrolled / scrollHeight
+      if (progress < 0) progress = 0
+      if (progress > 1) progress = 1
+      
+      // Map progress [0, 1] to translation [0%, -75%]
+      // Adjust -75% based on content width if needed, but -75% is the user's request
+      const translateX = progress * -75
+      heroStrip.style.transform = `translateX(${translateX}%)`
+    }
+    
+    window.addEventListener('scroll', handleHeroScroll)
+    // Initial call
+    handleHeroScroll()
+  }
+
   // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) entry.target.classList.add('active')
     })
-  }, { threshold: 0.08 })
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
+  }, { threshold: 0.1 })
+  document.querySelectorAll('.reveal, .scroll-reveal').forEach(el => observer.observe(el))
 
   // Comparison Slider
   document.querySelectorAll('.comparison-container').forEach(container => {
