@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GeoExtractor - Vũ An Edit</title>
+  
+  <link rel="icon" type="image/svg+xml" href="/logo_brand.svg" />
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="/src/geoextractor/style.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="auth-overlay">
+      <div class="spinner"></div>
+      <p>Đang kiểm tra quyền truy cập...</p>
+    </div>
+    <div id="sidebar">
+      <div class="sidebar-header">
+        <a href="/store" class="back-link">← Quay lại cửa hàng</a>
+        <h2>GeoExtractor</h2>
+        <span class="pro-badge">LIFETIME</span>
+      </div>
+      <div class="sidebar-content">
+        <!-- Search Section -->
+        <div class="search-section" style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #333;">
+          <h3 style="margin-bottom: 10px;">Tìm kiếm địa điểm</h3>
+          <input type="text" id="location-search-input" class="admin-input" placeholder="VD: Hà Nội, Hoang Sa..." style="width:100%; margin-bottom: 10px;">
+          <button id="btn-search-location" class="geo-btn highlight" style="width:100%">Tìm kiếm</button>
+          <div id="search-results" style="margin-top: 10px; max-height: 150px; overflow-y: auto; font-size: 0.8rem; display: flex; flex-direction: column; gap: 5px;"></div>
+        </div>
+
+        <!-- Extract Logic -->
+        <div class="extract-section">
+          <h3>Trích xuất bản đồ</h3>
+          <p class="hint">Click vào bản đồ để trích xuất vật thể</p>
+          <div id="extracted-list" class="layer-list">
+            <p style="color:#777; font-size:0.8rem; text-align:center;">Chưa có dữ liệu. Hãy click vào bản đồ.</p>
+          </div>
+          
+          <div id="download-section" style="display:none; margin-top:20px; border-top:1.5px solid var(--color-border); padding-top:15px;">
+            <p id="selected-layer-name" style="font-weight:700; color:#fff; margin-bottom:10px;">-</p>
+
+            <div id="object-checklist-container" style="margin-bottom: 15px; max-height: 200px; overflow-y: auto;">
+              <!-- Checkboxes will be here -->
+            </div>
+
+            <div class="actions" style="flex-direction: column; gap: 8px;">
+              <div style="display:flex; gap:8px; width:100%;">
+                <button id="btn-download-geojson" class="geo-btn highlight">Tải GeoJSON</button>
+                <button id="btn-download-kml" class="geo-btn">Tải KML</button>
+              </div>
+              <button id="btn-merge-zones" class="geo-btn highlight" style="width:100%; display:none;">Gộp thành 1 Zone & Tải</button>
+              <button id="btn-download-zip" class="geo-btn" style="width:100%; display:none;">Tải tất cả (ZIP)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- QnA Button at the bottom -->
+      <div id="btn-open-qna" class="qna-btn">
+        Hướng dẫn & FAQ
+      </div>
+        <div class="sidebar-footer">
+            <button id="admin-toggle-btn" onclick="window.location.href='/store/#store-admin'" class="btn-secondary" style="display: none; background: #222; margin-top: 10px; width: 100%; font-size: 0.75rem; cursor:pointer;">Quản lý Dữ liệu</button>
+            <p style="font-size: 0.65rem; color: #555; text-align: center; margin-top: 10px;">Vũ An GeoExtractor Data Management</p>
+        </div>
+    </div>
+
+    <div id="map-container">
+        <!-- CUSTOM BASEMAP CHANGER UI -->
+        <div id="custom-layer-control" class="custom-layer-control leaflet-control">
+            <div class="layer-toggle-icon" title="Đổi bản đồ nền">
+                <svg fill="#fff" viewBox="0 0 24 24" width="22" height="22"><path d="M11.99 18.54l-7.37-5.73L3 14.07l8.99 7 8.99-7-1.62-1.26-7.37 5.73zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/></svg>
+            </div>
+            <div class="layer-control-content">
+                <h4>Map Layers</h4>
+                <div class="layer-card active" data-layer="dark">
+                    <div class="layer-card-bg bg-dark"></div>
+                    <span>Bản đồ Tối</span>
+                </div>
+                <div class="layer-card" data-layer="light">
+                    <div class="layer-card-bg bg-light"></div>
+                    <span>Bản đồ Sáng</span>
+                </div>
+                <div class="layer-card" data-layer="satellite">
+                    <div class="layer-card-bg bg-sat"></div>
+                    <span>Vệ Tinh</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- QnA Modal -->
+    <div id="qna-modal" class="modal-overlay" style="display:none;">
+      <div class="modal-content">
+        <button class="modal-close" id="btn-close-qna">&times;</button>
+        <h2>Hướng dẫn & FAQ</h2>
+        <div class="qna-list">
+          <div class="qna-item">
+            <h4>1. Làm sao để trích xuất dữ liệu?</h4>
+            <p>Bạn chỉ cần click chuột vào bất kỳ vị trí nào trên bản đồ. GeoExtractor sẽ tự động tìm kiếm các ranh giới hành chính, tòa nhà hoặc hạ tầng giao thông xung quanh điểm đó dựa trên mức độ Phóng to (Zoom) của bạn.</p>
+          </div>
+          <div class="qna-item">
+            <h4>2. Tại sao không tìm thấy dữ liệu khi Click?</h4>
+            <p>Dữ liệu phụ thuộc vào mức Zoom. Nếu bạn muốn lấy Tỉnh/Thành phố, hãy zoom ra xa. Nếu muốn lấy Tòa nhà/Đường xá, hãy zoom thật gần. Ngoài ra, một số khu vực hẻo lánh có thể chưa được cập nhật đầy đủ trên OpenStreetMap.</p>
+          </div>
+          <div class="qna-item">
+            <h4>3. Tính năng "Gộp thành 1 Zone" là gì?</h4>
+            <p>Giúp bạn chọn nhiều quốc gia hoặc tỉnh thành (ví dụ chọn 11 nước ASEAN) và tự động xóa các đường biên giới chồng lấn giữa chúng để tạo ra một vùng bao duy nhất.</p>
+          </div>
+          <div class="qna-item">
+            <h4>4. Dữ liệu có phải là mới nhất?</h4>
+            <p>Đúng, chúng tôi lấy dữ liệu trực tiếp từ OpenStreetMap API theo thời gian thực. Bạn không cần API Key để sử dụng công cụ này.</p>
+          </div>
+          <div class="qna-item">
+            <h4>5. Hạn chế của công cụ?</h4>
+            <p>Do sử dụng API công cộng, nếu bạn yêu cầu trích xuất một vùng quá rộng (ví dụ cả Châu Lục) hoặc click quá nhanh nhiều lần, API có thể bị từ chối tạm thời (Rate Limit). Vui lòng đợi vài giây và thử lại.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/geoextractor/main.js"></script>
+</body>
+</html>

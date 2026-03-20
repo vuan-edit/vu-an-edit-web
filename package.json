@@ -1,0 +1,23 @@
+{
+  "name": "vu-an-edit-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.99.1",
+    "@turf/turf": "^7.3.4",
+    "jszip": "^3.10.1",
+    "leaflet": "^1.9.4",
+    "osmtogeojson": "^3.0.0-beta.5",
+    "text-to-svg": "^3.1.5",
+    "tokml": "^0.4.0"
+  }
+}
