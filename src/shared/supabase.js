@@ -1,5 +1,6 @@
 // --- LOCAL API CLIENT (Supabase Mock) ---
-const API_URL = 'http://localhost:3000/api';
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_URL = isLocal ? 'http://localhost:3000/api' : 'https://api.vuanedit.online/api';
 
 const getHeaders = () => {
     const token = localStorage.getItem('vuanedit_token');
