@@ -1,86 +1,43 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const bcrypt = require('bcryptjs');
-const { v4: uuidv4 } = require('uuid');
-const { db, dbRun, dbGet, dbAll, initDB } = require('./database');
-const { generateToken, authenticateToken } = require('./auth');
+const fs = require('fs');
+const multer = require('multer');
+const { dbAll, dbRun, initDB } = require('./database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use('/storage', express.static(path.join(__dirname, 'storage')));
 
-// --- AUTH ROUTES ---
+// Ensure storage directories exist
+const storageDir = path.join(__dirname, 'storage');
+const productsDir = path.join(storageDir, 'products');
+const geodataDir = path.join(storageDir, 'geodata');
 
-// Get current user
-app.get('/api/auth/me', authenticateToken, async (req, res) => {
-    try {
-        const user = await dbGet('SELECT id, email, plan_id FROM users WHERE id = ?', [req.user.id]);
-        if (!user) return res.status(404).json({ error: 'User not found' });
-        res.json({ user });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+[storageDir, productsDir, geodataDir].forEach(dir => {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 
-// Register
-app.post('/api/auth/signup', async (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ error: 'Missing email or password' });
-
-    try {
-        const password_hash = await bcrypt.hash(password, 10);
-        const id = uuidv4();
-        await dbRun('INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)', [id, email, password_hash]);
-        
-        const user = { id, email, plan_id: 'free' };
-        const token = generateToken(user);
-        res.status(201).json({ user, session: { access_token: token } });
-    } catch (err) {
-        if (err.message.includes('UNIQUE constraint failed')) {
-            return res.status(400).json({ error: 'Email already exists' });
-        }
-        res.status(500).json({ error: err.message });
+// Multer Storage Configuration
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const type = req.body.type || 'products'; // defaults to products
+        cb(null, path.join(__dirname, 'storage', type));
+    },
+    filename: function (req, file, cb) {
+        // Use original name or timestamp to avoid collisions
+        cb(null, `${Date.now()}_${file.originalname}`);
     }
 });
+const upload = multer({ storage: storage });
 
-// Login
-app.post('/api/auth/signin', async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        const user = await dbGet('SELECT * FROM users WHERE email = ?', [email]);
-        if (!user || !(await bcrypt.compare(password, user.password_hash))) {
-            return res.status(400).json({ error: 'Invalid email or password' });
-        }
+// Serve static files from storage/
+app.use('/storage', express.static(storageDir));
 
-        const token = generateToken(user);
-        res.json({ 
-            user: { id: user.id, email: user.email, plan_id: user.plan_id }, 
-            session: { access_token: token } 
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// --- PRODUCT ROUTES ---
-
-app.get('/api/products', async (req, res) => {
-    try {
-        const products = await dbAll('SELECT * FROM products ORDER BY created_at DESC');
-        res.json({ data: products });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// --- GEODATA ROUTES ---
-
-app.get('/api/geodata/layers', authenticateToken, async (req, res) => {
+// API for local Geodata Layers
+app.get('/api/geodata/layers', async (req, res) => {
     try {
         const layers = await dbAll('SELECT * FROM geodata_layers');
         res.json({ data: layers });
@@ -89,46 +46,23 @@ app.get('/api/geodata/layers', authenticateToken, async (req, res) => {
     }
 });
 
-// --- SEPAY WEBHOOK ---
-
-app.post('/api/webhooks/sepay', async (req, res) => {
-    try {
-        const payload = req.body;
-        console.log('SePay Webhook received:', payload);
-
-        const content = payload.content || "";
-        const match = content.match(/VCK\s*(\d+)/i);
-        
-        if (!match) {
-            return res.status(200).json({ error: 'No order code found' });
-        }
-
-        const orderCode = match[1];
-
-        // 1. Find pending payment
-        const payment = await dbGet('SELECT * FROM payment_history WHERE order_code = ? AND status = ?', [orderCode, 'pending']);
-        if (!payment) {
-            return res.status(200).json({ error: 'Payment not found or processed' });
-        }
-
-        // 2. Update status
-        await dbRun('UPDATE payment_history SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE order_code = ?', ['PAID', orderCode]);
-
-        // 3. Upgrade user plan
-        await dbRun('UPDATE users SET plan_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [payment.plan_id, payment.user_id]);
-
-        console.log(`User ${payment.user_id} upgraded to ${payment.plan_id}`);
-        res.json({ success: true });
-
-    } catch (err) {
-        console.error('Webhook error:', err.message);
-        res.status(500).json({ error: err.message });
-    }
+// NEW: Upload Endpoint for Admin
+app.post('/api/upload', upload.single('file'), (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    
+    // Return the filename so the frontend can save it to Supabase
+    res.json({ 
+        filename: req.file.filename,
+        path: `/storage/${req.body.type || 'products'}/${req.file.filename}`
+    });
 });
+
+// Ping
+app.get('/ping', (req, res) => res.send('pong'));
 
 // Start server
 initDB().then(() => {
     app.listen(PORT, () => {
-        console.log(`Server running on http://localhost:${PORT}`);
+        console.log(`Local Hybrid File Server running on http://localhost:${PORT}`);
     });
 });

@@ -1,4 +1,4 @@
-import { supabase } from '../shared/supabase.js'
+import { supabase, getLocalFileUrl } from '../shared/supabase.js'
 import * as L from 'leaflet'
 import tokml from 'tokml'
 import osmtogeojson from 'osmtogeojson'
@@ -257,8 +257,8 @@ async function onMapClick(e) {
               let geojson = offlineLayerCache[layer.file_path];
               
               if (!geojson) {
-                  const { data } = await supabase.storage.from('geodata').createSignedUrl(layer.file_path, 60);
-                  const res = await fetch(data.signedUrl);
+                  const signedUrl = getLocalFileUrl(layer.file_path, 'geodata');
+                  const res = await fetch(signedUrl);
                   geojson = await res.json();
                   
                   // Auto-convert standard Overpass OSM JSON format into GeoJSON locally

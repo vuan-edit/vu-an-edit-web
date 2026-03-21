@@ -1,5 +1,5 @@
 import './store-style.css'
-import { supabase, getCurrentUser, signIn, signUp, signOut } from '../shared/supabase.js'
+import { supabase, getCurrentUser, signIn, signUp, signOut, getLocalFileUrl } from '../shared/supabase.js'
 
 let allProducts = []
 let isLoadingProducts = false
@@ -789,7 +789,11 @@ async function checkAuthForNav() {
     }
 
     if (canDownload) {
-      dlArea.innerHTML = `<button class="plan-btn" style="background:var(--color-accent); color:#000; border-color:var(--color-accent); font-size:1rem;">Tải Xuống Ngay</button><p style="font-size:0.75rem; color:var(--color-subtle); margin-top:1rem; text-align:center;">Tệp sẽ được nén dưới định dạng .ZIP</p>`
+      dlArea.innerHTML = `<button id="btn-actual-download" class="plan-btn" style="background:var(--color-accent); color:#000; border-color:var(--color-accent); font-size:1rem;">Tải Xuống Ngay</button><p style="font-size:0.75rem; color:var(--color-subtle); margin-top:1rem; text-align:center;">Tệp sẽ được nén dưới định dạng .ZIP</p>`
+      document.getElementById('btn-actual-download').onclick = () => {
+        const fileUrl = getLocalFileUrl(product.file_url.split('/').pop(), 'products');
+        window.open(fileUrl, '_blank');
+      }
     } else if (needsLifetime) {
       dlArea.innerHTML = `<p style="font-size:0.85rem; margin-bottom:1.5rem; color:#f1c40f; font-weight:700;">Sản phẩm này yêu cầu gói <span style="color:var(--color-accent)">LIFETIME</span>.</p><a href="#store-pricing" class="plan-btn" style="background:var(--color-accent); color:#000; border-color:var(--color-accent); margin-bottom:1rem;">Nâng cấp lên Lifetime</a>`
     } else {
