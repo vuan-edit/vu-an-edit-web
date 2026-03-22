@@ -32,6 +32,9 @@ function getHeader() {
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
 
+      <!-- Global background elements removed in favor of site-wavy-background in CSS -->
+    </div>
+
     <header class="site-header reveal">
       <div class="logo" data-nav="">
         <img src="/logo_brand.svg" alt="Vũ An">
@@ -140,6 +143,32 @@ function getHomeTemplate() {
           <div class="reveal" style="max-width:680px;">
             <h2 class="hover-word">${wrapWords('Dữ liệu cũng có những câu chuyện.')}</h2>
             <p style="margin-top:1.5rem;">${hw('Đó là lúc tôi khám phá ra mình đang mô hình số hướng dẫn chọn cách thực quan hóa thông tin để làm bản đồ chuyển động, thiết kế infographic, đến tư duy sắp xếp ít dữ liệu để một câu chuyện giữ chân người xem từ đầu đến cuối.')}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="course-promo-section reveal">
+        <div class="video-montage-container">
+          <div class="montage-item vid-1">
+            <video src="/video_class_preview/vid_1.mp4" autoplay loop muted playsinline></video>
+          </div>
+          <div class="montage-item vid-2">
+            <video src="/video_class_preview/vid_2.mp4" autoplay loop muted playsinline></video>
+          </div>
+          <div class="montage-item vid-3">
+            <video src="/video_class_preview/vid_3.mp4" autoplay loop muted playsinline></video>
+          </div>
+        </div>
+        <div class="container course-promo-inner">
+          <div class="promo-content-wrapper">
+            <h2 class="hover-word promo-heading">
+              <span class="line-bold">${wrapWords('Từ con số 0 đến')}</span>
+              <span class="line-black">${wrapWords('video triệu view')}</span>
+            </h2>
+            <p>Học trọn bộ kỹ năng: After Effects nền tảng, GEOLayers 3 chuyên sâu và Tư duy viral content. Biến dữ liệu khô khan thành những câu chuyện bản đồ chuyển động đầy cuốn hút.</p>
+            <div style="display:flex; gap:2rem; align-items:center; flex-wrap:wrap;">
+              <a href="/courses/" class="promo-btn">Khám phá khóa học</a>
+            </div>
           </div>
         </div>
       </section>
@@ -302,25 +331,127 @@ function getCourseTemplate() {
     ${getHeader()}
     <main>
       <section class="course-hero container reveal">
-        <h1 class="hover-word">${wrapWords('Mastering')}<br>${wrapWords('Visual Storytelling')}</h1>
-        <p>${hw('Khóa học chuyên sâu dành cho những ai muốn nâng tầm kỹ năng dựng phim từ cơ bản đến nghệ thuật kể chuyện đỉnh cao.')}</p>
+        <h1 class="hover-word">${wrapWords('Làm chủ')}<br>${wrapWords('Kể chuyện bằng Dữ liệu')}</h1>
+        <p>${hw('Khóa học 10 buổi (15 giờ) – Từ con số 0 đến làm chủ quy trình sản xuất video triệu view theo phong cách "Người Quan Sát" và "Tình Báo Thị Trường".')}</p>
       </section>
 
       <div class="container">
-        <div class="course-cards reveal">
-          <div class="course-card">
-            <h3 class="hover-word">${wrapWords('01. Tư duy hình ảnh')}</h3>
-            <p>${hw('Khám phá cách sắp đặt khung hình để dẫn dắt cảm xúc người xem một cách tinh tế.')}</p>
-          </div>
-          <div class="course-card">
-            <h3 class="hover-word">${wrapWords('02. Kỹ thuật A24 Style')}</h3>
-            <p>${hw('Học cách tạo ra màu sắc và nhịp điệu đặc trưng của những bộ phim nghệ thuật đương đại.')}</p>
-          </div>
-          <div class="course-card">
-            <h3 class="hover-word">${wrapWords('03. Hậu kỳ chuyên sâu')}</h3>
-            <p>${hw('Làm chủ các công cụ mạnh mẽ và quy trình làm việc của một editor chuyên nghiệp.')}</p>
+        <!-- PHASE 1: AE CẤP TỐC -->
+        <div class="course-phase reveal">
+          <div class="phase-title">Phase 01: AE Cấp tốc (Nền tảng dựng video)</div>
+          <div class="session-list">
+            <div class="session-item">
+              <div class="session-name">Buổi 1: AE nền tảng + Moodboard</div>
+              <div class="session-desc">Làm quen giao diện, timeline, layer, keyframe. Bố cục 9:16 chuẩn MXH. Hướng dẫn tạo moodboard cá nhân (Canva/Milanote). Thực hành dựng 1 đoạn 10-15s cơ bản.</div>
+            </div>
+            <div class="session-item">
+              <div class="session-name">Buổi 2: Motion + Sound mixing cơ bản</div>
+              <div class="session-desc">Kỹ thuật zoom, pan, shake, blur, fade. Cách sync chuyển cảnh với beat nhạc. Tổ chức track âm thanh (VO, nhạc nền, SFX). Thực hành dựng đoạn 20-30s.</div>
+            </div>
+            <div class="session-item">
+              <div class="session-name">Buổi 3: Template Storytelling + SFX</div>
+              <div class="session-desc">Cấu trúc 30-60s: Hook, Body, Outro. Xây dựng project template tối ưu. Làm chủ SFX (whoosh, pop, click). Thực hành chỉnh video 20-30s với nhịp ổn.</div>
+            </div>
           </div>
         </div>
+
+        <!-- PHASE 2: GEOLAYERS 3 -->
+        <div class="course-phase reveal">
+          <div class="phase-title">Phase 02: GEOLayers 3 (Video bản đồ chuyên sâu)</div>
+          <div class="session-list">
+            <div class="session-item">
+              <div class="session-name">Buổi 4: Bản đồ cơ bản</div>
+              <div class="session-desc">Cài đặt plugin GEOLayers, nguồn map, xử lý lỗi. Tạo Mapcomp, chọn style map, camera cơ bản. Thực hành tạo comp bản đồ Việt Nam/tỉnh thành.</div>
+            </div>
+            <div class="session-item">
+              <div class="session-name">Buổi 5: Khoanh vùng, Route & Label</div>
+              <div class="session-desc">Vẽ vùng dự án, tạo đường đi (route) từ sân bay/trung tâm. Cách đặt label, chú giải chuyên nghiệp. Timing chuyển động map kết hợp SFX.</div>
+            </div>
+            <div class="session-item">
+              <div class="session-name">Buổi 6: Camera Cinematic & 3D Terrain</div>
+              <div class="session-desc">Điều khiển Orbit, dolly, tilt. Tận dụng 3D terrain, bóng đổ, vignette. Color grade bản đồ để trông "cinematic" như phim tài liệu.</div>
+            </div>
+            <div class="session-item">
+              <div class="session-name">Buổi 7: Ghép AE + Text & Infographic</div>
+              <div class="session-desc">Đưa Mapcomp vào AE tổng. Thêm text, icon, infographic (dòng vốn, cung-cầu). Cách chia giọng VO cho kịch bản BĐS/thị trường 30-60s.</div>
+            </div>
+            <div class="session-item">
+              <div class="session-name">Buổi 8: Hoàn thiện sản phẩm & Checklist</div>
+              <div class="session-desc">Checklist pacing (10-12 ý mỗi 3s), âm thanh (VO rõ, nhạc không lấn). Chuẩn export TikTok/Reels. Xuất video bản đồ hoàn chỉnh được review 1-1.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PHASE 3: CONTENT VIRAL -->
+        <div class="course-phase reveal">
+          <div class="phase-title">Phase 03: Content Viral (Tư duy & Tối ưu)</div>
+          <div class="session-list">
+            <div class="session-item">
+              <div class="session-name">Buổi 9: Hook, Kịch bản & Moodboard âm thanh</div>
+              <div class="session-desc">Phân tích cấu trúc video viral. 5-7 mẫu hook (mistake, curiosity gap...). Viết kịch bản cho chủ đề BĐS & Tình báo thị trường. Chọn nhạc nền signature.</div>
+            </div>
+            <div class="session-item">
+              <div class="session-name">Buổi 10: Quy trình sản xuất & Tối ưu kênh</div>
+              <div class="session-desc">Cách bắt trend, tối ưu hashtag, caption, thumbnail. Template kênh đồng bộ. Lập Content calendar cho 15-30 video. Quy trình tái sử dụng template.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRICING TABLE -->
+        <section class="pricing-section reveal">
+          <h2 class="hover-word">${wrapWords('Bảng giá & Gói học')}</h2>
+          <div class="pricing-table-wrapper">
+            <table class="pricing-table">
+              <thead>
+                <tr>
+                  <th>Gói học</th>
+                  <th>Số buổi</th>
+                  <th>Hình thức</th>
+                  <th>Giá ưu đãi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>AE cấp tốc (Buổi 1-3)</td>
+                  <td>3</td>
+                  <td>Nhóm online</td>
+                  <td class="price">590.000 VNĐ</td>
+                </tr>
+                <tr>
+                  <td>GEOLayers 3 (Buổi 4-8)</td>
+                  <td>5</td>
+                  <td>Nhóm online</td>
+                  <td class="price">1.990.000 VNĐ</td>
+                </tr>
+                <tr>
+                  <td>Content Viral (Buổi 9-10)</td>
+                  <td>2</td>
+                  <td>Nhóm online</td>
+                  <td class="price">890.000 VNĐ</td>
+                </tr>
+                <tr class="highlight-row">
+                  <td>Combo kỹ thuật (AE + GEOLayers)</td>
+                  <td>8</td>
+                  <td>Nhóm online</td>
+                  <td class="price">2.390.000 VNĐ</td>
+                </tr>
+                <tr class="main-combo">
+                  <td>Combo FULL (All in one)</td>
+                  <td>10</td>
+                  <td>Nhóm online</td>
+                  <td class="price">3.190.000 VNĐ</td>
+                </tr>
+                <tr>
+                  <td>Kèm 1-1 Online (Toàn bộ khóa)</td>
+                  <td>10</td>
+                  <td>1-1 online</td>
+                  <td class="price">7.500.000 VNĐ</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top: 2rem; font-size: 0.8rem; color: var(--color-subtle);">* Các gói lẻ 1-1 vui lòng nhắn tin trực tiếp để nhận báo giá chi tiết.</p>
+        </section>
 
         <div class="course-cta reveal">
           <h2 class="hover-word">${wrapWords('Sẵn sàng để bắt đầu hành trình?')}</h2>
@@ -440,7 +571,32 @@ function render() {
 window.render = render;
 window.addEventListener('hashchange', render);
 window.addEventListener('popstate', render);
-// --- EFFECTS ---
+// Injects a global video background with parallax
+function injectBackground() {
+  if (document.querySelector('.site-video-background')) return;
+  const container = document.createElement('div');
+  container.className = 'site-video-background';
+  
+  const video = document.createElement('video');
+  video.src = '/video_background.mp4';
+  video.autoplay = true;
+  video.loop = true;
+  video.muted = true;
+  video.playsInline = true;
+  
+  const overlay = document.createElement('div');
+  overlay.className = 'video-overlay';
+  
+  container.appendChild(video);
+  container.appendChild(overlay);
+  document.body.prepend(container);
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  render();
+  injectBackground();
+});
 
 // --- EFFECTS ---
 function initEffects() {
@@ -516,7 +672,6 @@ function initEffects() {
       if (progress > 1) progress = 1
       
       // Map progress [0, 1] to translation [0%, -75%]
-      // Adjust -75% based on content width if needed, but -75% is the user's request
       const translateX = progress * -75
       heroStrip.style.transform = `translateX(${translateX}%)`
     }
@@ -558,6 +713,3 @@ function initEffects() {
     initStoreEffects()
   }
 }
-
-// --- INIT ---
-render()

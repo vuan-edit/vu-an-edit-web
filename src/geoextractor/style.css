@@ -1,7 +1,10 @@
 :root {
   --color-bg: #000000;
   --color-fg: #ffffff;
-  --color-accent: #ffffff; /* Black and White Theme UI */
+  --color-primary: #000000;
+  --color-secondary: #111111;
+  --color-accent: #ffffff;
+  --color-text: #ffffff;
   --color-border: #333333;
   --color-surface: #111111;
   --color-hover: #1a1a1a;
@@ -505,4 +508,129 @@ p.hint {
   color: #888;
   margin-top: -10px;
   margin-bottom: 15px;
+}
+
+/* -------------------------------------
+   NEW UI OVERHAUL (TABS & TABLE)
+-------------------------------------- */
+/* Sidebar Tabs */
+.tabs-header {
+  display: flex;
+  background: #000;
+  border-bottom: 1px solid #333;
+}
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #888;
+  padding: 12px 0;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.8rem;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.tab-btn:hover { color: #fff; }
+.tab-btn.active {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* Tool Selection Buttons */
+.active-tool {
+  background: #ffffff !important;
+  color: #000 !important;
+  border-color: #ffffff !important;
+}
+.active-tool:hover { background: #eeeeee !important; }
+
+/* Floating Data Table */
+.floating-table-container {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 500px;
+  max-width: 90vw;
+  background: rgba(17, 17, 17, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid #333;
+  border-radius: 8px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+.floating-table-container.collapsed {
+  height: 42px; /* Header height */
+}
+.floating-table-container:not(.collapsed) {
+  height: 350px;
+}
+.floating-table-header {
+  padding: 8px 15px;
+  background: rgba(0,0,0,0.6);
+  border-bottom: 1px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  height: 42px;
+  box-sizing: border-box;
+}
+.floating-table-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.table-wrapper {
+  overflow-y: auto;
+  flex: 1;
+}
+#data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  color: #ccc;
+}
+#data-table th {
+  position: sticky;
+  top: 0;
+  background: #111;
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid #333;
+  z-index: 2;
+}
+#data-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #222;
+}
+#data-table tr:hover { background: rgba(255,255,255,0.05); }
+
+.btn-icon {
+  background: none; border: none; color: #aaa; cursor: pointer; padding: 4px;
+}
+.btn-icon.chevron { transition: transform 0.3s ease; }
+.collapsed .btn-icon.chevron { transform: rotate(180deg); }
+
+/* Dark Popup Leaflet */
+.dark-popup .leaflet-popup-content-wrapper {
+  background: #111;
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+.dark-popup .leaflet-popup-tip {
+  background: #111;
+  border: 1px solid #333;
+}
+.dark-popup .leaflet-popup-close-button {
+  color: #aaa !important;
 }
