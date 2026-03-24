@@ -92,10 +92,7 @@ function getStoreHomeTemplate() {
         </div>
         <h3 class="product-title hover-word" style="margin-top:0.5rem;">${wrapWords(p.title)}</h3>
         <p class="product-desc">${p.description || ''}</p>
-        <div class="product-footer">
-          <span style="font-size:0.8rem; font-weight:700;">${p.size}</span>
-          <span style="font-size:0.85rem; color:var(--color-accent); font-weight:700;">Xem chi tiết &rarr;</span>
-        </div>
+          <span style="font-size:0.85rem; color:var(--color-accent); font-weight:700;">Xem chi tiết <i class="bi bi-arrow-right"></i></span>
       </div>
     </a>
   `}).join('')
@@ -130,7 +127,7 @@ function getStoreHomeTemplate() {
       <section class="container" style="padding: 6vh 2rem;">
         <div style="display:flex; justify-content:space-between; align-items:flex-end;">
           <h2 class="reveal hover-word" style="font-size:2rem;">${wrapWords('Sản Phẩm Nổi Bật')}</h2>
-          <a href="#store-catalog" class="reveal" style="font-size:0.85rem; font-weight:700; text-transform:uppercase; color:var(--color-accent);">Xem tất cả &rarr;</a>
+          <a href="#store-catalog" class="reveal" style="font-size:0.85rem; font-weight:700; text-transform:uppercase; color:var(--color-accent);">Xem tất cả <i class="bi bi-arrow-right"></i></a>
         </div>
         <div class="product-grid">
           ${productCards}
@@ -171,7 +168,7 @@ function getStoreCatalogTemplate() {
         <p class="product-desc">${p.description || ''}</p>
         <div class="product-footer">
           <span style="font-size:0.8rem; font-weight:700;">${p.size}</span>
-          <span style="font-size:0.85rem; color:var(--color-accent); font-weight:700;">Xem chi tiết &rarr;</span>
+          <span style="font-size:0.85rem; color:var(--color-accent); font-weight:700;">Xem chi tiết <i class="bi bi-arrow-right"></i></span>
         </div>
       </div>
     </a>
@@ -187,7 +184,7 @@ function getStoreCatalogTemplate() {
 
         <div class="store-tools reveal">
           <div class="search-wrapper">
-            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <i class="bi bi-search search-icon" style="font-size:0.9rem; opacity:0.6;"></i>
             <input type="text" id="store-search" class="search-input" placeholder="Tìm tên sản phẩm hoặc nội dung...">
           </div>
           
@@ -273,7 +270,7 @@ function getStoreProductTemplate(productId) {
     ${getStoreNav()}
     <main>
       <section class="container" style="padding: 6vh 2rem;">
-        <a href="#store-catalog" style="font-size:0.85rem; font-weight:700; color:var(--color-subtle); text-transform:uppercase;">&larr; Trở lại Cửa hàng</a>
+        <a href="#store-catalog" style="font-size:0.85rem; font-weight:700; color:var(--color-subtle); text-transform:uppercase;"><i class="bi bi-arrow-left"></i> Trở lại Cửa hàng</a>
         
         <div class="reveal" style="margin-top:2rem; border:1.5px solid var(--color-border); background:#111; overflow:hidden;">
           <div style="aspect-ratio:21/9; background:#000; border-bottom:1.5px solid var(--color-border);">
@@ -320,7 +317,6 @@ function getStoreAuthTemplate() {
 
         <form id="store-auth-form">
           <div id="auth-error" style="color:#e74c3c; font-size:0.8rem; margin-bottom:1rem; display:none; font-weight:700;"></div>
-          
           <div class="form-group">
             <label class="form-label">Email</label>
             <input type="email" id="auth-email" class="form-input" required>
@@ -364,7 +360,7 @@ function getStoreDashboardTemplate() {
                 <a href="#store-pricing" style="font-size:0.8rem; color:var(--color-accent); text-decoration:underline;">Nâng cấp gói</a>
               </div>
             </div>
-            <button id="btn-logout" style="color:#e74c3c; font-size:0.85rem; font-weight:700; text-transform:uppercase;">Đăng xuất &rarr;</button>
+            <button id="btn-logout" style="color:#e74c3c; font-size:0.85rem; font-weight:700; text-transform:uppercase;">Đăng xuất <i class="bi bi-arrow-right"></i></button>
           </div>
 
           <div>
@@ -412,11 +408,11 @@ function getStoreCheckoutTemplate() {
             Hệ thống sẽ tự động kích hoạt gói ngay sau khi bạn hoàn tất chuyển khoản.
           </p>
           <div id="payment-status-message" style="text-align:center; margin-bottom: 1rem; display:none;">
-            <p style="color:var(--color-accent); font-weight:700;">✓ Đã nhận thanh toán! Đang chuyển hướng...</p>
+            <p style="color:var(--color-accent); font-weight:700;"><i class="bi bi-check-lg"></i> Đã nhận thanh toán! Đang chuyển hướng...</p>
           </div>
           <a href="https://zalo.me/0967575313" target="_blank" class="plan-btn" style="background:transparent; color:#fff; border-color:#444; text-align:center; font-size:0.8rem;">Gặp sự cố? Liên hệ Admin qua Zalo</a>
           <div style="margin-top: 1.5rem; text-align:center;">
-            <a href="#store-pricing" style="color:var(--color-subtle); font-size:0.85rem; text-decoration:underline;">&larr; Đổi gói khác</a>
+            <a href="#store-pricing" style="color:var(--color-subtle); font-size:0.85rem; text-decoration:underline;"><i class="bi bi-arrow-left"></i> Đổi gói khác</a>
           </div>
         </div>
       </section>
@@ -582,8 +578,8 @@ function getStoreAdminTemplate() {
           </div>
           
           <div style="margin-top: 3rem; display:flex; justify-content:space-between; align-items:center; border-top:1px solid #333; padding-top:2rem;">
-            <a href="#store-dashboard" style="color:var(--color-subtle); text-decoration:underline; font-size:0.85rem;">&larr; Về Dashboard</a>
-            <a href="/geoextractor/" style="background:#222; border:1px solid #444; color:#b4fd00; padding:10px 20px; font-size:0.85rem; font-weight:700; text-decoration:none; border-radius:4px;">⚙️ Mở thư viện Data Bản đồ (GeoExtractor)</a>
+            <a href="#store-dashboard" style="color:var(--color-subtle); text-decoration:underline; font-size:0.85rem;"><i class="bi bi-arrow-left"></i> Về Dashboard</a>
+            <a href="/geoextractor/" style="background:#222; border:1px solid #444; color:#b4fd00; padding:10px 20px; font-size:0.85rem; font-weight:700; text-decoration:none; border-radius:4px;"><i class="bi bi-gear-fill"></i> Mở thư viện Data Bản đồ (GeoExtractor)</a>
           </div>
         </div>
       </section>
@@ -868,7 +864,7 @@ async function initDashboardLogic() {
     }
   } catch (err) { console.error('Plan fetch error:', err.message) }
   if (user.email === 'vuan.edit@gmail.com' && adminLinkContainer) {
-    adminLinkContainer.innerHTML = '<a href="#store-admin" style="display:block; margin-top:1.5rem; font-size:0.85rem; color:var(--color-accent); font-weight: 700;">&rarr; Trang Quản Trị Admin (Quản lý dữ liệu)</a>'
+    adminLinkContainer.innerHTML = '<a href="#store-admin" style="display:block; margin-top:1.5rem; font-size:0.85rem; color:var(--color-accent); font-weight: 700;"><i class="bi bi-arrow-right"></i> Trang Quản Trị Admin (Quản lý dữ liệu)</a>'
   }
   btnLogout.onclick = async () => { await signOut(); window.location.href = '/store/' }
 }

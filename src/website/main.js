@@ -82,10 +82,10 @@ function getHomeTemplate() {
         <div class="video-stats-overlay">
           <p class="video-summary">${item.summary}</p>
           <div class="stats-grid">
-            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> ${item.views}</span>
-            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 000-7.78v0z"/></svg> ${item.likes}</span>
-            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg> ${item.comments}</span>
-            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> ${item.shares}</span>
+            <span><i class="bi bi-eye"></i> ${item.views}</span>
+            <span><i class="bi bi-heart"></i> ${item.likes}</span>
+            <span><i class="bi bi-chat-dots"></i> ${item.comments}</span>
+            <span><i class="bi bi-share"></i> ${item.shares}</span>
           </div>
         </div>
       </div>
@@ -222,7 +222,7 @@ function getProjectsTemplate() {
                 <div class="dark-card">
                   <h3 style="font-size: 0.8rem; margin-bottom: 1.5rem; border-bottom: 1.5px solid #222; padding-bottom: 0.8rem; text-align: center; color: var(--color-accent);">Tổng quan tập khách hàng</h3>
                   <div style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem;">
-                    <div style="font-size: 3rem;">👤</div>
+                    <div style="font-size: 2.5rem; color: #fff;"><i class="bi bi-person-bounding-box"></i></div>
                     <div style="font-size: 0.8rem; line-height: 1.5; color: #ccc;">
                       <p><strong style="color: #fff;">Độ tuổi:</strong> 18 - 24 (52.7%)</p>
                       <p><strong style="color: #fff;">Nghề nghiệp:</strong> Sinh viên, Văn phòng</p>
@@ -259,21 +259,21 @@ function getProjectsTemplate() {
                     <div class="content-card-thumb" style="aspect-ratio: 9/16; background: #222;"><div class="views accent-bg">6.9M</div></div>
                     <div class="content-card-info" style="padding: 0.8rem; color: #fff;">
                       <p style="font-size: 0.75rem;"><strong>Lạm phát là gì?</strong></p>
-                      <div class="stats" style="font-size: 0.6rem; color: var(--color-accent);">❤️ 335K | 🔄 5K</div>
+                      <div class="stats" style="font-size: 0.6rem; color: var(--color-accent);"><i class="bi bi-heart-fill"></i> 335K | <i class="bi bi-arrow-repeat"></i> 5K</div>
                     </div>
                   </div>
                   <div class="content-card" style="background: #111; border: 1.5px solid #222;">
                     <div class="content-card-thumb" style="aspect-ratio: 9/16; background: #222;"><div class="views accent-bg">6.9M</div></div>
                     <div class="content-card-info" style="padding: 0.8rem; color: #fff;">
                       <p style="font-size: 0.75rem;"><strong>Hàng hóa VN giá cao?</strong></p>
-                      <div class="stats" style="font-size: 0.6rem; color: var(--color-accent);">❤️ 290K | 🔄 11K</div>
+                      <div class="stats" style="font-size: 0.6rem; color: var(--color-accent);"><i class="bi bi-heart-fill"></i> 290K | <i class="bi bi-arrow-repeat"></i> 11K</div>
                     </div>
                   </div>
                   <div class="content-card" style="background: #111; border: 1.5px solid #222;">
                     <div class="content-card-thumb" style="aspect-ratio: 9/16; background: #222;"><div class="views accent-bg">6.2M</div></div>
                     <div class="content-card-info" style="padding: 0.8rem; color: #fff;">
                       <p style="font-size: 0.75rem;"><strong>Kênh đào Phù Nam?</strong></p>
-                      <div class="stats" style="font-size: 0.6rem; color: var(--color-accent);">❤️ 199K | 🔄 9K</div>
+                      <div class="stats" style="font-size: 0.6rem; color: var(--color-accent);"><i class="bi bi-heart-fill"></i> 280K | <i class="bi bi-arrow-repeat"></i> 9K</div>
                     </div>
                   </div>
                 </div>
@@ -288,7 +288,7 @@ function getProjectsTemplate() {
                   </div>
                 </div>
                 <div class="team-card" style="background: #111; padding: 1.5rem; border-radius: 12px; border: 1.5px solid #222;">
-                  <div class="team-avatar" style="width: 60px; height: 60px; display:flex; align-items:center; justify-content:center; background:#000; font-size:1.5rem; border-color: var(--color-accent);">👩‍💻</div>
+                  <div class="team-avatar" style="width: 60px; height: 60px; display:flex; align-items:center; justify-content:center; background:#000; font-size:1.8rem; border: 1px solid var(--color-accent);"><i class="bi bi-person-workspace" style="color:#fff;"></i></div>
                   <div class="team-meta">
                     <h4 style="font-size: 0.9rem; color: #fff;">Writer: Thanh Huyền</h4>
                     <span class="accent-bg" style="font-size: 0.6rem;">7 năm exp</span>
