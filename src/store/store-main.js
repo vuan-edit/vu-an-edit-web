@@ -744,8 +744,8 @@ async function initCheckoutLogic() {
 
     // 2. Render real QR from SePay
     const bankName = import.meta.env.VITE_BANK_NAME || 'BIDV'
-    const bankAcc = import.meta.env.VITE_BANK_ACCOUNT || ''
-    const bankHolder = import.meta.env.VITE_BANK_HOLDER || ''
+    const bankAcc = import.meta.env.VITE_BANK_ACCOUNT || '8808162732'
+    const bankHolder = import.meta.env.VITE_BANK_HOLDER || 'VŨ THANH AN'
     const qrUrl = `https://qr.sepay.vn/img?bank=${bankName}&acc=${bankAcc}&template=compact&amount=${amount}&des=${encodeURIComponent(memo)}`
     
     container.innerHTML = `
