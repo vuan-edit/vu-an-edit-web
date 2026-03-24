@@ -1,4 +1,4 @@
-import { supabase } from '../shared/supabase.js'
+import { supabase, LOCAL_API_URL } from '../shared/supabase.js'
 import * as L from 'leaflet'
 window.L = L;
 
@@ -14,9 +14,6 @@ let mapLegend = null; // Reference to the legend control
 
 const layerColors = ['#b4fd00', '#ff4b4b', '#00aaff', '#ffa500', '#9d50bb'];
 
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.match(/^192\.168\./) || window.location.hostname.match(/^10\./) || window.location.hostname.match(/^172\./);
-const protocol = (window.location.protocol === 'file:') ? 'http:' : window.location.protocol;
-const LOCAL_API_URL = isLocal ? `${protocol}//${window.location.hostname}:3000` : (window.location.hostname === '' ? 'http://localhost:3000' : 'https://api.vuanedit.online');
 const API_BASE = `${LOCAL_API_URL}/api/geodata`;
 const ADMIN_EMAILS = ['vuan.edit@gmail.com', 'vuanedit@gmail.com', 'vu.an.edit@gmail.com'];
 

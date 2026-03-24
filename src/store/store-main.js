@@ -1,5 +1,5 @@
 import './store-style.css'
-import { supabase, getCurrentUser, signIn, signUp, signOut, getLocalFileUrl } from '../shared/supabase.js'
+import { supabase, getCurrentUser, signIn, signUp, signOut, getLocalFileUrl, LOCAL_API_URL } from '../shared/supabase.js'
 
 let allProducts = []
 let isLoadingProducts = false
@@ -438,6 +438,23 @@ function getStoreAdminTemplate() {
             <button class="filter-btn active" data-target="admin-tab-upload" id="btn-tab-upload">Thêm Dữ Liệu</button>
             <button class="filter-btn" data-target="admin-tab-products">Danh Sách Dữ Liệu</button>
             <button class="filter-btn" data-target="admin-tab-users">Thành Viên</button>
+            <button class="filter-btn" data-target="admin-tab-config" id="btn-tab-config">Cấu hình Tunnel</button>
+          </div>
+
+          <div id="admin-tab-config" class="admin-tab-content" style="display: none; background: #111; border: 1.5px solid var(--color-border); padding: 3rem;">
+            <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Cấu hình Cloudflare Tunnel</h2>
+            <p style="color:var(--color-subtle); margin-bottom: 2rem;">Cập nhật địa chỉ Tunnel để toàn bộ website tự động nhận diện dữ liệu từ máy tính của bạn.</p>
+            
+            <div class="form-group">
+                <label class="form-label">Địa chỉ Tunnel hiện tại</label>
+                <div style="display:flex; gap:1rem;">
+                    <input type="url" id="admin-config-tunnel-url" class="form-input" placeholder="https://xxx.trycloudflare.com">
+                    <button id="btn-save-tunnel" class="plan-btn" style="width:auto; padding:0.5rem 2rem; background:var(--color-accent); color:#000;">Lưu cấu hình</button>
+                </div>
+                <p style="font-size:0.75rem; color:#888; margin-top:0.8rem;">
+                    * Sau khi lưu, toàn bộ người dùng truy cập web sẽ tự động kết nối tới máy chủ của bạn mà không cần dùng Console.
+                </p>
+            </div>
           </div>
           
           <div id="admin-tab-upload" class="admin-tab-content active" style="background: #111; border: 1.5px solid var(--color-border); padding: 3rem;">
@@ -866,6 +883,7 @@ async function initAdminLogic() {
       const target = btn.dataset.target; tabContents.forEach(tab => { tab.style.display = tab.id === target ? 'block' : 'none' })
       if (target === 'admin-tab-users') loadUserList()
       if (target === 'admin-tab-products') loadAdminProductList()
+      if (target === 'admin-tab-config') loadTunnelConfig()
     }
   })
   const form = document.getElementById('admin-upload-form'); const btnCancel = document.getElementById('btn-admin-cancel');
@@ -914,13 +932,30 @@ async function initAdminLogic() {
 
       if (fileInput.files.length > 0) {
           const file = fileInput.files[0];
-          const fileName = `${Date.now()}_${file.name}`;
-          const { error: uploadErr } = await supabase.storage.from('geodata').upload(fileName, file);
-          if (uploadErr) throw uploadErr;
-          file_path = fileName;
           
-          const { data } = supabase.storage.from('geodata').getPublicUrl(fileName);
-          file_url = data.publicUrl;
+          // Hybrid: Try local upload first if LOCAL_API_URL is available
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('type', 'products');
+
+          try {
+              console.log("[Store Admin] Attempting local upload to:", LOCAL_API_URL);
+              const uploadRes = await fetch(`${LOCAL_API_URL}/api/upload`, { method: 'POST', body: formData });
+              if (!uploadRes.ok) throw new Error('Local server upload failed');
+              const uploadData = await uploadRes.json();
+              
+              file_url = `${LOCAL_API_URL}${uploadData.path}`;
+              file_path = uploadData.filename;
+              console.log("[Store Admin] Local upload success:", file_url);
+          } catch (err) {
+              console.warn("[Store Admin] Local upload failed, falling back to Supabase:", err.message);
+              const fileName = `${Date.now()}_${file.name}`;
+              const { error: uploadErr } = await supabase.storage.from('geodata').upload(fileName, file);
+              if (uploadErr) throw uploadErr;
+              file_path = fileName;
+              const { data } = supabase.storage.from('geodata').getPublicUrl(fileName);
+              file_url = data.publicUrl;
+          }
       } else if (!file_url && !id) {
           throw new Error("Vui lòng tải lên file dữ liệu hoặc cung cấp Link URL.");
       }
@@ -1177,4 +1212,47 @@ async function loadUserList() {
       }
     })
   } catch (err) { tbody.innerHTML = `<tr><td colspan="4" style="padding:2rem 0; text-align:center; color:#e74c3c;">Lỗi: ${err.message}<br><small>Hãy chạy SQL trong Supabase Dashboard để tạo bảng profiles.</small></td></tr>` }
+}
+
+async function loadTunnelConfig() {
+    const input = document.getElementById('admin-config-tunnel-url');
+    const btnSave = document.getElementById('btn-save-tunnel');
+    if (!input || !btnSave) return;
+
+    input.value = 'Đang tải...';
+    input.disabled = true;
+
+    try {
+        const { data, error } = await supabase.from('app_config').select('value').eq('key', 'tunnel_url').single();
+        if (data) {
+            input.value = data.value;
+        } else {
+            input.value = '';
+        }
+    } catch (err) {
+        console.error("Lỗi load tunnel config:", err);
+    } finally {
+        input.disabled = false;
+    }
+
+    btnSave.onclick = async () => {
+        const newUrl = input.value.trim();
+        if (!newUrl) return alert("Vui lòng nhập URL.");
+        
+        btnSave.textContent = '...';
+        btnSave.disabled = true;
+
+        try {
+            const { error } = await supabase.from('app_config').upsert({ key: 'tunnel_url', value: newUrl, updated_at: new Date().toISOString() });
+            if (error) throw error;
+            alert("✓ Đã cập nhật Tunnel URL thành công!");
+            localStorage.setItem('vuanedit_api_url', newUrl);
+            window.location.reload(); 
+        } catch (err) {
+            alert("Lỗi: " + err.message);
+        } finally {
+            btnSave.textContent = 'Lưu cấu hình';
+            btnSave.disabled = false;
+        }
+    }
 }

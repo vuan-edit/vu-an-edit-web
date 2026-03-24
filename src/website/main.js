@@ -660,26 +660,41 @@ function initEffects() {
   const heroStrip = document.getElementById('hero-strip')
   
   if (heroContainer && heroStrip) {
+    let ticking = false
+    
     const handleHeroScroll = () => {
-      const rect = heroContainer.getBoundingClientRect()
-      const scrollHeight = rect.height - window.innerHeight
-      const scrolled = -rect.top
-      
-      let progress = scrolled / scrollHeight
-      if (progress < 0) progress = 0
-      if (progress > 1) progress = 1
-      
-      // Calculate translation based on viewport width
-      // On desktop, we want more translation, on mobile less as items are narrower
-      const isMobile = window.innerWidth <= 768
-      const maxTranslate = isMobile ? -85 : -75
-      
-      const translateX = progress * maxTranslate
-      heroStrip.style.transform = `translateX(${translateX}%)`
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const rect = heroContainer.getBoundingClientRect()
+          const viewportHeight = window.innerHeight
+          
+          // Use a more robust scroll progress calculation
+          // Starts scrolling when the container's top hits the top of the viewport
+          // Ends scrolling when the container's bottom hits the bottom of the viewport
+          const totalScrollable = rect.height - viewportHeight
+          let scrolled = -rect.top
+          
+          let progress = scrolled / totalScrollable
+          if (progress < 0) progress = 0
+          if (progress > 1) progress = 1
+          
+          // Calculate the correct translation to show all items
+          // translateX = -(stripWidth - viewportWidth) * progress
+          const stripWidth = heroStrip.scrollWidth
+          const viewportWidth = window.innerWidth
+          const maxTranslate = Math.max(0, stripWidth - viewportWidth)
+          
+          const translateX = progress * maxTranslate
+          heroStrip.style.transform = `translateX(${-translateX}px)`
+          
+          ticking = false
+        })
+        ticking = true
+      }
     }
     
     window.addEventListener('scroll', handleHeroScroll, { passive: true })
-    // Initial call
+    window.addEventListener('resize', handleHeroScroll, { passive: true })
     handleHeroScroll()
   }
 
