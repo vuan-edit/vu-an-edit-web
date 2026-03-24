@@ -61,10 +61,20 @@
   --font-main: 'Averta', sans-serif;
   --kerning: -0.02em;
   --container-padding: 4rem;
+  --header-height: 64px;
 }
 
-section {
-  background: transparent !important;
+@media (max-width: 1024px) {
+  :root {
+    --container-padding: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --container-padding: 1.5rem;
+    --header-height: 72px;
+  }
 }
 
 /* ============================================================
@@ -187,6 +197,12 @@ section {
   padding: 12vh 0;
 }
 
+@media (max-width: 768px) {
+  section {
+    padding: 8vh 0;
+  }
+}
+
 /* ============================================================
    HEADER / NAV
    ============================================================ */
@@ -246,11 +262,62 @@ section {
 }
 
 .mobile-menu-btn.active span:nth-child(1) {
-  transform: translateY(4px) rotate(45deg);
+  transform: translateY(8px) rotate(45deg);
 }
 
 .mobile-menu-btn.active span:nth-child(2) {
-  transform: translateY(-4px) rotate(-45deg);
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+.site-nav {
+  display: flex;
+  gap: 2.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 768px) {
+  .site-header {
+    padding: 0 1.25rem;
+    height: 72px; /* Slightly taller for better touch */
+  }
+
+  .mobile-menu-btn {
+    display: flex;
+  }
+
+  .site-nav {
+    position: fixed;
+    top: 72px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 72px);
+    background: #000;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    z-index: 1000;
+    padding-bottom: 10vh;
+  }
+
+  .site-nav.active {
+    transform: translateX(0);
+  }
+
+  .site-nav a {
+    font-size: 1.5rem; /* Larger links for mobile gallery */
+    font-weight: 900;
+  }
+
+  .site-nav a::after {
+    height: 3px;
+    bottom: -8px;
+  }
 }
 
 .site-nav a {
@@ -322,6 +389,27 @@ section {
   line-height: 1;
   text-align: center;
   white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .hero-scroll-container {
+    height: 350vh; /* More room to scroll horizontal on mobile */
+  }
+  
+  .hero-horizontal-strip {
+    gap: 2.5rem;
+  }
+
+  .hero-text-item h1 {
+    white-space: normal;
+    font-size: clamp(2rem, 12vw, 4rem);
+    line-height: 1.1;
+  }
+  
+  .hero-video-item {
+    height: 65vh;
+    border-width: 2px;
+  }
 }
 .hero-video-item {
   height: 80vh; /* Controlled height for vertical centering */
@@ -510,7 +598,7 @@ section {
 }
 
 .hero-cell--red {
-  background: #c0392b;
+  background: transparent;
 }
 
 /* ============================================================
@@ -518,7 +606,6 @@ section {
    ============================================================ */
 .about-section {
   padding: 6vh 0;
-  border-bottom: 1.5px solid #222;
 }
 
 .about-inner {
@@ -533,6 +620,31 @@ section {
   margin-bottom: 1.5rem;
 }
 
+@media (max-width: 768px) {
+  .about-inner {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  
+  .about-portrait {
+    order: -1; /* Image first on mobile */
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  
+  .about-text {
+    text-align: center;
+  }
+  
+  .about-text p {
+    margin: 1.5rem auto 0;
+  }
+  
+  .project-icon-group {
+    justify-content: center;
+  }
+}
+
 .about-text p {
   font-size: 1rem;
   line-height: 1.7;
@@ -540,8 +652,8 @@ section {
 }
 
 .about-portrait {
-  border: 1.5px solid #222;
-  background: #000;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -560,11 +672,9 @@ section {
    DATA / INFOGRAPHIC SECTION
    ============================================================ */
 .data-section {
-  background: #111;
+  background: transparent;
   color: #fff;
   padding: 8vh 0;
-  border-bottom: 1.5px solid #222;
-  border-top: 1.5px solid #222;
 }
 
 .data-section h2 {
@@ -584,7 +694,6 @@ section {
    ============================================================ */
 .practice-section {
   padding: 8vh 0;
-  border-bottom: 1.5px solid #222;
 }
 
 .practice-section h2 {
@@ -603,7 +712,6 @@ section {
    ============================================================ */
 .projects-hero {
   padding: 8vh 0 4vh;
-  border-bottom: 1.5px solid #222;
 }
 
 .projects-hero h1 {
@@ -620,7 +728,6 @@ section {
 
 .project-item {
   padding: 5vh 0;
-  border-bottom: 1.5px solid #222;
 }
 
 .project-meta {
@@ -646,7 +753,6 @@ section {
    ============================================================ */
 .course-hero {
   padding: 8vh 0 4vh;
-  border-bottom: 1.5px solid #222;
 }
 
 .course-hero h1 {
@@ -657,7 +763,6 @@ section {
 .course-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  border-top: 1.5px solid #222;
   margin-top: 4vh;
 }
 
@@ -708,6 +813,30 @@ section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 5rem;
+}
+
+@media (max-width: 768px) {
+  .contact-inner {
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+  }
+  
+  .contact-info {
+    text-align: center;
+  }
+  
+  .contact-info p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .contact-detail-value {
+    justify-content: center;
+  }
+  
+  .contact-form-wrap {
+    padding: 2rem 1.5rem;
+  }
 }
 
 .contact-info h1 {
@@ -1414,7 +1543,19 @@ textarea.form-input {
 .pricing-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 800px;
+  min-width: 700px;
+}
+
+@media (max-width: 768px) {
+  .pricing-table th,
+  .pricing-table td {
+    padding: 1.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .pricing-table .price {
+    font-size: 1rem;
+  }
 }
 
 .pricing-table th,
@@ -1493,6 +1634,15 @@ textarea.form-input {
 
 .promo-content-wrapper {
   max-width: 900px;
+  position: relative;
+  z-index: 2;
+}
+
+.promo-btn-container {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .course-promo-section h2.promo-heading {
@@ -1528,6 +1678,101 @@ textarea.form-input {
   font-weight: 600;
   line-height: 1.5;
   color: #aaa;
+}
+
+@media (max-width: 768px) {
+  .course-promo-section {
+    padding: 8vh 0;
+    text-align: center;
+    background: transparent;
+  }
+  
+  .course-promo-section .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .promo-content-wrapper {
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .video-montage-container {
+    width: 100%;
+    margin-bottom: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top: 0;
+    right: 0;
+    transform: none;
+    height: auto;
+    min-height: 250px;
+    order: -1; /* Videos on top for vertical stack */
+  }
+
+  .promo-btn-container {
+    justify-content: center;
+  }
+
+  .course-promo-section h2.promo-heading {
+    font-size: clamp(2.2rem, 8vw, 3.2rem) !important;
+    line-height: 1 !important;
+    margin-bottom: 2rem !important;
+    text-align: center;
+  }
+
+  .course-promo-section p {
+    margin-bottom: 2.5rem !important;
+    font-size: 1rem !important;
+    text-align: center;
+  }
+  
+  .course-promo-inner {
+    order: 2;
+    padding: 0 var(--container-padding);
+    width: 100%;
+  }
+
+  .promo-content-wrapper {
+    max-width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .course-promo-section h2.promo-heading {
+    font-size: clamp(1.8rem, 8vw, 2.5rem) !important;
+    line-height: 1.1 !important;
+    margin-bottom: 1.5rem !important;
+    text-align: center !important;
+    font-style: normal;
+  }
+  
+  .promo-heading .line-bold,
+  .promo-heading .line-black {
+    display: block !important; /* Ensure they stay as blocks to be centered individually or just better stack */
+    text-align: center !important;
+    font-style: normal;
+  }
+
+  .course-promo-section p {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+    margin: 0 auto 2.5rem !important;
+    color: #888 !important;
+    text-align: center !important;
+  }
+
+  .promo-btn-container {
+    justify-content: center;
+    width: 100%;
+  }
 }
 
 .promo-btn {
@@ -1619,6 +1864,62 @@ textarea.form-input {
   height: 40vw;
   pointer-events: auto; /* Enable hover capture */
   z-index: 5; /* Ensure it's above the text content */
+}
+
+@media (max-width: 768px) {
+  .video-montage-container {
+    order: 1; /* Videos on top */
+    position: relative;
+    top: 0;
+    right: 0;
+    transform: none;
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+    margin-bottom: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+  }
+  
+  .vid-1, .vid-2, .vid-3 {
+    position: relative;
+    width: 28vw;
+    height: 48vw;
+    max-width: 130px;
+    max-height: 220px;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    transform: none !important;
+    margin: 0 -4%;
+    opacity: 1 !important;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .vid-1 {
+    transform: rotate(-10deg) translateY(20px) !important;
+    z-index: 1;
+  }
+  
+  .vid-3 {
+    transform: rotate(10deg) translateY(20px) !important;
+    z-index: 1;
+  }
+  
+  .vid-2 {
+    z-index: 10;
+    width: 32vw;
+    height: 55vw;
+    max-width: 150px;
+    max-height: 260px;
+    transform: none !important;
+    border-color: var(--color-accent);
+    box-shadow: 0 25px 60px rgba(180, 253, 0, 0.3);
+  }
 }
 
 .montage-item {

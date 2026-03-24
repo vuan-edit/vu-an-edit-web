@@ -6,9 +6,13 @@ let map;
 let currentBasemap;
 let featureGroup; 
 let activeLayers = new Set();
+let layerSelectionOrder = []; // Track order of activation
 let selectedFeatures = {}; // { layerId: [featureId1, featureId2] }
 let layerMetadata = {}; 
 let fetchTimeout = null;
+let mapLegend = null; // Reference to the legend control
+
+const layerColors = ['#b4fd00', '#ff4b4b', '#00aaff', '#ffa500', '#9d50bb'];
 
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.match(/^192\.168\./) || window.location.hostname.match(/^10\./) || window.location.hostname.match(/^172\./);
 const protocol = (window.location.protocol === 'file:') ? 'http:' : window.location.protocol;
@@ -99,6 +103,9 @@ function initMap() {
 
   featureGroup = L.featureGroup().addTo(map);
   
+  // Initialize Legend Control
+  initLegend();
+
   map.on('moveend', () => {
       // Debounce the spatial filter fetch
       if(fetchTimeout) clearTimeout(fetchTimeout);
@@ -130,37 +137,50 @@ async function setupLayerTree() {
                 
                 const itemEl = document.createElement('div');
                 itemEl.className = 'layer-item';
-                itemEl.style.padding = '8px 10px';
-                itemEl.style.marginBottom = '4px';
+                itemEl.style.padding = '10px 12px';
+                itemEl.style.marginBottom = '6px';
                 itemEl.style.display = 'flex';
                 itemEl.style.alignItems = 'center';
-                itemEl.style.gap = '10px';
+                itemEl.style.gap = '12px';
                 itemEl.style.cursor = 'pointer';
+                itemEl.style.borderRadius = '8px';
+                itemEl.style.transition = 'background 0.2s';
                 
                 const chk = document.createElement('input');
                 chk.type = 'checkbox';
                 chk.checked = false;
                 chk.className = 'admin-input';
-                chk.style.width = '16px';
-                chk.style.height = '16px';
+                chk.style.width = '18px';
+                chk.style.height = '18px';
                 chk.style.margin = '0';
+                chk.style.cursor = 'pointer';
                 
                 chk.onchange = (e) => {
-                    if (e.target.checked) activeLayers.add(layer.id);
-                    else {
+                    if (e.target.checked) {
+                        activeLayers.add(layer.id);
+                        if (!layerSelectionOrder.includes(layer.id)) layerSelectionOrder.push(layer.id);
+                    } else {
                         activeLayers.delete(layer.id);
-                        delete selectedFeatures[layer.id]; // clear selection if layer deactivated
+                        layerSelectionOrder = layerSelectionOrder.filter(id => id !== layer.id);
+                        delete selectedFeatures[layer.id];
                     }
-                    if (e.target.checked) itemEl.classList.add('active');
-                    else itemEl.classList.remove('active');
+                    
+                    if (chk.checked) {
+                        itemEl.classList.add('active');
+                        const colorIdx = layerSelectionOrder.indexOf(layer.id);
+                        itemEl.style.borderLeft = `4px solid ${layerColors[colorIdx % layerColors.length]}`;
+                    } else {
+                        itemEl.classList.remove('active');
+                        itemEl.style.borderLeft = 'none';
+                    }
                     
                     updateSelectionSummary();
+                    updateLegend();
                     fetchFeaturesInView();
                 };
                 
-                // Allow clicking the text to toggle checkbox
                 itemEl.onclick = (e) => {
-                    if(e.target !== chk) {
+                    if(e.target !== chk && e.target.tagName !== 'BUTTON') {
                         chk.checked = !chk.checked;
                         chk.dispatchEvent(new Event('change'));
                     }
@@ -168,26 +188,45 @@ async function setupLayerTree() {
                 
                 const label = document.createElement('span');
                 label.innerText = layer.name;
-                label.style.fontSize = '12px';
+                label.style.fontSize = '12.5px';
+                label.style.fontWeight = '500';
                 label.style.flex = '1';
+                label.style.color = '#eee';
+                
+                if (layer.isSmart) {
+                    const badge = document.createElement('span');
+                    badge.className = 'pro-badge';
+                    badge.style.background = '#b4fd00';
+                    badge.style.color = '#000';
+                    badge.style.fontSize = '8px';
+                    badge.style.padding = '1px 5px';
+                    badge.style.marginLeft = '6px';
+                    badge.style.borderRadius = '3px';
+                    badge.style.verticalAlign = 'middle';
+                    badge.textContent = 'SMART';
+                    label.appendChild(badge);
+                }
                 
                 const selAllBtn = document.createElement('button');
-                selAllBtn.innerText = 'Chọn tất cả';
+                selAllBtn.innerText = 'Tất cả';
                 selAllBtn.style.fontSize = '10px';
-                selAllBtn.style.padding = '2px 5px';
-                selAllBtn.style.background = '#333';
-                selAllBtn.style.color = '#fff';
-                selAllBtn.style.border = 'none';
-                selAllBtn.style.borderRadius = '3px';
+                selAllBtn.style.padding = '3px 8px';
+                selAllBtn.style.background = '#2a2a2a';
+                selAllBtn.style.color = '#bbb';
+                selAllBtn.style.border = '1px solid #444';
+                selAllBtn.style.borderRadius = '4px';
                 selAllBtn.style.cursor = 'pointer';
+                selAllBtn.style.transition = 'all 0.2s';
                 
+                selAllBtn.onmouseover = () => { selAllBtn.style.background = '#444'; selAllBtn.style.color = '#fff'; };
+                selAllBtn.onmouseout = () => { selAllBtn.style.background = '#2a2a2a'; selAllBtn.style.color = '#bbb'; };
+
                 selAllBtn.onclick = (e) => {
                     e.stopPropagation();
                     if (!chk.checked) {
                         chk.checked = true;
                         chk.dispatchEvent(new Event('change'));
                     }
-                    // Special flag to indicate "Download ALL from this layer"
                     selectedFeatures[layer.id] = ['__ALL__'];
                     updateSelectionSummary();
                     fetchFeaturesInView();
@@ -229,7 +268,8 @@ async function fetchFeaturesInView() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 bbox: bboxStr,
-                activeLayers: Array.from(activeLayers)
+                activeLayers: Array.from(activeLayers),
+                zoom: zoom
             })
         });
         const json = await res.json();
@@ -249,15 +289,26 @@ function renderFeatures(featuresArray) {
             const isAllMode = selectedFeatures[feature.layerId] && selectedFeatures[feature.layerId].includes('__ALL__');
             const isSelected = isAllMode || (selectedFeatures[feature.layerId] && selectedFeatures[feature.layerId].includes(feature.id));
             
+            const colorIdx = layerSelectionOrder.indexOf(feature.layerId);
+            const layerColor = layerColors[colorIdx % layerColors.length] || '#b4fd00';
+
             return {
-                color: isSelected ? '#b4fd00' : '#888',
-                weight: isSelected ? 3 : 1,
-                fillOpacity: isSelected ? 0.4 : 0.05,
-                fillColor: isSelected ? '#b4fd00' : '#444'
+                color: layerColor,
+                weight: isSelected ? 4 : 2,
+                opacity: isSelected ? 1.0 : 0.8,
+                fillOpacity: isSelected ? 0.4 : 0.2,
+                fillColor: layerColor
             };
         },
         onEachFeature: (feature, layer) => {
-            const name = feature.properties['name:vi'] || feature.properties.name || feature.properties.source_layer || `Đối tượng ${feature.id}`;
+            const name = feature.properties['name:vi'] 
+                        || feature.properties['name:en'] 
+                        || feature.properties.ten_xa
+                        || feature.properties.ten_tinh
+                        || feature.properties.name 
+                        || feature.properties.NAME 
+                        || feature.properties.source_layer 
+                        || `Đối tượng ${feature.id || 'N/A'}`;
             layer.bindTooltip(`<div style="font-family:'Averta',sans-serif; font-size:12px;">${name}</div>`, { sticky: true });
             
             layer.on({
@@ -270,10 +321,14 @@ function renderFeatures(featuresArray) {
                 mouseout: (e) => {
                     const isAllMode = selectedFeatures[feature.layerId] && selectedFeatures[feature.layerId].includes('__ALL__');
                     const isSelected = isAllMode || (selectedFeatures[feature.layerId] && selectedFeatures[feature.layerId].includes(feature.id));
+                    
+                    const colorIdx = layerSelectionOrder.indexOf(feature.layerId);
+                    const layerColor = layerColors[colorIdx % layerColors.length] || '#b4fd00';
+
                     if (!isSelected) {
-                        e.target.setStyle({ color: '#888', weight: 1, fillOpacity: 0.05, fillColor: '#444' });
+                        e.target.setStyle({ color: layerColor, weight: 2, opacity: 0.8, fillOpacity: 0.2 });
                     } else {
-                        e.target.setStyle({ color: '#b4fd00', weight: 3, fillOpacity: 0.4, fillColor: '#b4fd00' });
+                        e.target.setStyle({ color: layerColor, weight: 4, opacity: 1.0, fillOpacity: 0.4 });
                     }
                 },
                 click: (e) => {
@@ -284,6 +339,54 @@ function renderFeatures(featuresArray) {
             });
         }
     }).addTo(featureGroup);
+}
+
+function initLegend() {
+    mapLegend = L.control({ position: 'bottomright' });
+    mapLegend.onAdd = function() {
+        const div = L.DomUtil.create('div', 'info legend');
+        div.id = 'map-legend-box';
+        div.style.background = 'rgba(0,0,0,0.85)';
+        div.style.padding = '10px 15px';
+        div.style.borderRadius = '8px';
+        div.style.border = '1px solid #444';
+        div.style.color = '#fff';
+        div.style.fontFamily = "'Averta', sans-serif";
+        div.style.fontSize = '12px';
+        div.style.display = 'none'; // Hidden by default
+        div.style.backdropFilter = 'blur(4px)';
+        div.style.boxShadow = '0 4px 15px rgba(0,0,0,0.5)';
+        return div;
+    };
+    mapLegend.addTo(map);
+}
+
+function updateLegend() {
+    const div = document.getElementById('map-legend-box');
+    if (!div) return;
+
+    if (layerSelectionOrder.length === 0) {
+        div.style.display = 'none';
+        return;
+    }
+
+    div.style.display = 'block';
+    div.innerHTML = `<div style="font-weight:700; color:#b4fd00; margin-bottom:8px; border-bottom:1px solid #333; padding-bottom:5px; font-size:10px; opacity:0.7;">ACTIVE LAYERS</div>`;
+    
+    layerSelectionOrder.forEach((layerId, idx) => {
+        const layer = layerMetadata[layerId];
+        const color = layerColors[idx % layerColors.length];
+        const item = document.createElement('div');
+        item.style.display = 'flex';
+        item.style.alignItems = 'center';
+        item.style.gap = '8px';
+        item.style.marginBottom = '4px';
+        item.innerHTML = `
+            <div style="width:12px; height:2px; background:${color}; border-radius:1px; box-shadow: 0 0 5px ${color}88;"></div>
+            <span style="font-size:11px; white-space:nowrap;">${layer?.name || 'Unknown'}</span>
+        `;
+        div.appendChild(item);
+    });
 }
 
 function toggleFeatureSelection(layerId, featureId) {
@@ -314,13 +417,16 @@ function updateSelectionSummary() {
             const isAll = featIds.includes('__ALL__');
             
             totalCount += isAll ? 1 : featIds.length;
+
+            const colorIdx = layerSelectionOrder.indexOf(layerId);
+            const layerColor = layerColors[colorIdx % layerColors.length] || '#b4fd00';
             
             const div = document.createElement('div');
             div.style.fontSize = '11px';
             div.style.padding = '8px';
             div.style.background = '#222';
             div.style.borderRadius = '4px';
-            div.style.borderLeft = '3px solid #b4fd00';
+            div.style.borderLeft = `3px solid ${layerColor}`;
             div.innerText = isAll ? `${layerName} (Chọn tất cả)` : `${layerName} (${featIds.length} đối tượng)`;
             
             const removeBtn = document.createElement('span');

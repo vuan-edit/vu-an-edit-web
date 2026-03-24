@@ -75,7 +75,7 @@ function getHomeTemplate() {
   const videoCards = videoData.map(item => `
     <div class="hero-item">
       <div class="hero-video-item">
-        <video poster="${item.poster}" muted autoplay loop playsinline preload="metadata">
+        <video poster="${item.poster}" muted autoplay loop playsinline preload="metadata" loading="lazy">
           <source src="${item.srcWebm}" type="video/webm">
           <source src="${item.srcMp4}" type="video/mp4">
         </video>
@@ -130,8 +130,7 @@ function getHomeTemplate() {
                 </a>
               </div>
             </div>
-            <div class="about-portrait reveal" style="animation-delay:0.15s; border:3px solid #fff; background:#000;">
-              <img src="/Me (0-00-00-00).png" alt="Vũ An" style="width:100%;height:100%;object-fit:cover;display:block;">
+              <img src="/Me (0-00-00-00).png" alt="Vũ An" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">
             </div>
           </div>
         </div>
@@ -150,13 +149,13 @@ function getHomeTemplate() {
       <section class="course-promo-section reveal">
         <div class="video-montage-container">
           <div class="montage-item vid-1">
-            <video src="/video_class_preview/vid_1.mp4" autoplay loop muted playsinline></video>
+            <video src="/video_class_preview/vid_1.mp4" autoplay loop muted playsinline loading="lazy"></video>
           </div>
           <div class="montage-item vid-2">
-            <video src="/video_class_preview/vid_2.mp4" autoplay loop muted playsinline></video>
+            <video src="/video_class_preview/vid_2.mp4" autoplay loop muted playsinline loading="lazy"></video>
           </div>
           <div class="montage-item vid-3">
-            <video src="/video_class_preview/vid_3.mp4" autoplay loop muted playsinline></video>
+            <video src="/video_class_preview/vid_3.mp4" autoplay loop muted playsinline loading="lazy"></video>
           </div>
         </div>
         <div class="container course-promo-inner">
@@ -166,7 +165,7 @@ function getHomeTemplate() {
               <span class="line-black">${wrapWords('video triệu view')}</span>
             </h2>
             <p>Học trọn bộ kỹ năng: After Effects nền tảng, GEOLayers 3 chuyên sâu và Tư duy viral content. Biến dữ liệu khô khan thành những câu chuyện bản đồ chuyển động đầy cuốn hút.</p>
-            <div style="display:flex; gap:2rem; align-items:center; flex-wrap:wrap;">
+            <div class="promo-btn-container">
               <a href="/courses/" class="promo-btn">Khám phá khóa học</a>
             </div>
           </div>
@@ -303,10 +302,9 @@ function getProjectsTemplate() {
           </div>
         </div>
 
-        <!-- Project 2: Người Quan Sát -->
         <div class="project-item reveal">
           <div class="comparison-container" data-project="2">
-            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=2000" class="comparison-image image-before" alt="Before">
+            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=2000" class="comparison-image image-before" alt="Before" loading="lazy">
             <div class="image-after" style="background-image:url('https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&q=80&w=2000'); background-size:cover; background-position:center; position:absolute; top:0; left:0; width:100%; height:100%;"></div>
             <div class="comparison-handle" style="left:50%;"></div>
             <div class="label-before">Draft</div>
@@ -671,12 +669,16 @@ function initEffects() {
       if (progress < 0) progress = 0
       if (progress > 1) progress = 1
       
-      // Map progress [0, 1] to translation [0%, -75%]
-      const translateX = progress * -75
+      // Calculate translation based on viewport width
+      // On desktop, we want more translation, on mobile less as items are narrower
+      const isMobile = window.innerWidth <= 768
+      const maxTranslate = isMobile ? -85 : -75
+      
+      const translateX = progress * maxTranslate
       heroStrip.style.transform = `translateX(${translateX}%)`
     }
     
-    window.addEventListener('scroll', handleHeroScroll)
+    window.addEventListener('scroll', handleHeroScroll, { passive: true })
     // Initial call
     handleHeroScroll()
   }
@@ -704,8 +706,12 @@ function initEffects() {
       handle.style.left = `${position}%`
     }
 
-    container.onmousemove = updateSlider
-    container.ontouchmove = updateSlider
+    container.addEventListener('mousemove', updateSlider)
+    container.addEventListener('touchmove', updateSlider, { passive: true })
+    
+    // Add active class for better mobile feedback
+    container.addEventListener('touchstart', () => container.classList.add('active'), { passive: true })
+    container.addEventListener('touchend', () => container.classList.remove('active'), { passive: true })
   })
 
   // Store Effects

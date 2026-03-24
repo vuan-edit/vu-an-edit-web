@@ -50,20 +50,21 @@ app.get('/api/geodata/tree', (req, res) => {
     }
 });
 
-app.post('/api/geodata/features', (req, res) => {
+app.post('/api/geodata/features', async (req, res) => {
     try {
-        const { bbox, activeLayers } = req.body;
-        const features = geodataService.getFeaturesInBbox(bbox, activeLayers);
+        const { bbox, activeLayers, zoom } = req.body;
+        const features = await geodataService.getFeaturesInBbox(bbox, activeLayers, zoom);
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.json({ data: features });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-app.post('/api/geodata/download', (req, res) => {
+app.post('/api/geodata/download', async (req, res) => {
     try {
         const { selectedLayers, selectedFeatures, format } = req.body;
-        const fc = geodataService.downloadFeatures(selectedLayers, selectedFeatures);
+        const fc = await geodataService.downloadFeatures(selectedLayers, selectedFeatures);
         
         let outData, filename, contentType;
         if (format === 'kml') {
@@ -77,7 +78,7 @@ app.post('/api/geodata/download', (req, res) => {
         }
         
         res.setHeader('Content-disposition', `attachment; filename=${filename}`);
-        res.setHeader('Content-type', contentType);
+        res.setHeader('Content-type', `${contentType}; charset=utf-8`);
         res.send(outData);
     } catch (err) {
         res.status(500).json({ error: err.message });
