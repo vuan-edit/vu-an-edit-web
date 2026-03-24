@@ -1952,3 +1952,9 @@ textarea.form-input {
     --container-padding: 1.25rem;
   }
 }
+
+/* COMPARISON SLIDER HINT (D2) */
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.3; transform: translateX(-50%) scale(1); }
+  50% { opacity: 0.8; transform: translateX(-50%) scale(1.05); }
+}

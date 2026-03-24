@@ -77,13 +77,13 @@ async function initDB() {
 
     // --- SEED DATA ---
     
-    // Seed Admin User (password: vuan123)
-    // In production, we should hash this, but I'll do it in the signup logic/init
-    const adminEmail = 'vuan.edit@gmail.com';
+    // Seed Admin User
+    const adminEmail = process.env.ADMIN_EMAIL || 'vuan.edit@gmail.com';
+    const adminPassword = process.env.ADMIN_PASSWORD;
     const existingAdmin = await dbGet('SELECT * FROM users WHERE email = ?', [adminEmail]);
-    if (!existingAdmin) {
+    if (!existingAdmin && adminPassword) {
         const bcrypt = require('bcryptjs');
-        const hash = await bcrypt.hash('vuan123', 10);
+        const hash = await bcrypt.hash(adminPassword, 10);
         await dbRun('INSERT INTO users (id, email, password_hash, plan_id) VALUES (?, ?, ?, ?)', 
             ['admin-uuid', adminEmail, hash, 'lifetime']);
         console.log('Admin user seeded');

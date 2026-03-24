@@ -27,9 +27,12 @@ window.adminDeleteLayer = async (id, filePath) => {
         if (sbError) throw new Error(`Supabase: ${sbError.message}`);
 
         console.log("[Admin] Deleting local file...");
+        const { data: { session } } = await supabase.auth.getSession();
+        const authHeaders = {};
+        if (session?.access_token) authHeaders['Authorization'] = `Bearer ${session.access_token}`;
         const res = await fetch(`${LOCAL_API_URL}/api/file`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...authHeaders },
             body: JSON.stringify({ path: `geodata/${filePath}` })
         });
         
@@ -580,7 +583,10 @@ async function handleAdminGeodataUpload() {
         formData.append('file', file);
         formData.append('type', `geodata/${folder}`); 
         
-        const uploadRes = await fetch(`${LOCAL_API_URL}/api/upload`, { method: 'POST', body: formData });
+        const { data: { session } } = await supabase.auth.getSession();
+        const authHeaders = {};
+        if (session?.access_token) authHeaders['Authorization'] = `Bearer ${session.access_token}`;
+        const uploadRes = await fetch(`${LOCAL_API_URL}/api/upload`, { method: 'POST', body: formData, headers: authHeaders });
         if (!uploadRes.ok) throw new Error('Upload server cục bộ thất bại');
         const uploadData = await uploadRes.json();
         const uploadedFilename = uploadData.filename; 

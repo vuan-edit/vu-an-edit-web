@@ -376,3 +376,14 @@
   color: var(--color-subtle);
   font-weight: 700;
 }
+
+/* SKELETON LOADER (D4) */
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

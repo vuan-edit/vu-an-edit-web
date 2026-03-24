@@ -6,6 +6,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
+        notFound: resolve(__dirname, '404.html'),
         geoextractor: resolve(__dirname, 'geoextractor/index.html'),
         projects: resolve(__dirname, 'projects/index.html'),
         courses: resolve(__dirname, 'courses/index.html'),

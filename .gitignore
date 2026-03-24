@@ -26,10 +26,15 @@ dist-ssr
 # Supabase
 supabase/.temp
 
+# Environment Variables
+.env
+server/.env
+
 # Local Server
 server/node_modules
 server/*.db
 server/*.db-journal
 server/storage/
+server/config.yml
 cloudflared.exe
 query

@@ -1,6 +1,10 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'vuanedit-secret-key-2026';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+    console.error('[Auth] FATAL: JWT_SECRET not set in environment. Set it in server/.env');
+    process.exit(1);
+}
 
 function generateToken(user) {
     return jwt.sign(

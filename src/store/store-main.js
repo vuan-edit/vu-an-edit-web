@@ -1,14 +1,30 @@
 import './store-style.css'
 import { supabase, getCurrentUser, signIn, signUp, signOut, getLocalFileUrl, LOCAL_API_URL } from '../shared/supabase.js'
+import { wrapWords, hw } from '../shared/utils.js'
 
 let allProducts = []
 let isLoadingProducts = false
 let hasInitialFetched = false
+const CACHE_KEY = 'vuanedit_products_cache'
+const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
 async function fetchProductsFromSupabase() {
   if (isLoadingProducts) return
   isLoadingProducts = true
   try {
+    // P6: Check session cache first
+    const cached = sessionStorage.getItem(CACHE_KEY)
+    if (cached) {
+      const { data: cachedData, timestamp } = JSON.parse(cached)
+      if (Date.now() - timestamp < CACHE_TTL) {
+        allProducts = cachedData
+        isLoadingProducts = false
+        hasInitialFetched = true
+        window.dispatchEvent(new CustomEvent('vuanedit:render'))
+        return
+      }
+    }
+
     const { data, error } = await supabase
       .from('products')
       .select('*')
@@ -16,22 +32,19 @@ async function fetchProductsFromSupabase() {
     
     if (error) throw error
     allProducts = data || []
+
+    // Cache result
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify({
+      data: allProducts,
+      timestamp: Date.now()
+    }))
   } catch (err) {
     console.error('Error fetching products:', err.message)
   } finally {
     isLoadingProducts = false
     hasInitialFetched = true
-    if (typeof window.render === 'function') {
-      window.render()
-    }
+    window.dispatchEvent(new CustomEvent('vuanedit:render'))
   }
-}
-
-function wrapWords(text) {
-  return text.split(' ').map(word => `<span class="word">${word}</span>`).join(' ')
-}
-function hw(text) {
-  return `<span class="hover-word">${wrapWords(text)}</span>`
 }
 
 function getStoreNav() {
@@ -596,7 +609,20 @@ export function getStoreTemplate(view) {
   if (isLoadingProducts && allProducts.length === 0) {
     return `
       ${getStoreNav()}
-      <main><div class="container" style="padding: 10vh 2rem; text-align:center;"><p style="letter-spacing:0.1em; color:#888;">ĐANG TẢI DỮ LIỆU...</p></div></main>
+      <main><div class="container" style="padding: 10vh 2rem;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;">
+          ${[1,2,3,4,5,6].map(() => `
+            <div class="skeleton-card" style="background:#111;border:1px solid #222;border-radius:8px;overflow:hidden;animation:skeletonPulse 1.5s ease-in-out infinite;">
+              <div style="height:180px;background:linear-gradient(90deg,#111 25%,#1a1a1a 50%,#111 75%);background-size:200% 100%;animation:skeletonShimmer 1.5s infinite;"></div>
+              <div style="padding:1.2rem;">
+                <div style="height:14px;background:#222;border-radius:4px;width:60%;margin-bottom:0.8rem;"></div>
+                <div style="height:10px;background:#1a1a1a;border-radius:4px;width:90%;margin-bottom:0.5rem;"></div>
+                <div style="height:10px;background:#1a1a1a;border-radius:4px;width:70%;"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div></main>
       ${getStoreFooter()}
     `
   }
@@ -717,8 +743,10 @@ async function initCheckoutLogic() {
     if (error) throw error
 
     // 2. Render real QR from SePay
-    // Template: compact, amount: X, des: MEMO, account: BIDV - 8808162732 - VU AN
-    const qrUrl = `https://qr.sepay.vn/img?bank=BIDV&acc=8808162732&template=compact&amount=${amount}&des=${encodeURIComponent(memo)}`
+    const bankName = import.meta.env.VITE_BANK_NAME || 'BIDV'
+    const bankAcc = import.meta.env.VITE_BANK_ACCOUNT || ''
+    const bankHolder = import.meta.env.VITE_BANK_HOLDER || ''
+    const qrUrl = `https://qr.sepay.vn/img?bank=${bankName}&acc=${bankAcc}&template=compact&amount=${amount}&des=${encodeURIComponent(memo)}`
     
     container.innerHTML = `
       <div style="background: #000; border: 1.5px solid var(--color-border); padding: 1.5rem; border-radius: 4px; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
@@ -726,15 +754,15 @@ async function initCheckoutLogic() {
           <h3 style="font-size:1rem; margin-bottom: 1rem;">Hướng dẫn thanh toán</h3>
           <div style="margin-bottom: 0.8rem;">
             <span style="font-size:0.7rem; color:var(--color-subtle); text-transform:uppercase;">Ngân hàng</span>
-            <div style="font-weight:700;">BIDV</div>
+            <div style="font-weight:700;">${bankName}</div>
           </div>
           <div style="margin-bottom: 0.8rem;">
             <span style="font-size:0.7rem; color:var(--color-subtle); text-transform:uppercase;">Số tài khoản</span>
-            <div style="font-weight:700; font-size:1.1rem; color:var(--color-accent);">8808162732</div>
+            <div style="font-weight:700; font-size:1.1rem; color:var(--color-accent);">${bankAcc}</div>
           </div>
           <div style="margin-bottom: 0.8rem;">
             <span style="font-size:0.7rem; color:var(--color-subtle); text-transform:uppercase;">Chủ tài khoản</span>
-            <div style="font-weight:700;">VŨ THANH AN</div>
+            <div style="font-weight:700;">${bankHolder}</div>
           </div>
           <div>
             <span style="font-size:0.7rem; color:var(--color-subtle); text-transform:uppercase;">Nội dung chuyển khoản</span>
@@ -936,7 +964,10 @@ async function initAdminLogic() {
 
           try {
               console.log("[Store Admin] Attempting local upload to:", LOCAL_API_URL);
-              const uploadRes = await fetch(`${LOCAL_API_URL}/api/upload`, { method: 'POST', body: formData });
+              const { data: { session } } = await supabase.auth.getSession();
+              const headers = {};
+              if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
+              const uploadRes = await fetch(`${LOCAL_API_URL}/api/upload`, { method: 'POST', body: formData, headers });
               if (!uploadRes.ok) throw new Error('Local server upload failed');
               const uploadData = await uploadRes.json();
               

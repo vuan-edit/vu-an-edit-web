@@ -115,8 +115,8 @@ async function fetchOsmDataLive(bbox, type, zoom) {
     }
 }
 
-function loadGeojsonFromFile(filePath) {
-    const raw = fs.readFileSync(filePath, 'utf8');
+async function loadGeojsonFromFile(filePath) {
+    const raw = await fs.promises.readFile(filePath, 'utf8');
     const parsed = JSON.parse(raw);
     return parsed.features ? parsed : { type: "FeatureCollection", features: [] };
 }
@@ -139,8 +139,8 @@ function processZipForGeojson(zipPath) {
 
 const { createClient } = require('@supabase/supabase-js');
 
-const supabaseUrl = 'https://gmjxcgblzfjqhaavgjgh.supabase.co';
-const supabaseAnonKey = 'sb_publishable_0Tn6z1ce6OJeRl5-4exKYA_vrWE6szc';
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 async function initGeodataService() {
@@ -168,7 +168,7 @@ async function initGeodataService() {
                 const fullPath = path.join(storageGeodata, actualPath);
                 if (fs.existsSync(fullPath)) {
                     console.log(`[GeodataService] Loading: ${fullPath}`);
-                    const geojson = loadGeojsonFromFile(fullPath);
+                    const geojson = await loadGeojsonFromFile(fullPath);
                     featureMemoryCache.set(layer.id, geojson);
                     physicalPathToId.set(layer.file_path, layer.id);
                     
@@ -205,7 +205,7 @@ async function initGeodataService() {
                     if (fullPath.endsWith('.zip')) {
                         geojson = processZipForGeojson(fullPath);
                     } else if (fullPath.endsWith('.geojson')) {
-                        geojson = loadGeojsonFromFile(fullPath);
+                        geojson = await loadGeojsonFromFile(fullPath);
                     }
                     
                     if (geojson && geojson.features.length > 0) {
@@ -227,7 +227,7 @@ async function initGeodataService() {
             if (!physicalPathToId.has(relPath)) {
                 const fullPath = path.join(osmDir, fileName);
                 console.log(`[GeodataService] Auto-loading OSM: ${fullPath}`);
-                const geojson = loadGeojsonFromFile(fullPath);
+                const geojson = await loadGeojsonFromFile(fullPath);
                 const layerId = `osm_auto_${fileName.replace('.geojson', '')}`;
                 featureMemoryCache.set(layerId, geojson);
                 physicalPathToId.set(relPath, layerId);

@@ -1,8 +1,11 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+const rateLimit = require('express-rate-limit');
 const { dbAll, dbRun, initDB } = require('./database');
 const geodataService = require('./geodata_service');
 const tokml = require('tokml');
@@ -10,8 +13,63 @@ const tokml = require('tokml');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+// --- SECURITY: CORS Whitelist ---
+const allowedOrigins = [
+    'https://vuanedit.online',
+    'http://localhost:5173',
+    'http://localhost:4173',
+    'http://127.0.0.1:5173'
+];
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests with no origin (mobile apps, curl, server-to-server)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            return callback(null, true);
+        }
+        return callback(new Error('CORS policy: Origin not allowed'), false);
+    }
+}));
+
 app.use(express.json());
+
+// --- SECURITY: Rate Limiting ---
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 200, // limit each IP to 200 requests per windowMs
+    message: { error: 'Too many requests, please try again later.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use('/api/', apiLimiter);
+
+// --- SECURITY: Simple Admin Auth Middleware ---
+// Uses Supabase JWT verification via the anon key
+const { createClient } = require('@supabase/supabase-js');
+const supabaseAdmin = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_ANON_KEY
+);
+
+async function requireAuth(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    try {
+        const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+        if (error || !user) {
+            return res.status(403).json({ error: 'Invalid or expired token' });
+        }
+        req.user = user;
+        next();
+    } catch (err) {
+        return res.status(403).json({ error: 'Authentication failed' });
+    }
+}
 
 // Log incoming requests
 app.use((req, res, next) => {
@@ -52,6 +110,7 @@ app.get('/api/geodata/tree', (req, res) => {
         const tree = geodataService.getLayerTree();
         res.json({ data: tree });
     } catch (err) {
+        console.error('[API] Error getting layer tree:', err.message);
         res.status(500).json({ error: err.message });
     }
 });
@@ -63,6 +122,7 @@ app.post('/api/geodata/features', async (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.json({ data: features });
     } catch (err) {
+        console.error('[API] Error getting features:', err.message);
         res.status(500).json({ error: err.message });
     }
 });
@@ -87,6 +147,7 @@ app.post('/api/geodata/download', async (req, res) => {
         res.setHeader('Content-type', `${contentType}; charset=utf-8`);
         res.send(outData);
     } catch (err) {
+        console.error('[API] Error downloading features:', err.message);
         res.status(500).json({ error: err.message });
     }
 });
@@ -97,12 +158,13 @@ app.get('/api/geodata/layers', async (req, res) => {
         const layers = await dbAll('SELECT * FROM geodata_layers');
         res.json({ data: layers });
     } catch (err) {
+        console.error('[API] Error getting layers:', err.message);
         res.status(500).json({ error: err.message });
     }
 });
 
-// NEW: Upload Endpoint for Admin
-app.post('/api/upload', upload.single('file'), (req, res) => {
+// SECURITY: Upload Endpoint — now requires auth
+app.post('/api/upload', requireAuth, upload.single('file'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
     
     // Return the filename so the frontend can save it to Supabase
@@ -112,8 +174,8 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     });
 });
 
-// NEW: Delete Local File Endpoint
-app.delete('/api/file', (req, res) => {
+// SECURITY: Delete Local File Endpoint — now requires auth
+app.delete('/api/file', requireAuth, (req, res) => {
     const filePath = req.body.path; // e.g., 'geodata/provinces/file.geojson'
     if (!filePath) return res.status(400).json({ error: 'Missing file path' });
 
