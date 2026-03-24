@@ -70,6 +70,31 @@ function getFooter() {
 
 import { videoData } from './video_data.js'
 
+// --- MONTAGE DATA (Sample for Course Promo) ---
+const montageData = [
+  {
+    id: 1,
+    video: '/video_class_preview/vid_1.mp4',
+    summary: 'AE Cấp Tốc - Nền tảng dựng phim chuẩn viral.',
+    views: '450K',
+    likes: '32K'
+  },
+  {
+    id: 2,
+    video: '/video_class_preview/vid_2.mp4',
+    summary: 'GEOLayers 3 - Làm chủ bản đồ chuyển động.',
+    views: '890K',
+    likes: '64K'
+  },
+  {
+    id: 3,
+    video: '/video_class_preview/vid_3.mp4',
+    summary: 'Tư duy Viral - Biến con số thành triệu view.',
+    views: '215K',
+    likes: '18K'
+  }
+]
+
 // --- VIEWS ---
 function getHomeTemplate() {
   const videoCards = videoData.map(item => `
@@ -148,15 +173,18 @@ function getHomeTemplate() {
 
       <section class="course-promo-section reveal">
         <div class="video-montage-container">
-          <div class="montage-item vid-1">
-            <video src="/video_class_preview/vid_1.mp4" autoplay loop muted playsinline loading="lazy"></video>
-          </div>
-          <div class="montage-item vid-2">
-            <video src="/video_class_preview/vid_2.mp4" autoplay loop muted playsinline loading="lazy"></video>
-          </div>
-          <div class="montage-item vid-3">
-            <video src="/video_class_preview/vid_3.mp4" autoplay loop muted playsinline loading="lazy"></video>
-          </div>
+          ${montageData.map((item, idx) => `
+            <div class="montage-item vid-${idx + 1}">
+              <video src="${item.video}" autoplay loop muted playsinline loading="lazy"></video>
+              <div class="montage-stats">
+                <p class="montage-stats-summary">${item.summary}</p>
+                <div class="montage-stats-grid">
+                  <span><i class="bi bi-eye"></i> ${item.views}</span>
+                  <span><i class="bi bi-heart"></i> ${item.likes}</span>
+                </div>
+              </div>
+            </div>
+          `).join('')}
         </div>
         <div class="container course-promo-inner">
           <div class="promo-content-wrapper">
@@ -728,6 +756,26 @@ function initEffects() {
     container.addEventListener('touchstart', () => container.classList.add('active'), { passive: true })
     container.addEventListener('touchend', () => container.classList.remove('active'), { passive: true })
   })
+
+  // Video Montage Touch/Mobile Interactivity
+  const montageItems = document.querySelectorAll('.montage-item')
+  if (montageItems.length > 0) {
+    montageItems.forEach(item => {
+      item.onclick = (e) => {
+        // Toggle active class on tap
+        const isActive = item.classList.contains('active')
+        montageItems.forEach(el => el.classList.remove('active'))
+        if (!isActive) item.classList.add('active')
+      }
+    })
+
+    // Clear active state when clicking away
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.montage-item')) {
+        montageItems.forEach(el => el.classList.remove('active'))
+      }
+    }, { passive: true })
+  }
 
   // Store Effects
   if (currentView.startsWith(VIEWS.STORE)) {

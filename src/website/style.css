@@ -103,6 +103,8 @@ body {
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* ============================================================
@@ -306,13 +308,15 @@ section {
     justify-content: center;
     gap: 3rem;
     transform: translateX(100%);
-    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    visibility: hidden;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s;
     z-index: 1000;
     padding-bottom: 10vh;
   }
 
   .site-nav.active {
     transform: translateX(0);
+    visibility: visible;
   }
 
   .site-nav a {
@@ -356,7 +360,7 @@ section {
   background: transparent;
   position: relative;
   padding: 0; /* Remove default section padding */
-  margin-top: -64px; /* Pull up to account for sticky header */
+  margin-top: calc(var(--header-height) * -1); /* Pull up to account for sticky header */
 }
 
 .hero-sticky-wrapper {
@@ -1198,39 +1202,9 @@ textarea.form-input {
     padding: 0 1.25rem;
   }
 
-  .site-header {
-    padding: 0 var(--container-padding);
-  }
-
-  .mobile-menu-btn {
-    display: flex;
-  }
-
-  .site-nav {
-    position: fixed;
-    top: 64px;
-    left: 0;
-    width: 100%;
-    height: calc(100vh - 64px);
-    background: rgba(0, 0, 0, 0.98);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    flex-direction: column;
-    padding: 3rem 2rem;
-    gap: 2rem;
-    transform: translateX(100%);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 999;
-    border-top: 1.5px solid #222;
-  }
-
-  .site-nav.active {
-    transform: translateX(0);
-  }
-
-  .site-nav a {
-    font-size: 1.5rem;
-    letter-spacing: 0;
+  .hero-scroll-container {
+    height: 350vh;
+    margin-top: -72px; /* Pull up to account for taller mobile header */
   }
 
   .hero-section {
@@ -1637,32 +1611,43 @@ textarea.form-input {
   overflow: hidden;
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .course-promo-inner {
   position: relative;
   z-index: 2;
+  width: 100%;
 }
 
 .promo-content-wrapper {
   max-width: 900px;
+  margin: 0 auto;
   position: relative;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .promo-btn-container {
   display: flex;
   gap: 2rem;
   align-items: center;
+  justify-content: center;
   flex-wrap: wrap;
 }
 
 .course-promo-section h2.promo-heading {
   font-size: clamp(3rem, 7vw, 6.5rem); 
-  line-height: 0.8; 
-  margin-bottom: 3.5rem;
+  line-height: 0.9; 
+  margin-bottom: 3rem;
   color: #fff;
   letter-spacing: -0.05em;
+  text-align: center;
 }
 
 .promo-heading .line-bold {
@@ -1686,104 +1671,16 @@ textarea.form-input {
 .course-promo-section p {
   font-size: clamp(1.1rem, 2vw, 1.4rem);
   max-width: 700px;
-  margin-bottom: 4.5rem;
+  margin: 0 auto 4rem;
   font-weight: 600;
   line-height: 1.5;
   color: #aaa;
+  text-align: center;
 }
 
 @media (max-width: 768px) {
   .course-promo-section {
-    padding: 8vh 0;
-    text-align: center;
-    background: transparent;
-  }
-  
-  .course-promo-section .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .promo-content-wrapper {
-    width: 100%;
-    position: relative;
-    z-index: 2;
-  }
-
-  .video-montage-container {
-    width: 100%;
-    margin-bottom: 3rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    top: 0;
-    right: 0;
-    transform: none;
-    height: auto;
-    min-height: 250px;
-    order: -1; /* Videos on top for vertical stack */
-  }
-
-  .promo-btn-container {
-    justify-content: center;
-  }
-
-  .course-promo-section h2.promo-heading {
-    font-size: clamp(2.2rem, 8vw, 3.2rem) !important;
-    line-height: 1 !important;
-    margin-bottom: 2rem !important;
-    text-align: center;
-  }
-
-  .course-promo-section p {
-    margin-bottom: 2.5rem !important;
-    font-size: 1rem !important;
-    text-align: center;
-  }
-  
-  .course-promo-inner {
-    order: 2;
-    padding: 0 var(--container-padding);
-    width: 100%;
-  }
-
-  .promo-content-wrapper {
-    max-width: 100%;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .course-promo-section h2.promo-heading {
-    font-size: clamp(1.8rem, 8vw, 2.5rem) !important;
-    line-height: 1.1 !important;
-    margin-bottom: 1.5rem !important;
-    text-align: center !important;
-    font-style: normal;
-  }
-  
-  .promo-heading .line-bold,
-  .promo-heading .line-black {
-    display: block !important; /* Ensure they stay as blocks to be centered individually or just better stack */
-    text-align: center !important;
-    font-style: normal;
-  }
-
-  .course-promo-section p {
-    font-size: 1rem !important;
-    line-height: 1.6 !important;
-    margin: 0 auto 2.5rem !important;
-    color: #888 !important;
-    text-align: center !important;
-  }
-
-  .promo-btn-container {
-    justify-content: center;
-    width: 100%;
+    padding: 10vh 0;
   }
 }
 
@@ -1866,134 +1763,182 @@ textarea.form-input {
   z-index: 1;
 }
 
-/* VIDEO MONTAGE */
+/* VIDEO MONTAGE (Unified Centered Layout) */
 .video-montage-container {
-  position: absolute;
-  top: 50%;
-  right: 0%;
-  transform: translateY(-50%);
-  width: 45vw;
-  height: 40vw;
-  pointer-events: auto; /* Enable hover capture */
-  z-index: 5; /* Ensure it's above the text content */
-}
-
-@media (max-width: 768px) {
-  .video-montage-container {
-    order: 1; /* Videos on top */
-    position: relative;
-    top: 0;
-    right: 0;
-    transform: none;
-    width: 100%;
-    height: auto;
-    min-height: 300px;
-    margin-bottom: 3rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-  }
-  
-  .vid-1, .vid-2, .vid-3 {
-    position: relative;
-    width: 28vw;
-    height: 48vw;
-    max-width: 130px;
-    max-height: 220px;
-    top: auto;
-    right: auto;
-    bottom: auto;
-    transform: none !important;
-    margin: 0 -4%;
-    opacity: 1 !important;
-    border-radius: 12px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-  
-  .vid-1 {
-    transform: rotate(-10deg) translateY(20px) !important;
-    z-index: 1;
-  }
-  
-  .vid-3 {
-    transform: rotate(10deg) translateY(20px) !important;
-    z-index: 1;
-  }
-  
-  .vid-2 {
-    z-index: 10;
-    width: 32vw;
-    height: 55vw;
-    max-width: 150px;
-    max-height: 260px;
-    transform: none !important;
-    border-color: var(--color-accent);
-    box-shadow: 0 25px 60px rgba(180, 253, 0, 0.3);
-  }
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  height: 450px; /* Base height for fanning */
+  margin: 0 auto 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+  z-index: 5;
 }
 
 .montage-item {
   position: absolute;
-  overflow: hidden;
+  overflow: visible; /* Needed for stats to slide out */
   border-radius: 12px;
   background: transparent;
   box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   border: 1px solid rgba(255,255,255,0.1);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
   pointer-events: auto;
+  transform: translateX(var(--tx, 0));
 }
 
 .montage-item video {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 12px;
 }
 
-.vid-1 {
-  width: 12vw;
-  height: 21vw;
-  top: 5%;
-  right: 22%;
-  z-index: 2;
-  transform: rotate(-6deg);
+/* Phones Scaling Across Viewports */
+.vid-1, .vid-3 {
+  width: 220px;
+  height: 380px;
 }
 
 .vid-2 {
-  width: 14vw;
-  height: 25vw;
-  top: 25%;
-  right: 8%;
+  width: 250px;
+  height: 440px;
+}
+
+/* SIMPLE HORIZONTAL ROW (Stable Variable-Driven) */
+.vid-1 {
+  z-index: 2;
+  --tx: -110%;
+}
+
+.vid-2 {
   z-index: 4;
-  transform: rotate(2deg);
-  box-shadow: 0 30px 60px rgba(180, 253, 0, 0.2);
-  border: 1.5px solid var(--color-accent);
+  --tx: 0;
+  box-shadow: 0 40px 100px rgba(180, 253, 0, 0.2);
+  border: 1.5px solid rgba(180, 253, 0, 0.3);
 }
 
 .vid-3 {
-  width: 11vw;
-  height: 20vw;
-  bottom: 8%;
-  right: 25%;
-  z-index: 1;
-  transform: rotate(6deg);
-  opacity: 0.6;
+  z-index: 2;
+  --tx: 110%;
 }
 
-/* Individual Hover Highlights */
-.montage-item:hover {
-  z-index: 10 !important;
-  transform: scale(1.1) rotate(0deg) !important;
+/* --- MONTAGE STATS OVERLAY --- */
+.montage-stats {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.8) 70%, transparent 100%);
+  backdrop-filter: blur(8px);
+  padding: 1.5rem 1rem 1rem;
+  border-top: 1.5px solid var(--color-accent);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.montage-stats-summary {
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  line-height: 1.3;
+  color: #fff;
+}
+
+.montage-stats-grid {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: var(--color-accent);
+}
+
+.montage-stats-grid span {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Individual Hover Highlights - STABLE & SMOOTH */
+.montage-item:hover,
+.montage-item.active {
+  z-index: 60 !important;
+  transform: translateX(var(--tx)) scale(1.1) !important;
   opacity: 1 !important;
-  box-shadow: 0 40px 80px rgba(180, 253, 0, 0.4);
-  filter: brightness(1.2);
+  box-shadow: 0 40px 100px rgba(180, 253, 0, 0.4);
   border-color: var(--color-accent);
 }
 
-.course-promo-section:hover .montage-item:not(:hover) {
-  opacity: 0.3;
-  filter: blur(2px) grayscale(0.5);
+.montage-item:hover .montage-stats,
+.montage-item.active .montage-stats {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* ONLY fade others if ONE of the items is actually hovered or active */
+.video-montage-container:has(.montage-item:hover, .montage-item.active) .montage-item:not(:hover):not(.active) {
+  opacity: 0.15;
+  filter: blur(4px) grayscale(0.7);
+  transform: translateX(var(--tx)) scale(0.9) !important;
+}
+
+@media (max-width: 1024px) {
+  .video-montage-container {
+    height: 380px;
+    max-width: 900px;
+  }
+  .vid-1, .vid-3 { width: 170px; height: 300px; }
+  .vid-2 { width: 190px; height: 340px; }
+  
+  .montage-stats {
+    width: 160px;
+    padding: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .course-promo-section {
+    padding: 8vh 0;
+  }
+  .video-montage-container {
+    height: 320px;
+    margin-bottom: 2rem;
+  }
+  .vid-1, .vid-3 { 
+    width: 120px; 
+    height: 220px;
+    --tx: -110%;
+  }
+  .vid-3 {
+    --tx: 110%;
+  }
+  .vid-2 { 
+    width: 140px; 
+    height: 250px; 
+    --tx: 0;
+  }
+  
+  .montage-stats {
+    width: 100%;
+    padding: 0.8rem 0.5rem;
+    font-size: 0.7rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.9) 100%);
+  }
+  .montage-stats-summary {
+    font-size: 0.65rem;
+    margin-bottom: 0.4rem;
+  }
+  .montage-stats-grid {
+    gap: 0.5rem;
+    font-size: 0.65rem;
+  }
 }
 
 @media (max-width: 1024px) {
