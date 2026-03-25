@@ -158,6 +158,8 @@ nav a {
   transition: background-color 0.15s ease, color 0.15s ease;
   padding: 0 0.05em;
   border-radius: 2px;
+  font-style: italic;
+  font-weight: 900;
 }
 
 .hover-word .word:hover {
@@ -421,6 +423,23 @@ section {
     border-width: 2px;
   }
 }
+
+/* Very small phones (iPhone SE, Galaxy S small) */
+@media (max-width: 375px) {
+  .hero-scroll-container {
+    height: 400vh;
+  }
+  .hero-horizontal-strip {
+    gap: 1.5rem;
+  }
+  .hero-text-item h1 {
+    font-size: clamp(1.6rem, 10vw, 3rem);
+  }
+  .hero-video-item {
+    height: 55vh;
+    width: 250px;
+  }
+}
 .hero-video-item {
   height: 80vh; /* Controlled height for vertical centering */
   aspect-ratio: 9/16;
@@ -461,6 +480,15 @@ section {
 
 .hero-video-item:hover .video-stats-overlay {
   transform: translateY(0);
+}
+
+/* Touch devices: always show a compact stats overlay */
+@media (hover: none) {
+  .video-stats-overlay {
+    transform: translateY(0);
+    padding: 1.5rem 1rem 1rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 60%, transparent 100%);
+  }
 }
 
 /* --- ABOUT PROJECT ICONS --- */
@@ -1283,7 +1311,249 @@ textarea.form-input {
   min-height: auto;
   color: #fff;
   padding-bottom: 2vh;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1.5px solid var(--color-border);
 }
+
+.project-dashboard-inner {
+  padding: 3rem;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+}
+
+.project-dashboard-header {
+  margin-bottom: 3rem;
+}
+
+.project-dashboard-title {
+  font-size: clamp(2rem, 5vw, 4rem);
+  color: var(--color-accent);
+  text-transform: uppercase;
+  line-height: 0.9;
+  margin-bottom: 0.5rem;
+}
+
+/* Project Audience */
+.project-audience-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.project-audience-icon {
+  font-size: 2.5rem;
+  color: #fff;
+}
+
+.project-audience-details {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #ccc;
+}
+
+.project-audience-details strong {
+  color: #fff;
+}
+
+/* Project Gender Bar */
+.project-gender-bar {
+  height: 8px;
+  background: #222;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  margin-bottom: 0.5rem;
+  border-top: 1.5px solid #222;
+  padding-top: 0;
+  margin-top: 1rem;
+}
+
+.project-gender-fill {
+  background: var(--color-accent);
+}
+
+.project-gender-label {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+/* Project Stats Grid */
+.project-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+}
+
+.project-stat-item {
+  padding: 0.8rem;
+  border: 1.5px solid #222;
+  border-radius: 8px;
+  background: #0a0a0a;
+  text-align: center;
+}
+
+.project-stat-label {
+  font-size: 0.55rem;
+  color: #888;
+  text-transform: uppercase;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.project-stat-value {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--color-accent);
+  letter-spacing: -0.02em;
+}
+
+/* Project Content Section */
+.project-content-section {
+  margin-top: 3rem;
+}
+
+.project-content-section .dashboard-tag {
+  margin-bottom: 2rem;
+}
+
+.project-content-gallery {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.project-content-card {
+  background: #111;
+  border: 1.5px solid #222;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.project-content-card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-4px);
+}
+
+.project-content-thumb {
+  aspect-ratio: 9/16;
+  background: #222;
+  position: relative;
+}
+
+.project-content-views {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  border-radius: 4px;
+}
+
+.project-content-info {
+  padding: 0.8rem;
+  color: #fff;
+}
+
+.project-content-info p {
+  font-size: 0.75rem;
+  margin-bottom: 0.3rem;
+  line-height: 1.4;
+}
+
+.project-content-stats {
+  font-size: 0.6rem;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+/* Project Team Grid */
+.project-team-grid {
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.project-team-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1.5px solid #222;
+  transition: border-color 0.3s ease;
+}
+
+.project-team-card:hover {
+  border-color: var(--color-accent);
+}
+
+.project-team-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-accent);
+}
+
+.project-team-avatar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  font-size: 1.8rem;
+  color: #fff;
+}
+
+/* Project Meta Label */
+.project-meta-label {
+  font-size: 0.8rem;
+  color: #555;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .project-dashboard-inner {
+    padding: 2rem 1.25rem;
+  }
+  .project-dashboard-title {
+    font-size: clamp(1.5rem, 8vw, 2.5rem);
+  }
+  .project-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .project-content-gallery {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+  .project-team-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .project-audience-info {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 375px) {
+  .project-content-gallery {
+    grid-template-columns: 1fr;
+  }
+  .project-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+}
+
 
 .dashboard-header {
   padding: 6vh 0 4vh;
@@ -1452,6 +1722,21 @@ textarea.form-input {
 @media (max-width: 900px) {
   .dashboard-grid, .content-gallery {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .project-dashboard .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .project-item .team-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .project-meta {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
   }
 }
 
@@ -1938,6 +2223,42 @@ textarea.form-input {
   .montage-stats-grid {
     gap: 0.5rem;
     font-size: 0.65rem;
+  }
+}
+
+/* Touch devices: show montage stats on tap */
+@media (hover: none) {
+  .montage-item.active .montage-stats {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+/* Very small phones montage */
+@media (max-width: 375px) {
+  .video-montage-container {
+    height: 280px;
+    margin-bottom: 1.5rem;
+  }
+  .vid-1, .vid-3 {
+    width: 100px;
+    height: 180px;
+  }
+  .vid-2 {
+    width: 120px;
+    height: 210px;
+  }
+  .course-promo-section h2.promo-heading {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+  .course-promo-section p {
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+  }
+  .promo-btn {
+    padding: 1rem 2.5rem;
+    font-size: 0.85rem;
   }
 }
 

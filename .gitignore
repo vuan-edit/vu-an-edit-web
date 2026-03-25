@@ -30,11 +30,13 @@ supabase/.temp
 .env
 server/.env
 
-# Local Server
-server/node_modules
-server/*.db
-server/*.db-journal
-server/storage/
-server/config.yml
+# Local Server & CLI Tools
+server/
 cloudflared.exe
 query
+start_vuanedit.bat
+scripts/
+
+# Offline Desktop App
+geoextractor/
+/geoextractor/

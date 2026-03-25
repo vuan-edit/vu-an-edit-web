@@ -64,7 +64,7 @@ function getStoreNav() {
         <a href="/store/" data-store-nav="">Trang chủ Store</a>
         <a href="#store-catalog">Dữ liệu</a>
         <a href="#store-pricing">Bảng giá</a>
-        <a href="/geoextractor/" style="color:var(--color-accent); font-weight:700;">GeoExtractor</a>
+
         <a href="#store-dashboard" id="nav-account-link">Tài khoản</a>
         <a href="/" style="color:#888; margin-left:1rem;">← Về Vũ An Edit</a>
       </nav>
@@ -123,16 +123,16 @@ function getStoreHomeTemplate() {
         </div>
       </section>
 
-      <!-- GeoExtractor Feature Banner -->
+      <!-- GeoExtractor Software Promo Banner -->
       <div class="container reveal" style="margin: 4vh auto;">
-        <div style="background: transparent; border: 1.5px solid var(--color-accent); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; md:flex-row; box-shadow: 0 0 20px rgba(180, 253, 0, 0.05);">
+        <div style="background: transparent; border: 1.5px solid var(--color-accent); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(180, 253, 0, 0.05);">
           <div style="padding: 4rem; flex: 1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
-             <div style="display:inline-block; padding: 0.3rem 0.8rem; background:var(--color-accent); color:#000; font-size:0.75rem; font-weight:900; text-transform:uppercase; border-radius:4px; margin-bottom:1.5rem;">Độc quyền Lifetime</div>
-             <h2 style="font-size: 2.8rem; margin-bottom: 1.5rem; color: #fff;">Công cụ <span style="color:var(--color-accent);">GeoExtractor</span></h2>
+             <div style="display:inline-block; padding: 0.3rem 0.8rem; background:var(--color-accent); color:#000; font-size:0.75rem; font-weight:900; text-transform:uppercase; border-radius:4px; margin-bottom:1.5rem;">Phần Mềm Độc Quyền</div>
+             <h2 style="font-size: 2.8rem; margin-bottom: 1.5rem; color: #fff;">Phần mềm <span style="color:var(--color-accent);">GeoExtractor</span></h2>
              <p style="color:var(--color-subtle); max-width:650px; margin-bottom: 2.5rem; line-height: 1.7;">
-               Trích xuất dữ liệu bản đồ OpenStreetMap (Tòa nhà, Sông hồ, Đường bộ, Quốc gia) trực tiếp ngay trên trình duyệt.<br>Tải xuống định dạng GeoJSON hoặc KML chỉ với 1 click chuột! Không giới hạn tính năng.
+               Trích xuất dữ liệu bản đồ OpenStreetMap (Tòa nhà, Sông hồ, Đường bộ, Quốc gia) trực tiếp trên máy tính.<br>Tải xuống định dạng GeoJSON hoặc KML chỉ với 1 click. Phần mềm desktop sẽ sớm ra mắt!
              </p>
-             <a href="/geoextractor/" class="plan-btn" style="background:var(--color-accent); color:#000; border-color:var(--color-accent); padding: 1rem 3rem; width: auto; font-size: 1rem; font-weight: 800;">Trải Nghiệm Ngay</a>
+             <span class="plan-btn" style="background:#333; color:var(--color-accent); border-color:#444; padding: 1rem 3rem; width: auto; font-size: 1rem; font-weight: 800; cursor:default;"><i class="bi bi-clock-history"></i> Sắp Ra Mắt</span>
           </div>
         </div>
       </div>
@@ -592,7 +592,7 @@ function getStoreAdminTemplate() {
           
           <div style="margin-top: 3rem; display:flex; justify-content:space-between; align-items:center; border-top:1px solid #333; padding-top:2rem;">
             <a href="#store-dashboard" style="color:var(--color-subtle); text-decoration:underline; font-size:0.85rem;"><i class="bi bi-arrow-left"></i> Về Dashboard</a>
-            <a href="/geoextractor/" style="background:#222; border:1px solid #444; color:#b4fd00; padding:10px 20px; font-size:0.85rem; font-weight:700; text-decoration:none; border-radius:4px;"><i class="bi bi-gear-fill"></i> Mở thư viện Data Bản đồ (GeoExtractor)</a>
+            <span style="background:#222; border:1px solid #444; color:#888; padding:10px 20px; font-size:0.85rem; font-weight:700; border-radius:4px;"><i class="bi bi-clock-history"></i> GeoExtractor — Sẽ ra mắt dưới dạng phần mềm riêng</span>
           </div>
         </div>
       </section>
@@ -831,9 +831,32 @@ async function checkAuthForNav() {
 
     if (canDownload) {
       dlArea.innerHTML = `<button id="btn-actual-download" class="plan-btn" style="background:var(--color-accent); color:#000; border-color:var(--color-accent); font-size:1rem;">Tải Xuống Ngay</button><p style="font-size:0.75rem; color:var(--color-subtle); margin-top:1rem; text-align:center;">Tệp sẽ được nén dưới định dạng .ZIP</p>`
-      document.getElementById('btn-actual-download').onclick = () => {
-        const fileUrl = getLocalFileUrl(product.file_url.split('/').pop(), 'products');
-        window.open(fileUrl, '_blank');
+      document.getElementById('btn-actual-download').onclick = async () => {
+        const btn = document.getElementById('btn-actual-download');
+        const originalText = btn.innerText;
+        btn.innerText = 'Đang tạo link bảo mật...';
+        btn.disabled = true;
+        
+        try {
+          const fileName = product.file_url.split('/').pop();
+          // Gọi Edge Function để lấy Signed URL từ Cloudflare R2
+          const { data, error } = await supabase.functions.invoke('get-r2-url', {
+            body: { path: fileName }
+          });
+          
+          if (error) throw error;
+          if (data && data.url) {
+            window.open(data.url, '_blank');
+          } else {
+            throw new Error(data?.error || 'Không lấy được link tải.');
+          }
+        } catch (err) {
+          console.error('Lỗi tải file R2:', err);
+          alert('Có lỗi xảy ra khi lấy link tải: ' + err.message);
+        } finally {
+          btn.innerText = originalText;
+          btn.disabled = false;
+        }
       }
     } else if (needsLifetime) {
       dlArea.innerHTML = `<p style="font-size:0.85rem; margin-bottom:1.5rem; color:#f1c40f; font-weight:700;">Sản phẩm này yêu cầu gói <span style="color:var(--color-accent)">LIFETIME</span>.</p><a href="#store-pricing" class="plan-btn" style="background:var(--color-accent); color:#000; border-color:var(--color-accent); margin-bottom:1rem;">Nâng cấp lên Lifetime</a>`
@@ -957,31 +980,37 @@ async function initAdminLogic() {
       if (fileInput.files.length > 0) {
           const file = fileInput.files[0];
           
-          // Hybrid: Try local upload first if LOCAL_API_URL is available
-          const formData = new FormData();
-          formData.append('file', file);
-          formData.append('type', 'products');
+          // Direct Upload to Cloudflare R2 via Edge Function Signed URL
+          // Lọc ký tự đặc biệt để đảm bảo URL an toàn trên R2
+          const cleanName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+          const fileName = `${Date.now()}_${cleanName}`;
+          const fileType = file.type || 'application/octet-stream';
 
           try {
-              console.log("[Store Admin] Attempting local upload to:", LOCAL_API_URL);
-              const { data: { session } } = await supabase.auth.getSession();
-              const headers = {};
-              if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
-              const uploadRes = await fetch(`${LOCAL_API_URL}/api/upload`, { method: 'POST', body: formData, headers });
-              if (!uploadRes.ok) throw new Error('Local server upload failed');
-              const uploadData = await uploadRes.json();
+              console.log("[Store Admin] Đang xin cấp quyền Upload từ R2...");
+              const { data, error } = await supabase.functions.invoke('get-r2-upload-url', {
+                  body: { path: fileName, contentType: fileType }
+              });
               
-              file_url = `${LOCAL_API_URL}${uploadData.path}`;
-              file_path = uploadData.filename;
-              console.log("[Store Admin] Local upload success:", file_url);
-          } catch (err) {
-              console.warn("[Store Admin] Local upload failed, falling back to Supabase:", err.message);
-              const fileName = `${Date.now()}_${file.name}`;
-              const { error: uploadErr } = await supabase.storage.from('geodata').upload(fileName, file);
-              if (uploadErr) throw uploadErr;
+              if (error) throw error;
+              if (!data || !data.url) throw new Error("Không thể lấy Link bảo mật R2.");
+              
+              console.log("[Store Admin] Đang đẩy file trực tiếp lên R2...");
+              const uploadRes = await fetch(data.url, {
+                  method: 'PUT',
+                  body: file,
+                  headers: { 'Content-Type': fileType }
+              });
+              
+              if (!uploadRes.ok) throw new Error('Up file lỗi. Mã: ' + uploadRes.status);
+              
+              // Lưu filename tinh gọn, khi download hệ thống sẽ gọi Edge Function ghép prefix R2
               file_path = fileName;
-              const { data } = supabase.storage.from('geodata').getPublicUrl(fileName);
-              file_url = data.publicUrl;
+              file_url = fileName;
+              console.log("[Store Admin] Upload thành công:", fileName);
+          } catch (err) {
+              console.error("[Store Admin] Lỗi Upload R2:", err.message);
+              throw new Error("Lỗi tải lên R2: " + err.message);
           }
       } else if (!file_url && !id) {
           throw new Error("Vui lòng tải lên file dữ liệu hoặc cung cấp Link URL.");

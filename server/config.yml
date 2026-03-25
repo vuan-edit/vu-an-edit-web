@@ -1,7 +1,0 @@
-tunnel: a46a7770-9ecc-40c1-80af-53cb536a6eec
-credentials-file: C:\Users\Admin\.cloudflared\a46a7770-9ecc-40c1-80af-53cb536a6eec.json
-
-ingress:
-  - hostname: api.vuanedit.online
-    service: http://127.0.0.1:3000
-  - service: http_status:404

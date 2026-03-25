@@ -238,95 +238,92 @@ function getProjectsTemplate() {
       <div class="container">
         <!-- Project 1: Finpath - Tình Báo Thị Trường -->
         <div class="project-item reveal">
-          <div class="project-dashboard" style="border-radius: 12px; overflow: hidden; border: 1.5px solid var(--color-border); padding: 0;">
-            <div style="padding: 3rem; background: #000;">
-              <div style="margin-bottom: 3rem;">
-                <span class="dashboard-tag accent-bg" style="border-radius: 4px;">Update: 18/03/2026</span>
-                <h2 style="font-size: clamp(2rem, 5vw, 4rem); color: var(--color-accent); text-transform: uppercase; line-height: 0.9; margin-bottom: 0.5rem;">Tình báo thị trường</h2>
-                <div class="project-collab" style="color: var(--color-subtle); letter-spacing: 0.05em;">Data Visualization & Motion Branding</div>
+          <div class="project-dashboard">
+            <div class="project-dashboard-inner">
+              <div class="project-dashboard-header">
+                <span class="dashboard-tag accent-bg">Update: 18/03/2026</span>
+                <h2 class="project-dashboard-title">Tình báo thị trường</h2>
+                <div class="project-collab">Data Visualization & Motion Branding</div>
               </div>
  
               <div class="dashboard-grid">
                 <div class="dark-card">
-                  <h3 style="font-size: 0.8rem; margin-bottom: 1.5rem; border-bottom: 1.5px solid #222; padding-bottom: 0.8rem; text-align: center; color: var(--color-accent);">Tổng quan tập khách hàng</h3>
-                  <div style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem;">
-                    <div style="font-size: 2.5rem; color: #fff;"><i class="bi bi-person-bounding-box"></i></div>
-                    <div style="font-size: 0.8rem; line-height: 1.5; color: #ccc;">
-                      <p><strong style="color: #fff;">Độ tuổi:</strong> 18 - 24 (52.7%)</p>
-                      <p><strong style="color: #fff;">Nghề nghiệp:</strong> Sinh viên, Văn phòng</p>
-                      <p><strong style="color: #fff;">Sở thích:</strong> Tài chính, Chứng khoán</p>
+                  <h3>Tổng quan tập khách hàng</h3>
+                  <div class="project-audience-info">
+                    <div class="project-audience-icon"><i class="bi bi-person-bounding-box"></i></div>
+                    <div class="project-audience-details">
+                      <p><strong>Độ tuổi:</strong> 18 - 24 (52.7%)</p>
+                      <p><strong>Nghề nghiệp:</strong> Sinh viên, Văn phòng</p>
+                      <p><strong>Sở thích:</strong> Tài chính, Chứng khoán</p>
                     </div>
                   </div>
-                  <div style="border-top: 1.5px solid #222; padding-top: 1rem;">
-                    <div style="height: 8px; background: #222; border-radius: 4px; overflow: hidden; display: flex; margin-bottom: 0.5rem;">
-                      <div style="width: 72%; background: var(--color-accent);"></div>
-                      <div style="width: 28%; background: #333;"></div>
-                    </div>
-                    <p style="font-size: 0.75rem; color: #888;"><span style="color: var(--color-accent);">Nam: 72%</span> | Nữ: 27%</p>
-                    <p style="font-size: 0.75rem; color: #888; margin-top: 0.5rem;">Vị trí: HN (30%), HCM (28%)</p>
+                  <div class="project-gender-bar">
+                    <div class="project-gender-fill" style="width:72%"></div>
                   </div>
+                  <p class="project-gender-label"><span class="accent-text">Nam: 72%</span> | Nữ: 27%</p>
+                  <p class="project-gender-label" style="margin-top:0.3rem;">Vị trí: HN (30%), HCM (28%)</p>
                 </div>
  
                 <div class="dark-card">
-                  <h3 style="font-size: 0.8rem; margin-bottom: 1.5rem; border-bottom: 1.5px solid #222; padding-bottom: 0.8rem; text-align: center; color: var(--color-accent);">Chỉ số 3 tháng gần nhất</h3>
-                  <div class="stats-container" style="grid-template-columns: repeat(3, 1fr); gap: 0.8rem;">
-                    <div class="stat-item" style="padding: 0.8rem; border-color: #222; background: #0a0a0a;"><span class="label" style="font-size:0.55rem; color: #888;">Xem</span><div class="stat-value" style="font-size:1.2rem; color: var(--color-accent);">119M</div></div>
-                    <div class="stat-item" style="padding: 0.8rem; border-color: #222; background: #0a0a0a;"><span class="label" style="font-size:0.55rem; color: #888;">Like</span><div class="stat-value" style="font-size:1.2rem; color: var(--color-accent);">5.8M</div></div>
-                    <div class="stat-item" style="padding: 0.8rem; border-color: #222; background: #0a0a0a;"><span class="label" style="font-size:0.55rem; color: #888;">Cmt</span><div class="stat-value" style="font-size:1.2rem; color: var(--color-accent);">215K</div></div>
-                    <div class="stat-item" style="padding: 0.8rem; border-color: #222; background: #0a0a0a;"><span class="label" style="font-size:0.55rem; color: #888;">Share</span><div class="stat-value" style="font-size:1.2rem; color: var(--color-accent);">431K</div></div>
-                    <div class="stat-item" style="padding: 0.8rem; border-color: #222; background: #0a0a0a;"><span class="label" style="font-size:0.55rem; color: #888;">Reach</span><div class="stat-value" style="font-size:1.2rem; color: var(--color-accent);">9M</div></div>
-                    <div class="stat-item" style="padding: 0.8rem; border-color: #222; background: #0a0a0a;"><span class="label" style="font-size:0.55rem; color: #888;">Profile</span><div class="stat-value" style="font-size:1.2rem; color: var(--color-accent);">946K</div></div>
+                  <h3>Chỉ số 3 tháng gần nhất</h3>
+                  <div class="project-stats-grid">
+                    <div class="project-stat-item"><span class="project-stat-label">Xem</span><div class="project-stat-value">119M</div></div>
+                    <div class="project-stat-item"><span class="project-stat-label">Like</span><div class="project-stat-value">5.8M</div></div>
+                    <div class="project-stat-item"><span class="project-stat-label">Cmt</span><div class="project-stat-value">215K</div></div>
+                    <div class="project-stat-item"><span class="project-stat-label">Share</span><div class="project-stat-value">431K</div></div>
+                    <div class="project-stat-item"><span class="project-stat-label">Reach</span><div class="project-stat-value">9M</div></div>
+                    <div class="project-stat-item"><span class="project-stat-label">Profile</span><div class="project-stat-value">946K</div></div>
                   </div>
                 </div>
               </div>
  
-              <div style="margin-top: 3rem;">
-                <h3 class="dashboard-tag accent-bg" style="margin-bottom: 2rem;">Top content</h3>
-                <div class="content-gallery" style="grid-template-columns: repeat(3, 1fr); gap: 1rem;">
-                  <div class="content-card" style="background: #111; border: 1.5px solid #222;">
-                    <div class="content-card-thumb" style="aspect-ratio: 9/16; background: #222;"><div class="views accent-bg">6.9M</div></div>
-                    <div class="content-card-info" style="padding: 0.8rem; color: #fff;">
-                      <p style="font-size: 0.75rem;"><strong>Lạm phát là gì?</strong></p>
-                      <div class="stats" style="font-size: 0.6rem; color: var(--color-accent);"><i class="bi bi-heart-fill"></i> 335K | <i class="bi bi-arrow-repeat"></i> 5K</div>
+              <div class="project-content-section">
+                <h3 class="dashboard-tag accent-bg">Top content</h3>
+                <div class="content-gallery project-content-gallery">
+                  <div class="project-content-card">
+                    <div class="project-content-thumb"><div class="project-content-views accent-bg">6.9M</div></div>
+                    <div class="project-content-info">
+                      <p><strong>Lạm phát là gì?</strong></p>
+                      <div class="project-content-stats"><i class="bi bi-heart-fill"></i> 335K | <i class="bi bi-arrow-repeat"></i> 5K</div>
                     </div>
                   </div>
-                  <div class="content-card" style="background: #111; border: 1.5px solid #222;">
-                    <div class="content-card-thumb" style="aspect-ratio: 9/16; background: #222;"><div class="views accent-bg">6.9M</div></div>
-                    <div class="content-card-info" style="padding: 0.8rem; color: #fff;">
-                      <p style="font-size: 0.75rem;"><strong>Hàng hóa VN giá cao?</strong></p>
-                      <div class="stats" style="font-size: 0.6rem; color: var(--color-accent);"><i class="bi bi-heart-fill"></i> 290K | <i class="bi bi-arrow-repeat"></i> 11K</div>
+                  <div class="project-content-card">
+                    <div class="project-content-thumb"><div class="project-content-views accent-bg">6.9M</div></div>
+                    <div class="project-content-info">
+                      <p><strong>Hàng hóa VN giá cao?</strong></p>
+                      <div class="project-content-stats"><i class="bi bi-heart-fill"></i> 290K | <i class="bi bi-arrow-repeat"></i> 11K</div>
                     </div>
                   </div>
-                  <div class="content-card" style="background: #111; border: 1.5px solid #222;">
-                    <div class="content-card-thumb" style="aspect-ratio: 9/16; background: #222;"><div class="views accent-bg">6.2M</div></div>
-                    <div class="content-card-info" style="padding: 0.8rem; color: #fff;">
-                      <p style="font-size: 0.75rem;"><strong>Kênh đào Phù Nam?</strong></p>
-                      <div class="stats" style="font-size: 0.6rem; color: var(--color-accent);"><i class="bi bi-heart-fill"></i> 280K | <i class="bi bi-arrow-repeat"></i> 9K</div>
+                  <div class="project-content-card">
+                    <div class="project-content-thumb"><div class="project-content-views accent-bg">6.2M</div></div>
+                    <div class="project-content-info">
+                      <p><strong>Kênh đào Phù Nam?</strong></p>
+                      <div class="project-content-stats"><i class="bi bi-heart-fill"></i> 280K | <i class="bi bi-arrow-repeat"></i> 9K</div>
                     </div>
                   </div>
                 </div>
               </div>
  
-              <div style="margin-top: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                <div class="team-card" style="background: #111; padding: 1.5rem; border-radius: 12px; border: 1.5px solid #222;">
-                  <img src="/Me (0-00-00-00).png" class="team-avatar" style="width: 60px; height: 60px; border-color: var(--color-accent);">
+              <div class="project-team-grid">
+                <div class="project-team-card">
+                  <img src="/Me (0-00-00-00).png" class="project-team-avatar">
                   <div class="team-meta">
-                    <h4 style="font-size: 0.9rem; color: #fff;">Editor: Vũ An</h4>
-                    <span class="accent-bg" style="font-size: 0.6rem;">3 năm exp</span>
+                    <h4>Editor: Vũ An</h4>
+                    <span class="accent-bg">3 năm exp</span>
                   </div>
                 </div>
-                <div class="team-card" style="background: #111; padding: 1.5rem; border-radius: 12px; border: 1.5px solid #222;">
-                  <div class="team-avatar" style="width: 60px; height: 60px; display:flex; align-items:center; justify-content:center; background:#000; font-size:1.8rem; border: 1px solid var(--color-accent);"><i class="bi bi-person-workspace" style="color:#fff;"></i></div>
+                <div class="project-team-card">
+                  <div class="project-team-avatar project-team-avatar-icon"><i class="bi bi-person-workspace"></i></div>
                   <div class="team-meta">
-                    <h4 style="font-size: 0.9rem; color: #fff;">Writer: Thanh Huyền</h4>
-                    <span class="accent-bg" style="font-size: 0.6rem;">7 năm exp</span>
+                    <h4>Writer: Thanh Huyền</h4>
+                    <span class="accent-bg">7 năm exp</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="project-meta">
-            <div style="font-size:0.8rem;color:#555;font-weight:700;text-transform:uppercase;">BIẾN DỮ LIỆU KHÔ KHAN THÀNH CÂU CHUYỆN CUỐN HÚT</div>
+            <div class="project-meta-label">BIẾN DỮ LIỆU KHÔ KHAN THÀNH CÂU CHUYỆN CUỐN HÚT</div>
           </div>
         </div>
 
@@ -343,7 +340,7 @@ function getProjectsTemplate() {
               <h3 class="project-title hover-word">${wrapWords('Người Quan Sát')}</h3>
               <div class="project-collab">Analysis & Visual Narrative</div>
             </div>
-            <div style="font-size:0.8rem;color:#555;font-weight:700;text-transform:uppercase;">KỂ CHUYỆN QUA NHỮNG GÓC NHÌN SÂU SẮC</div>
+            <div class="project-meta-label">KỂ CHUYỆN QUA NHỮNG GÓC NHÌN SÂU SẮC</div>
           </div>
         </div>
       </div>
@@ -576,8 +573,7 @@ function render() {
     } else {
        currentView = VIEWS.STORE;
     }
-  } else if (path.startsWith('/geoextractor')) {
-    return;
+
   } else {
     currentView = VIEWS.HOME;
   }
