@@ -158,7 +158,6 @@ nav a {
   transition: background-color 0.15s ease, color 0.15s ease;
   padding: 0 0.05em;
   border-radius: 2px;
-  font-style: italic;
   font-weight: 900;
 }
 
