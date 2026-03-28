@@ -1,9 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Fallback values for live builds where .env is not available
-// Note: Supabase anon/publishable keys are safe for client-side (enforced by RLS)
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://gmjxcgblzfjqhaavgjgh.supabase.co'
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_0Tn6z1ce6OJeRl5-4exKYA_vrWE6szc'
+// Supabase client (credentials loaded from environment variables only)
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('[Supabase] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY in environment.')
+}
 
 // Official Supabase Client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)

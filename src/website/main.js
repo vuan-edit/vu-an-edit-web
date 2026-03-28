@@ -1,5 +1,6 @@
 import './style.css'
 import { getStoreTemplate, initStoreEffects } from '../store/store-main.js'
+import { t, getLang, setLang } from '../shared/i18n.js'
 
 // --- CONSTANTS ---
 const VIEWS = {
@@ -7,7 +8,8 @@ const VIEWS = {
   PROJECTS: 'projects',
   COURSE: 'course',
   CONTACT: 'contact',
-  STORE: 'store'
+  STORE: 'store',
+  BLOG: 'blog'
 }
 
 // --- STATE ---
@@ -28,28 +30,31 @@ function hw(text) {
 
 // --- TEMPLATE PARTS ---
 function getHeader() {
+  const lang = getLang()
   return `
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
 
-      <!-- Global background elements removed in favor of site-wavy-background in CSS -->
-    </div>
-
     <header class="site-header reveal">
       <div class="logo" data-nav="">
-        <img src="/logo_brand.svg" alt="Vũ An">
+        <img src="/logo_brand.svg" alt="Vũ An - Video Editor & Content Creator">
       </div>
       <button class="mobile-menu-btn" aria-label="Toggle Menu">
         <span></span>
         <span></span>
       </button>
       <nav class="site-nav">
-        <a href="/" data-nav="">Trang chủ</a>
-        <a href="/projects/">Dự án</a>
-        <a href="/courses/">Khóa học</a>
-        <a href="/store/">Cửa hàng</a>
-        <a href="/#blog">Blog</a>
-        <a href="/contact/">Liên hệ</a>
+        <a href="/" data-nav="">${t('nav_home')}</a>
+        <a href="/projects/">${t('nav_projects')}</a>
+        <a href="/courses/">${t('nav_courses')}</a>
+        <a href="/store/">${t('nav_store')}</a>
+        <a href="/blog/">${t('nav_blog')}</a>
+        <a href="/contact/">${t('nav_contact')}</a>
+        <button class="lang-toggle" aria-label="Switch language">
+          <span class="lang-option ${lang === 'vi' ? 'active' : ''}" data-lang="vi">VI</span>
+          <span class="lang-divider">/</span>
+          <span class="lang-option ${lang === 'en' ? 'active' : ''}" data-lang="en">EN</span>
+        </button>
       </nav>
     </header>
   `
@@ -58,11 +63,11 @@ function getHeader() {
 function getFooter() {
   return `
     <footer class="site-footer">
-      <p>© 2026 Vũ An. Thủ công &amp; Tỉ mỉ.</p>
+      <p>${t('footer_copy')}</p>
       <div style="display:flex; gap:1.5rem; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">
-        <a href="https://facebook.com/vuanedit" target="_blank">Facebook</a>
-        <a href="https://instagram.com/vuanedit" target="_blank">Instagram</a>
-        <a href="https://tiktok.com/@vuanedit" target="_blank">TikTok</a>
+        <a href="https://facebook.com/vuanedit" target="_blank" rel="noopener noreferrer">Facebook</a>
+        <a href="https://instagram.com/vuanedit" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a href="https://tiktok.com/@vuanedit" target="_blank" rel="noopener noreferrer">TikTok</a>
       </div>
     </footer>
   `
@@ -100,7 +105,7 @@ function getHomeTemplate() {
   const videoCards = videoData.map(item => `
     <div class="hero-item">
       <div class="hero-video-item">
-        <video poster="${item.poster}" muted autoplay loop playsinline preload="metadata" loading="lazy">
+        <video poster="${item.poster}" muted autoplay loop playsinline preload="metadata">
           <source src="${item.srcWebm}" type="video/webm">
           <source src="${item.srcMp4}" type="video/mp4">
         </video>
@@ -127,7 +132,7 @@ function getHomeTemplate() {
           <div class="hero-horizontal-strip" id="hero-strip">
             <!-- First Item: Centered Title -->
             <div class="hero-item hero-text-item">
-              <h1 class="hover-word">${wrapWords('Làm chủ hình ảnh,')}<br>${wrapWords('kể chuyện cuốn hút.')}</h1>
+              <h1 class="hover-word">${wrapWords(t('hero_line1'))}<br>${wrapWords(t('hero_line2'))}</h1>
             </div>
             <!-- Subsequent Items: Local Videos -->
             ${videoCards}
@@ -141,16 +146,16 @@ function getHomeTemplate() {
         <div class="container">
           <div class="about-inner">
             <div class="about-text reveal">
-              <h2 class="hover-word">${wrapWords('Chào bạn, mình là Vũ An.')}</h2>
-              <p style="margin-top:1.5rem; line-height:1.8; max-width: 600px;">${hw('Trong 4 năm làm content, mình đã xây dựng hai kênh TikTok "Tình Báo Chứng Khoán" và "Người Quan Sát" đạt hàng trăm triệu lượt xem. Bí mật chính là cách biến dữ liệu khô khan thành video cuốn hút qua bố cục và infographic.')}</p>
+              <h2 class="hover-word">${wrapWords(t('about_title'))}</h2>
+              <p style="margin-top:1.5rem; line-height:1.8; max-width: 600px;">${hw(t('about_desc'))}</p></p>
               
               <div class="project-icon-group">
-                <a href="/projects/" class="project-icon-btn">
-                  <span class="project-icon-label">Dự án 01</span>
+                <a href="/projects/#finpath" class="project-icon-btn">
+                  <span class="project-icon-label">${t('about_project01')}</span>
                   <span class="project-icon-name">Finpath</span>
                 </a>
-                <a href="/projects/" class="project-icon-btn">
-                  <span class="project-icon-label">Dự án 02</span>
+                <a href="/projects/#nqs" class="project-icon-btn">
+                  <span class="project-icon-label">${t('about_project02')}</span>
                   <span class="project-icon-name">Người quan sát</span>
                 </a>
               </div>
@@ -165,8 +170,8 @@ function getHomeTemplate() {
       <section class="data-section">
         <div class="container">
           <div class="reveal" style="max-width:680px;">
-            <h2 class="hover-word">${wrapWords('Dữ liệu cũng có những câu chuyện.')}</h2>
-            <p style="margin-top:1.5rem;">${hw('Đó là lúc tôi khám phá ra mình đang mô hình số hướng dẫn chọn cách thực quan hóa thông tin để làm bản đồ chuyển động, thiết kế infographic, đến tư duy sắp xếp ít dữ liệu để một câu chuyện giữ chân người xem từ đầu đến cuối.')}</p>
+            <h2 class="hover-word">${wrapWords(t('data_title'))}</h2>
+            <p style="margin-top:1.5rem;">${hw(t('data_desc'))}</p>
           </div>
         </div>
       </section>
@@ -175,7 +180,7 @@ function getHomeTemplate() {
         <div class="video-montage-container">
           ${montageData.map((item, idx) => `
             <div class="montage-item vid-${idx + 1}">
-              <video src="${item.video}" autoplay loop muted playsinline loading="lazy"></video>
+              <video src="${item.video}" autoplay loop muted playsinline preload="none"></video>
               <div class="montage-stats">
                 <p class="montage-stats-summary">${item.summary}</p>
                 <div class="montage-stats-grid">
@@ -189,12 +194,12 @@ function getHomeTemplate() {
         <div class="container course-promo-inner">
           <div class="promo-content-wrapper">
             <h2 class="hover-word promo-heading">
-              <span class="line-bold">${wrapWords('Từ con số 0 đến')}</span>
-              <span class="line-black">${wrapWords('video triệu view')}</span>
+              <span class="line-bold">${wrapWords(t('promo_line1'))}</span>
+              <span class="line-black">${wrapWords(t('promo_line2'))}</span>
             </h2>
-            <p>Học trọn bộ kỹ năng: After Effects nền tảng, GEOLayers 3 chuyên sâu và Tư duy viral content. Biến dữ liệu khô khan thành những câu chuyện bản đồ chuyển động đầy cuốn hút.</p>
+            <p>${t('promo_desc')}</p>
             <div class="promo-btn-container">
-              <a href="/courses/" class="promo-btn">Khám phá khóa học</a>
+              <a href="/courses/" class="promo-btn">${t('promo_cta')}</a>
             </div>
           </div>
         </div>
@@ -204,8 +209,8 @@ function getHomeTemplate() {
       <section class="practice-section">
         <div class="container">
           <div class="reveal" style="max-width:720px;">
-            <h2 class="hover-word">${wrapWords('Học thực chiến, làm ra sản phẩm thực tế.')}</h2>
-            <p style="margin-top:1.5rem;">${hw('Nếu bạn muốn học thực hành về video, kỹ thuật, phân tích chuyên nghiệp và sản xuất từ tâm sắt vì đang, không lan man, thì khóa học này sẽ là thứ bạn cần.')}</p>
+            <h2 class="hover-word">${wrapWords(t('practice_title'))}</h2>
+            <p style="margin-top:1.5rem;">${hw(t('practice_desc'))}</p></p>
           </div>
         </div>
       </section>
@@ -213,11 +218,11 @@ function getHomeTemplate() {
       <!-- CONTACT LINKS - BIG TEXT -->
       <section style="padding:0; border-top:1.5px solid #000;">
         <div class="container" style="padding:0;">
-          <h2 class="reveal" style="padding:2rem 2rem 1rem; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#555; border-bottom:1.5px solid #000;">Bắt đầu dự án</h2>
+          <h2 class="reveal" style="padding:2rem 2rem 1rem; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#555; border-bottom:1.5px solid #000;">${t('contact_start')}</h2>
           <a href="mailto:vuan.edit@gmail.com" class="contact-link">vuan.edit@gmail.com</a>
-          <a href="https://facebook.com/vuanedit" target="_blank" class="contact-link">Facebook</a>
-          <a href="https://instagram.com/vuanedit" target="_blank" class="contact-link">Instagram</a>
-          <a href="https://tiktok.com/@vuanedit" target="_blank" class="contact-link">TikTok</a>
+          <a href="https://facebook.com/vuanedit" target="_blank" rel="noopener noreferrer" class="contact-link">Facebook</a>
+          <a href="https://instagram.com/vuanedit" target="_blank" rel="noopener noreferrer" class="contact-link">Instagram</a>
+          <a href="https://tiktok.com/@vuanedit" target="_blank" rel="noopener noreferrer" class="contact-link">TikTok</a>
         </div>
       </section>
 
@@ -226,120 +231,200 @@ function getHomeTemplate() {
   `
 }
 
+function getAnalyticsShowcase(data) {
+  const accent = data.accent || '#b4fd00';
+  
+  // Create an SVG path for the chart bars (0-100 values)
+  const points = data.chartBars.map((h, i) => {
+    const x = (i / (data.chartBars.length - 1)) * 100;
+    // Map max height to 90 so it doesn't touch the very top
+    const y = 100 - (h * 0.9);
+    return `${x},${y}`;
+  }).join(' L ');
+  
+  const polygonPoints = `0,100 L ${points} L 100,100`;
+  const pathD = `M 0,${100 - (data.chartBars[0] * 0.9)} L ${points}`;
+
+  // X Axis Labels
+  const labels = data.chartLabels || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+  const labelsHtml = labels.map((lb, i) => {
+    let tr = '-50%';
+    if (i === 0) tr = '0%';
+    else if (i === labels.length - 1) tr = '-100%';
+    const leftPos = (i / (labels.length - 1)) * 100;
+    return `<div class="ms-x-label" style="left: ${leftPos}%; transform: translateX(${tr})">${lb}</div>`;
+  }).join('');
+
+  // Y Axis Lines & Labels
+  const maxViews = data.maxChartViews || 50; 
+  const yLines = [0, 50, 100].map(val => { // Only show 3 lines for ultra-minimalism: Top, Mid, Bottom
+     const viewTick = val === 100 ? '0' : (maxViews * (100 - val) / 100).toFixed(1) + "M";
+     return `
+       <div class="ms-y-line" style="top: ${val}%">
+         <span class="ms-y-label">${viewTick}</span>
+       </div>
+     `;
+  }).join('');
+
+  return `
+    <div class="ms-dashboard" style="--accent: ${accent};">
+      <div class="ms-header">
+        <div class="ms-avatar">${data.avatarHtml}</div>
+        <div class="ms-header-info">
+          <h3 class="ms-username">${data.username} <i class="bi bi-patch-check-fill" style="color:var(--accent)"></i></h3>
+          <p class="ms-desc">${data.desc}</p>
+          <div class="ms-followers">
+            <span><strong>${data.following}</strong> Following</span>
+            <span class="ms-dot"></span>
+            <span><strong>${data.followers}</strong> Followers</span>
+            <span class="ms-dot"></span>
+            <span><strong>${data.videos}</strong> Videos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ms-hero-stat">
+        <div class="ms-hero-label">TOTAL VIEWS</div>
+        <div class="ms-hero-val">${data.stats.views}</div>
+        <div class="ms-hero-sub"><i class="bi bi-graph-up-arrow"></i> Outstanding Growth Trajectory</div>
+      </div>
+
+      <div class="ms-grid">
+        <div class="ms-card">
+          <div class="ms-card-label">LIKES</div>
+          <div class="ms-card-val">${data.stats.likes}</div>
+        </div>
+        <div class="ms-card">
+          <div class="ms-card-label">COMMENTS</div>
+          <div class="ms-card-val">${data.stats.comments}</div>
+        </div>
+        <div class="ms-card">
+          <div class="ms-card-label">SHARES</div>
+          <div class="ms-card-val">${data.stats.shares}</div>
+        </div>
+        <div class="ms-card">
+          <div class="ms-card-label">BOOKMARKS</div>
+          <div class="ms-card-val">${data.stats.bookmarks}</div>
+        </div>
+      </div>
+
+      <div class="ms-chart-container">
+        <div class="ms-chart-header-line">
+          <div class="ms-chart-label">PERFORMANCE TIMELINE</div>
+        </div>
+        <div class="ms-chart-wrapper">
+          <div class="ms-chart-grid">
+            ${yLines}
+          </div>
+          <svg class="ms-chart" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="glowGrad-${data.id}" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="${accent}" stop-opacity="0.5" />
+                <stop offset="100%" stop-color="${accent}" stop-opacity="0.0" />
+              </linearGradient>
+              <filter id="neon-${data.id}" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="${accent}" flood-opacity="0.6"/>
+              </filter>
+            </defs>
+            <polygon points="${polygonPoints}" fill="url(#glowGrad-${data.id})" class="ms-chart-fill" />
+            <path d="${pathD}" fill="none" class="ms-chart-line" filter="url(#neon-${data.id})" vector-effect="non-scaling-stroke" />
+          </svg>
+          <div class="ms-chart-x-axis">
+            ${labelsHtml}
+          </div>
+        </div>
+      </div>
+
+      <div class="ms-footer">
+         <div class="ms-f-item">
+            <div class="ms-f-label">WATCH TIME</div>
+            <div class="ms-f-val">${data.metrics.watchTime}</div>
+         </div>
+         <div class="ms-f-item">
+            <div class="ms-f-label">AVG DURATION</div>
+            <div class="ms-f-val">${data.metrics.hours}h</div>
+         </div>
+         <div class="ms-f-item">
+            <div class="ms-f-label">ENGAGEMENT</div>
+            <div class="ms-f-val">${data.metrics.engagement}</div>
+         </div>
+         <div class="ms-f-item">
+            <div class="ms-f-label">BUZZ RANK</div>
+            <div class="ms-f-val">${data.metrics.rank}</div>
+         </div>
+      </div>
+    </div>
+  `;
+}
+
 function getProjectsTemplate() {
+  const finpathData = {
+    id: 'fp',
+    accent: '#b4fd00',
+    avatarHtml: '<div class="ms-avatar-shape" style="background: linear-gradient(135deg, #111, #333); border: 2px solid #b4fd00; color:#b4fd00;">FP</div>',
+    username: "@tinhbao.chungkhoan",
+    desc: "Data Visualization & Investment Insights",
+    following: "54", followers: "563K", videos: "132",
+    stats: { views: "163.6M", likes: "7.3M", comments: "107.3K", shares: "436.6K", bookmarks: "421.7K" },
+    metrics: { watchTime: "969.7M", hours: "5.93", rank: "B", engagement: "5%" },
+    chartBars: [12, 12, 30, 25, 40, 10, 10, 12, 25, 10, 10, 15, 80, 20, 5],
+    chartLabels: ["Thg 10", "Thg 11", "Thg 12", "Thg 01", "Thg 02", "Thg 03"],
+    maxChartViews: 25.5
+  };
+
+  const nqsData = {
+    id: 'nqs',
+    accent: '#ea4335',
+    avatarHtml: '<div class="ms-avatar-shape" style="background: linear-gradient(135deg, #eee, #fff); border: 2px solid #ea4335; color:#ea4335;">QS</div>',
+    username: "@nqs.kinhte <span style='font-size:0.8rem; margin-left:5px;'>🇻🇳</span>",
+    desc: "Economic Analysis & Visual Narrative",
+    following: "25", followers: "1.2M", videos: "485",
+    stats: { views: "374M", likes: "15M", comments: "161.2K", shares: "559.9K", bookmarks: "709.9K" },
+    metrics: { watchTime: "11B", hours: "29.46", rank: "B", engagement: "4.4%" },
+    chartBars: [2, 35, 30, 28, 12, 5, 5, 8, 30, 6, 10, 15, 6, 8, 12, 7, 50, 15, 20, 18, 5, 5, 6, 5, 4, 3, 5],
+    chartLabels: ["Q2 2023", "Q3 2023", "Q4 2023", "Q1 2024", "Q2 2024"],
+    maxChartViews: 45.2
+  };
+
   return `
     ${getHeader()}
     <main>
       <section class="projects-hero container reveal">
-        <h1 class="hover-word">${wrapWords('Hợp tác &')}<br>${wrapWords('Sáng tạo')}</h1>
-        <p>${hw('Khám phá sự thay đổi ngoạn mục qua từng dự án. Từ những khung hình thô sơ đến tác phẩm nghệ thuật hoàn chỉnh.')}</p>
+        <h1 class="hover-word">${wrapWords(t('projects_title1'))}<br>${wrapWords(t('projects_title2'))}</h1>
+        <p>${hw(t('projects_desc'))}</p>
       </section>
 
       <div class="container">
         <!-- Project 1: Finpath - Tình Báo Thị Trường -->
-        <div class="project-item reveal">
+        <div id="finpath" class="project-item reveal">
           <div class="project-dashboard">
             <div class="project-dashboard-inner">
               <div class="project-dashboard-header">
-                <span class="dashboard-tag accent-bg">Update: 18/03/2026</span>
-                <h2 class="project-dashboard-title">Tình báo thị trường</h2>
+                <span class="dashboard-tag accent-bg">Data Visualization</span>
+                <h2 class="project-dashboard-title">Tình Báo Thị Trường</h2>
                 <div class="project-collab">Data Visualization & Motion Branding</div>
               </div>
- 
-              <div class="dashboard-grid">
-                <div class="dark-card">
-                  <h3>Tổng quan tập khách hàng</h3>
-                  <div class="project-audience-info">
-                    <div class="project-audience-icon"><i class="bi bi-person-bounding-box"></i></div>
-                    <div class="project-audience-details">
-                      <p><strong>Độ tuổi:</strong> 18 - 24 (52.7%)</p>
-                      <p><strong>Nghề nghiệp:</strong> Sinh viên, Văn phòng</p>
-                      <p><strong>Sở thích:</strong> Tài chính, Chứng khoán</p>
-                    </div>
-                  </div>
-                  <div class="project-gender-bar">
-                    <div class="project-gender-fill" style="width:72%"></div>
-                  </div>
-                  <p class="project-gender-label"><span class="accent-text">Nam: 72%</span> | Nữ: 27%</p>
-                  <p class="project-gender-label" style="margin-top:0.3rem;">Vị trí: HN (30%), HCM (28%)</p>
-                </div>
- 
-                <div class="dark-card">
-                  <h3>Chỉ số 3 tháng gần nhất</h3>
-                  <div class="project-stats-grid">
-                    <div class="project-stat-item"><span class="project-stat-label">Xem</span><div class="project-stat-value">119M</div></div>
-                    <div class="project-stat-item"><span class="project-stat-label">Like</span><div class="project-stat-value">5.8M</div></div>
-                    <div class="project-stat-item"><span class="project-stat-label">Cmt</span><div class="project-stat-value">215K</div></div>
-                    <div class="project-stat-item"><span class="project-stat-label">Share</span><div class="project-stat-value">431K</div></div>
-                    <div class="project-stat-item"><span class="project-stat-label">Reach</span><div class="project-stat-value">9M</div></div>
-                    <div class="project-stat-item"><span class="project-stat-label">Profile</span><div class="project-stat-value">946K</div></div>
-                  </div>
-                </div>
-              </div>
- 
-              <div class="project-content-section">
-                <h3 class="dashboard-tag accent-bg">Top content</h3>
-                <div class="content-gallery project-content-gallery">
-                  <div class="project-content-card">
-                    <div class="project-content-thumb"><div class="project-content-views accent-bg">6.9M</div></div>
-                    <div class="project-content-info">
-                      <p><strong>Lạm phát là gì?</strong></p>
-                      <div class="project-content-stats"><i class="bi bi-heart-fill"></i> 335K | <i class="bi bi-arrow-repeat"></i> 5K</div>
-                    </div>
-                  </div>
-                  <div class="project-content-card">
-                    <div class="project-content-thumb"><div class="project-content-views accent-bg">6.9M</div></div>
-                    <div class="project-content-info">
-                      <p><strong>Hàng hóa VN giá cao?</strong></p>
-                      <div class="project-content-stats"><i class="bi bi-heart-fill"></i> 290K | <i class="bi bi-arrow-repeat"></i> 11K</div>
-                    </div>
-                  </div>
-                  <div class="project-content-card">
-                    <div class="project-content-thumb"><div class="project-content-views accent-bg">6.2M</div></div>
-                    <div class="project-content-info">
-                      <p><strong>Kênh đào Phù Nam?</strong></p>
-                      <div class="project-content-stats"><i class="bi bi-heart-fill"></i> 280K | <i class="bi bi-arrow-repeat"></i> 9K</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
- 
-              <div class="project-team-grid">
-                <div class="project-team-card">
-                  <img src="/Me (0-00-00-00).png" class="project-team-avatar">
-                  <div class="team-meta">
-                    <h4>Editor: Vũ An</h4>
-                    <span class="accent-bg">3 năm exp</span>
-                  </div>
-                </div>
-                <div class="project-team-card">
-                  <div class="project-team-avatar project-team-avatar-icon"><i class="bi bi-person-workspace"></i></div>
-                  <div class="team-meta">
-                    <h4>Writer: Thanh Huyền</h4>
-                    <span class="accent-bg">7 năm exp</span>
-                  </div>
-                </div>
-              </div>
+              ${getAnalyticsShowcase(finpathData)}
             </div>
           </div>
-          <div class="project-meta">
+          <div class="project-meta" style="margin-top:2rem;">
             <div class="project-meta-label">BIẾN DỮ LIỆU KHÔ KHAN THÀNH CÂU CHUYỆN CUỐN HÚT</div>
           </div>
         </div>
 
-        <div class="project-item reveal">
-          <div class="comparison-container" data-project="2">
-            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=2000" class="comparison-image image-before" alt="Before" loading="lazy">
-            <div class="image-after" style="background-image:url('https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&q=80&w=2000'); background-size:cover; background-position:center; position:absolute; top:0; left:0; width:100%; height:100%;"></div>
-            <div class="comparison-handle" style="left:50%;"></div>
-            <div class="label-before">Draft</div>
-            <div class="label-after">Final Story</div>
-          </div>
-          <div class="project-meta">
-            <div>
-              <h3 class="project-title hover-word">${wrapWords('Người Quan Sát')}</h3>
-              <div class="project-collab">Analysis & Visual Narrative</div>
+        <!-- Project 2: Người Quan Sát -->
+        <div id="nqs" class="project-item reveal">
+          <div class="project-dashboard" style="margin-top:4rem;">
+            <div class="project-dashboard-inner">
+              <div class="project-dashboard-header">
+                <span class="dashboard-tag accent-bg" style="background:#ea4335; color:#fff;">Visual Narrative</span>
+                <h2 class="project-dashboard-title" style="color:#ea4335;">Người Quan Sát</h2>
+                <div class="project-collab">Analysis & Visual Narrative</div>
+              </div>
+              ${getAnalyticsShowcase(nqsData)}
             </div>
+          </div>
+          <div class="project-meta" style="margin-top:2rem;">
             <div class="project-meta-label">KỂ CHUYỆN QUA NHỮNG GÓC NHÌN SÂU SẮC</div>
           </div>
         </div>
@@ -354,131 +439,131 @@ function getCourseTemplate() {
     ${getHeader()}
     <main>
       <section class="course-hero container reveal">
-        <h1 class="hover-word">${wrapWords('Làm chủ')}<br>${wrapWords('Kể chuyện bằng Dữ liệu')}</h1>
-        <p>${hw('Khóa học 10 buổi (15 giờ) – Từ con số 0 đến làm chủ quy trình sản xuất video triệu view theo phong cách "Người Quan Sát" và "Tình Báo Thị Trường".')}</p>
+        <h1 class="hover-word">${wrapWords(t('courses_title1'))}<br>${wrapWords(t('courses_title2'))}</h1>
+        <p style="margin-top:1.5rem; max-width:600px;">${hw(t('courses_desc'))}</p>
       </section>
 
       <div class="container">
         <!-- PHASE 1: AE CẤP TỐC -->
         <div class="course-phase reveal">
-          <div class="phase-title">Phase 01: AE Cấp tốc (Nền tảng dựng video)</div>
+          <div class="phase-title">${t('course_phase1_title')}</div>
           <div class="session-list">
             <div class="session-item">
-              <div class="session-name">Buổi 1: AE nền tảng + Moodboard</div>
-              <div class="session-desc">Làm quen giao diện, timeline, layer, keyframe. Bố cục 9:16 chuẩn MXH. Hướng dẫn tạo moodboard cá nhân (Canva/Milanote). Thực hành dựng 1 đoạn 10-15s cơ bản.</div>
+              <div class="session-name">${t('course_session1_name')}</div>
+              <div class="session-desc">${t('course_session1_desc')}</div>
             </div>
             <div class="session-item">
-              <div class="session-name">Buổi 2: Motion + Sound mixing cơ bản</div>
-              <div class="session-desc">Kỹ thuật zoom, pan, shake, blur, fade. Cách sync chuyển cảnh với beat nhạc. Tổ chức track âm thanh (VO, nhạc nền, SFX). Thực hành dựng đoạn 20-30s.</div>
+              <div class="session-name">${t('course_session2_name')}</div>
+              <div class="session-desc">${t('course_session2_desc')}</div>
             </div>
             <div class="session-item">
-              <div class="session-name">Buổi 3: Template Storytelling + SFX</div>
-              <div class="session-desc">Cấu trúc 30-60s: Hook, Body, Outro. Xây dựng project template tối ưu. Làm chủ SFX (whoosh, pop, click). Thực hành chỉnh video 20-30s với nhịp ổn.</div>
+              <div class="session-name">${t('course_session3_name')}</div>
+              <div class="session-desc">${t('course_session3_desc')}</div>
             </div>
           </div>
         </div>
 
         <!-- PHASE 2: GEOLAYERS 3 -->
         <div class="course-phase reveal">
-          <div class="phase-title">Phase 02: GEOLayers 3 (Video bản đồ chuyên sâu)</div>
+          <div class="phase-title">${t('course_phase2_title')}</div>
           <div class="session-list">
             <div class="session-item">
-              <div class="session-name">Buổi 4: Bản đồ cơ bản</div>
-              <div class="session-desc">Cài đặt plugin GEOLayers, nguồn map, xử lý lỗi. Tạo Mapcomp, chọn style map, camera cơ bản. Thực hành tạo comp bản đồ Việt Nam/tỉnh thành.</div>
+              <div class="session-name">${t('course_session4_name')}</div>
+              <div class="session-desc">${t('course_session4_desc')}</div>
             </div>
             <div class="session-item">
-              <div class="session-name">Buổi 5: Khoanh vùng, Route & Label</div>
-              <div class="session-desc">Vẽ vùng dự án, tạo đường đi (route) từ sân bay/trung tâm. Cách đặt label, chú giải chuyên nghiệp. Timing chuyển động map kết hợp SFX.</div>
+              <div class="session-name">${t('course_session5_name')}</div>
+              <div class="session-desc">${t('course_session5_desc')}</div>
             </div>
             <div class="session-item">
-              <div class="session-name">Buổi 6: Camera Cinematic & 3D Terrain</div>
-              <div class="session-desc">Điều khiển Orbit, dolly, tilt. Tận dụng 3D terrain, bóng đổ, vignette. Color grade bản đồ để trông "cinematic" như phim tài liệu.</div>
+              <div class="session-name">${t('course_session6_name')}</div>
+              <div class="session-desc">${t('course_session6_desc')}</div>
             </div>
             <div class="session-item">
-              <div class="session-name">Buổi 7: Ghép AE + Text & Infographic</div>
-              <div class="session-desc">Đưa Mapcomp vào AE tổng. Thêm text, icon, infographic (dòng vốn, cung-cầu). Cách chia giọng VO cho kịch bản BĐS/thị trường 30-60s.</div>
+              <div class="session-name">${t('course_session7_name')}</div>
+              <div class="session-desc">${t('course_session7_desc')}</div>
             </div>
             <div class="session-item">
-              <div class="session-name">Buổi 8: Hoàn thiện sản phẩm & Checklist</div>
-              <div class="session-desc">Checklist pacing (10-12 ý mỗi 3s), âm thanh (VO rõ, nhạc không lấn). Chuẩn export TikTok/Reels. Xuất video bản đồ hoàn chỉnh được review 1-1.</div>
+              <div class="session-name">${t('course_session8_name')}</div>
+              <div class="session-desc">${t('course_session8_desc')}</div>
             </div>
           </div>
         </div>
 
         <!-- PHASE 3: CONTENT VIRAL -->
         <div class="course-phase reveal">
-          <div class="phase-title">Phase 03: Content Viral (Tư duy & Tối ưu)</div>
+          <div class="phase-title">${t('course_phase3_title')}</div>
           <div class="session-list">
             <div class="session-item">
-              <div class="session-name">Buổi 9: Hook, Kịch bản & Moodboard âm thanh</div>
-              <div class="session-desc">Phân tích cấu trúc video viral. 5-7 mẫu hook (mistake, curiosity gap...). Viết kịch bản cho chủ đề BĐS & Tình báo thị trường. Chọn nhạc nền signature.</div>
+              <div class="session-name">${t('course_session9_name')}</div>
+              <div class="session-desc">${t('course_session9_desc')}</div>
             </div>
             <div class="session-item">
-              <div class="session-name">Buổi 10: Quy trình sản xuất & Tối ưu kênh</div>
-              <div class="session-desc">Cách bắt trend, tối ưu hashtag, caption, thumbnail. Template kênh đồng bộ. Lập Content calendar cho 15-30 video. Quy trình tái sử dụng template.</div>
+              <div class="session-name">${t('course_session10_name')}</div>
+              <div class="session-desc">${t('course_session10_desc')}</div>
             </div>
           </div>
         </div>
 
         <!-- PRICING TABLE -->
         <section class="pricing-section reveal">
-          <h2 class="hover-word">${wrapWords('Bảng giá & Gói học')}</h2>
+          <h2 class="hover-word">${wrapWords(t('pricing_table_title'))}</h2>
           <div class="pricing-table-wrapper">
             <table class="pricing-table">
               <thead>
                 <tr>
-                  <th>Gói học</th>
-                  <th>Số buổi</th>
-                  <th>Hình thức</th>
-                  <th>Giá ưu đãi</th>
+                  <th>${t('pricing_col_package')}</th>
+                  <th>${t('pricing_col_sessions')}</th>
+                  <th>${t('pricing_col_format')}</th>
+                  <th>${t('pricing_col_price')}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>AE cấp tốc (Buổi 1-3)</td>
-                  <td>3</td>
-                  <td>Nhóm online</td>
-                  <td class="price">590.000 VNĐ</td>
+                  <td>${t('pricing_package_ae_title')}</td>
+                  <td>${t('pricing_package_ae_sessions')}</td>
+                  <td>${t('pricing_package_ae_format')}</td>
+                  <td class="price">${t('pricing_package_ae_price')}</td>
                 </tr>
                 <tr>
-                  <td>GEOLayers 3 (Buổi 4-8)</td>
-                  <td>5</td>
-                  <td>Nhóm online</td>
-                  <td class="price">1.990.000 VNĐ</td>
+                  <td>${t('pricing_package_geolayers_title')}</td>
+                  <td>${t('pricing_package_geolayers_sessions')}</td>
+                  <td>${t('pricing_package_geolayers_format')}</td>
+                  <td class="price">${t('pricing_package_geolayers_price')}</td>
                 </tr>
                 <tr>
-                  <td>Content Viral (Buổi 9-10)</td>
-                  <td>2</td>
-                  <td>Nhóm online</td>
-                  <td class="price">890.000 VNĐ</td>
+                  <td>${t('pricing_package_viral_title')}</td>
+                  <td>${t('pricing_package_viral_sessions')}</td>
+                  <td>${t('pricing_package_viral_format')}</td>
+                  <td class="price">${t('pricing_package_viral_price')}</td>
                 </tr>
                 <tr class="highlight-row">
-                  <td>Combo kỹ thuật (AE + GEOLayers)</td>
-                  <td>8</td>
-                  <td>Nhóm online</td>
-                  <td class="price">2.390.000 VNĐ</td>
+                  <td>${t('pricing_package_tech_combo_title')}</td>
+                  <td>${t('pricing_package_tech_combo_sessions')}</td>
+                  <td>${t('pricing_package_tech_combo_format')}</td>
+                  <td class="price">${t('pricing_package_tech_combo_price')}</td>
                 </tr>
                 <tr class="main-combo">
-                  <td>Combo FULL (All in one)</td>
-                  <td>10</td>
-                  <td>Nhóm online</td>
-                  <td class="price">3.190.000 VNĐ</td>
+                  <td>${t('pricing_package_full_combo_title')}</td>
+                  <td>${t('pricing_package_full_combo_sessions')}</td>
+                  <td>${t('pricing_package_full_combo_format')}</td>
+                  <td class="price">${t('pricing_package_full_combo_price')}</td>
                 </tr>
                 <tr>
-                  <td>Kèm 1-1 Online (Toàn bộ khóa)</td>
-                  <td>10</td>
-                  <td>1-1 online</td>
-                  <td class="price">7.500.000 VNĐ</td>
+                  <td>${t('pricing_package_1on1_title')}</td>
+                  <td>${t('pricing_package_1on1_sessions')}</td>
+                  <td>${t('pricing_package_1on1_format')}</td>
+                  <td class="price">${t('pricing_package_1on1_price')}</td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <p style="margin-top: 2rem; font-size: 0.8rem; color: var(--color-subtle);">* Các gói lẻ 1-1 vui lòng nhắn tin trực tiếp để nhận báo giá chi tiết.</p>
+          <p style="margin-top: 2rem; font-size: 0.8rem; color: var(--color-subtle);">${t('pricing_note')}</p>
         </section>
 
         <div class="course-cta reveal">
-          <h2 class="hover-word">${wrapWords('Sẵn sàng để bắt đầu hành trình?')}</h2>
-          <a href="https://t.me/vuanedit" target="_blank" class="submit-btn" style="display:inline-block; width:auto; text-decoration:none; text-align:center;">Nhận tư vấn ngay</a>
+          <h2 class="hover-word">${wrapWords(t('courses_cta'))}</h2>
+          <a href="https://zalo.me/0967575313" target="_blank" rel="noopener noreferrer" class="submit-btn" style="display:inline-block; width:auto; text-decoration:none; text-align:center;">${t('courses_cta_btn')}</a>
         </div>
       </div>
     </main>
@@ -494,22 +579,22 @@ function getContactTemplate() {
         <div class="container">
           <div class="contact-inner">
             <div class="contact-info reveal">
-              <h1 class="hover-word">${wrapWords('Liên hệ &')}<br>${wrapWords('Hợp tác')}</h1>
-              <p>${hw('Bạn có ý tưởng? Hãy cùng nhau biến nó thành hiện thực. Tôi sẽ phản hồi sớm nhất có thể.')}</p>
-              <div style="display:flex;flex-direction:column;gap:1.5rem;">
+              <h1 class="hover-word">${wrapWords(t('contact_title1'))}<br>${wrapWords(t('contact_title2'))}</h1>
+              <p class="contact-desc">${hw(t('contact_desc'))}</p>
+              <div class="contact-details">
                 <div>
-                  <div class="contact-detail-label">Email</div>
+                  <div class="contact-detail-label">${t('contact_email_label')}</div>
                   <div class="contact-detail-value">
                     <a href="mailto:vuan.edit@gmail.com">vuan.edit@gmail.com</a>
                   </div>
                 </div>
                 <div>
-                  <div class="contact-detail-label">Social</div>
-                  <div class="contact-detail-value" style="display:flex;gap:1.5rem;flex-wrap:wrap;">
-                    <a href="https://facebook.com/vuanedit" target="_blank">Facebook</a>
-                    <a href="https://instagram.com/vuanedit" target="_blank">Instagram</a>
-                    <a href="https://tiktok.com/@vuanedit" target="_blank">TikTok</a>
-                    <a href="https://t.me/vuanedit" target="_blank">Telegram</a>
+                  <div class="contact-detail-label">${t('contact_social_label')}</div>
+                  <div class="contact-detail-value social-links">
+                    <a href="https://facebook.com/vuanedit" target="_blank" rel="noopener noreferrer">Facebook</a>
+                    <a href="https://instagram.com/vuanedit" target="_blank" rel="noopener noreferrer">Instagram</a>
+                    <a href="https://tiktok.com/@vuanedit" target="_blank" rel="noopener noreferrer">TikTok</a>
+                    <a href="https://zalo.me/0967575313" target="_blank" rel="noopener noreferrer">Zalo</a>
                   </div>
                 </div>
               </div>
@@ -519,22 +604,22 @@ function getContactTemplate() {
               <form action="https://formspree.io/f/maqpweyd" method="POST">
                 <input type="hidden" name="_to" value="vuan.edit@gmail.com">
                 <div class="form-group">
-                  <label class="form-label">Họ và tên</label>
-                  <input type="text" name="name" class="form-input" placeholder="Ví dụ: Nguyễn Văn A" required>
+                  <label class="contact-label">${t('contact_name')}</label>
+                  <input type="text" name="name" class="contact-input" placeholder="${t('contact_name_ph')}" required>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Số điện thoại (Zalo)</label>
-                  <input type="tel" name="phone" class="form-input" placeholder="090 123 4567" required>
+                  <label class="contact-label">${t('contact_phone')}</label>
+                  <input type="tel" name="phone" class="contact-input" placeholder="${t('contact_phone_ph')}" required>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Email</label>
-                  <input type="email" name="email" class="form-input" placeholder="name@example.com" required>
+                  <label class="contact-label">${t('contact_email')}</label>
+                  <input type="email" name="email" class="contact-input" placeholder="${t('contact_email_ph')}" required>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Lời nhắn</label>
-                  <textarea name="message" class="form-input" placeholder="Chia sẻ về dự án của bạn..." required></textarea>
+                  <label class="contact-label">${t('contact_message')}</label>
+                  <textarea name="message" class="contact-input" rows="4" placeholder="${t('contact_message_ph')}" required></textarea>
                 </div>
-                <button type="submit" class="submit-btn">Gửi yêu cầu</button>
+                <button type="submit" class="submit-btn">${t('contact_submit')}</button>
               </form>
             </div>
           </div>
@@ -546,10 +631,203 @@ function getContactTemplate() {
 }
 
 
+// --- BLOG DATA ---
+const blogPosts = [
+  {
+    id: 'cach-edit-video-trieu-view',
+    title: 'Cách Edit Video Triệu View — Bí Quyết Từ Thực Chiến',
+    excerpt: 'Khám phá quy trình sản xuất video triệu view từ kinh nghiệm thực tế của Vũ An tại kênh Tình Báo Thị Trường.',
+    date: '2026-03-25',
+    category: 'Video Editing',
+    readTime: '8 phút đọc',
+    content: `
+      <p>Bạn có bao giờ tự hỏi tại sao cùng một chủ đề, có video đạt triệu view nhưng video khác chỉ vài trăm? Bí mật nằm ở <strong>3 yếu tố then chốt</strong>: Hook, Pacing và Visual Storytelling.</p>
+      <h3>1. Hook — 3 giây đầu quyết định tất cả</h3>
+      <p>Trên TikTok, người xem quyết định lướt hay ở lại chỉ trong 1-3 giây đầu. Một hook hiệu quả thường bắt đầu bằng một câu hỏi gây tò mò hoặc một hình ảnh bất ngờ. Ví dụ: thay vì mở đầu "Hôm nay mình sẽ nói về lạm phát", hãy thử "Nếu bạn có 100 triệu trong ngân hàng, mỗi năm bạn đang mất đi bao nhiêu?"</p>
+      <h3>2. Pacing — Nhịp độ video</h3>
+      <p>Video viral thường có nhịp nhanh: mỗi 2-3 giây phải có một thay đổi về hình ảnh, text hoặc âm thanh. Sử dụng kỹ thuật zoom, pan, và chuyển cảnh sync với beat nhạc để giữ chân người xem.</p>
+      <h3>3. Visual Storytelling — Kể chuyện bằng hình ảnh</h3>
+      <p>Thay vì chỉ hiện text trên nền đen, hãy dùng infographic, bản đồ chuyển động, và data visualization. Đây chính là thế mạnh mà mình đã áp dụng cho kênh Tình Báo Thị Trường với hơn 100 triệu lượt xem.</p>
+      <h3>Kết luận</h3>
+      <p>Edit video triệu view không phải là may mắn — đó là kết quả của việc hiểu người xem và áp dụng đúng kỹ thuật. Nếu bạn muốn học chi tiết hơn, hãy xem <a href="/courses/">khóa học thực chiến</a> của mình.</p>
+    `
+  },
+  {
+    id: 'geolayers-3-huong-dan-co-ban',
+    title: 'GEOLayers 3 — Hướng Dẫn Toàn Diện Cho Người Mới',
+    excerpt: 'Từ cài đặt plugin đến tạo bản đồ chuyển động cinematic trong After Effects với GEOLayers 3.',
+    date: '2026-03-20',
+    category: 'GEOLayers 3',
+    readTime: '12 phút đọc',
+    content: `
+      <p>GEOLayers 3 là plugin After Effects cho phép bạn tạo <strong>bản đồ chuyển động chất lượng cao</strong> — công cụ mà các kênh như Tình Báo Thị Trường và Người Quan Sát sử dụng hàng ngày.</p>
+      <h3>Bước 1: Cài đặt và thiết lập</h3>
+      <p>Tải GEOLayers 3 từ aescripts.com, cài vào After Effects. Mở plugin, tạo Mapcomp đầu tiên. Chọn style bản đồ phù hợp — mình recommend style dark cho video news/analysis.</p>
+      <h3>Bước 2: Tạo Mapcomp cơ bản</h3>
+      <p>Mapcomp là composition chứa bản đồ. Bạn có thể zoom, pan, rotate bản đồ tự do. Ưu điểm lớn nhất: bản đồ vector — zoom bao nhiêu cũng không bị vỡ.</p>
+      <h3>Bước 3: Thêm Route và Label</h3>
+      <p>Vẽ đường đi (route) giữa hai điểm, thêm marker và label cho các vị trí quan trọng. Kết hợp animation timing để tạo hiệu ứng "khám phá" trên bản đồ.</p>
+      <h3>Bước 4: Camera Cinematic</h3>
+      <p>Sử dụng Orbit camera để tạo góc nghiêng 3D, thêm terrain và bóng đổ. Color grade bản đồ với Lumetri để trông như phim tài liệu chuyên nghiệp.</p>
+      <p>Xem đầy đủ trong <a href="/courses/">Phase 02 của khóa học</a>.</p>
+    `
+  },
+  {
+    id: 'tu-duy-viral-content',
+    title: 'Tư Duy Viral Content — Tại Sao Video Của Bạn Không Lên Xu Hướng?',
+    excerpt: '5 sai lầm phổ biến khiến video không viral và cách khắc phục bằng data-driven approach.',
+    date: '2026-03-15',
+    category: 'Content Strategy',
+    readTime: '6 phút đọc',
+    content: `
+      <p>Sau 4 năm sản xuất nội dung và hàng trăm video, mình nhận ra rằng viral content không phải là "cầu may" — mà là <strong>khoa học có thể lặp lại</strong>.</p>
+      <h3>Sai lầm 1: Không có Hook rõ ràng</h3>
+      <p>80% video "flop" vì mở đầu nhàm chán. Người xem không biết video nói về gì trong 3 giây đầu → lướt ngay.</p>
+      <h3>Sai lầm 2: Quá nhiều thông tin, thiếu câu chuyện</h3>
+      <p>Video 60 giây nhồi 20 ý → người xem choáng ngợp. Thay vào đó, chọn 1 góc nhìn, kể 1 câu chuyện, đưa ra 1 kết luận.</p>
+      <h3>Sai lầm 3: Nhịp quá chậm</h3>
+      <p>Trên short-form content, mỗi 2-3 giây phải có "sự kiện" mới: text mới, hình ảnh mới, âm thanh mới. Nếu 5 giây không có gì thay đổi, người xem sẽ lướt.</p>
+      <h3>Sai lầm 4: Copy format mà không hiểu tại sao</h3>
+      <p>Nhiều người copy y hệt format video viral nhưng không hiểu logic đằng sau. Điều quan trọng là hiểu framework rồi adapt cho nội dung của bạn.</p>
+      <h3>Sai lầm 5: Không tối ưu sau khi đăng</h3>
+      <p>Analytics là bạn thân. Watch time, completion rate, save rate — đây là những metrics cho bạn biết video đang "hỏng" ở đoạn nào. Dùng data này để cải thiện video tiếp theo.</p>
+    `
+  },
+  {
+    id: 'data-visualization-cho-video',
+    title: 'Data Visualization Cho Video — Biến Số Liệu Thành Câu Chuyện',
+    excerpt: 'Cách biến dữ liệu khô khan thành infographic và bản đồ chuyển động cuốn hút người xem.',
+    date: '2026-03-10',
+    category: 'Data Visualization',
+    readTime: '10 phút đọc',
+    content: `
+      <p>Trong thời đại "data is king", khả năng <strong>kể chuyện bằng dữ liệu</strong> là skill có giá trị nhất cho content creator. Đây là cách mình đã build 2 kênh triệu view chỉ dựa vào data visualization.</p>
+      <h3>Nguyên tắc 1: Less is More</h3>
+      <p>Một biểu đồ tốt chỉ truyền tải 1 message. Đừng nhồi 10 loại data vào 1 slide. Chia nhỏ, animate từng bước để người xem theo kịp.</p>
+      <h3>Nguyên tắc 2: Chọn đúng loại chart</h3>
+      <p>So sánh → Bar chart. Xu hướng → Line chart. Tỷ lệ → Pie/Donut. Địa lý → Map. Đừng dùng pie chart cho 15 category — người xem sẽ không đọc được.</p>
+      <h3>Nguyên tắc 3: Motion = Emotion</h3>
+      <p>Static infographic tốt cho print, nhưng video cần MOTION. Animate số liệu tăng dần, bar chart grow từ 0, map zoom-in vào vị trí quan trọng. Motion tạo ra cảm xúc và giữ chân người xem.</p>
+      <h3>Công cụ mình sử dụng</h3>
+      <p>After Effects + GEOLayers 3 cho bản đồ, Excel/Google Sheets cho data processing, Figma cho mockup trước khi animate. Flow cơ bản: Data → Insight → Storyboard → Animate.</p>
+    `
+  }
+]
+
+function getBlogTemplate() {
+  const postCards = blogPosts.map(post => `
+    <article class="blog-card reveal">
+      <div class="blog-card-meta">
+        <span class="blog-card-category">${post.category}</span>
+        <span class="blog-card-date">${new Date(post.date).toLocaleDateString(getLang() === 'vi' ? 'vi-VN' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+      </div>
+      <h2 class="blog-card-title hover-word">
+        <a href="/blog/#post-${post.id}">${wrapWords(post.title)}</a>
+      </h2>
+      <p class="blog-card-excerpt">${post.excerpt}</p>
+      <div class="blog-card-footer">
+        <span class="blog-card-readtime"><i class="bi bi-clock"></i> ${post.readTime}</span>
+        <a href="/blog/#post-${post.id}" class="blog-card-link">${t('blog_readmore')} <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </article>
+  `).join('')
+
+  return `
+    ${getHeader()}
+    <main>
+      <section class="blog-hero container reveal">
+        <h1 class="hover-word">${wrapWords(t('blog_title1'))}<br>${wrapWords(t('blog_title2'))}</h1>
+        <p>${hw(t('blog_desc'))}</p>
+      </section>
+
+      <div class="container blog-grid">
+        ${postCards}
+      </div>
+
+      <section class="blog-cta container reveal">
+        <div class="blog-cta-inner">
+          <h2 class="hover-word">${wrapWords(t('blog_cta_title'))}</h2>
+          <p>${t('blog_cta_desc')}</p>
+          <a href="/courses/" class="submit-btn" style="display:inline-block; width:auto; text-decoration:none; text-align:center;">${t('blog_cta_btn')}</a>
+        </div>
+      </section>
+    </main>
+    ${getFooter()}
+  `
+}
+
+function getBlogPostTemplate(postId) {
+  const post = blogPosts.find(p => p.id === postId)
+  if (!post) {
+    return `
+      ${getHeader()}
+      <main>
+        <section class="container" style="padding:10vh 2rem; text-align:center;">
+          <h1>${t('blog_not_found')}</h1>
+          <p style="margin-top:1rem; color:var(--color-subtle);">${t('blog_not_found_desc')}</p>
+          <a href="/blog/" style="display:inline-block; margin-top:2rem; color:var(--color-accent); font-weight:700;">${t('blog_back')}</a>
+        </section>
+      </main>
+      ${getFooter()}
+    `
+  }
+
+  // Get related posts (exclude current)
+  const related = blogPosts.filter(p => p.id !== postId).slice(0, 2)
+  const relatedCards = related.map(p => `
+    <a href="/blog/#post-${p.id}" class="blog-related-card">
+      <span class="blog-card-category">${p.category}</span>
+      <h4>${p.title}</h4>
+      <span class="blog-card-readtime"><i class="bi bi-clock"></i> ${p.readTime}</span>
+    </a>
+  `).join('')
+
+  return `
+    ${getHeader()}
+    <main>
+      <article class="blog-post-container container">
+        <div class="blog-post-header reveal">
+          <a href="/blog/" class="blog-back-link"><i class="bi bi-arrow-left"></i> ${t('blog_all_posts')}</a>
+          <div class="blog-post-meta">
+            <span class="blog-card-category">${post.category}</span>
+            <span class="blog-card-date">${new Date(post.date).toLocaleDateString(getLang() === 'vi' ? 'vi-VN' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+            <span class="blog-card-readtime"><i class="bi bi-clock"></i> ${post.readTime}</span>
+          </div>
+          <h1 class="blog-post-title hover-word">${wrapWords(post.title)}</h1>
+        </div>
+
+        <div class="blog-post-body reveal">
+          ${post.content}
+        </div>
+
+        <div class="blog-post-author reveal">
+          <img src="/Me (0-00-00-00).png" alt="Vũ An" class="blog-author-avatar">
+          <div>
+            <h4>Vũ An</h4>
+            <p>Video Editor & Content Creator — Tình Báo Thị Trường, Người Quan Sát</p>
+          </div>
+        </div>
+
+        ${related.length > 0 ? `
+          <div class="blog-related reveal">
+            <h3>${t('blog_related')}</h3>
+            <div class="blog-related-grid">
+              ${relatedCards}
+            </div>
+          </div>
+        ` : ''}
+      </article>
+    </main>
+    ${getFooter()}
+  `
+}
+
 function getTemplate(view) {
   if (view === VIEWS.PROJECTS) return getProjectsTemplate()
   if (view === VIEWS.COURSE) return getCourseTemplate()
   if (view === VIEWS.CONTACT) return getContactTemplate()
+  if (view === VIEWS.BLOG) return getBlogTemplate()
+  if (view.startsWith('blog-post-')) return getBlogPostTemplate(view.replace('blog-post-', ''))
   if (view.startsWith(VIEWS.STORE)) return getStoreTemplate(view)
   return getHomeTemplate()
 }
@@ -565,6 +843,12 @@ function render() {
     currentView = VIEWS.COURSE;
   } else if (path.startsWith('/contact')) {
     currentView = VIEWS.CONTACT;
+  } else if (path.startsWith('/blog')) {
+    if (hash.startsWith('#post-')) {
+      currentView = 'blog-post-' + hash.substring(6);
+    } else {
+      currentView = VIEWS.BLOG;
+    }
   } else if (path.startsWith('/store/store-login')) {
     currentView = 'store-login';
   } else if (path.startsWith('/store')) {
@@ -573,7 +857,6 @@ function render() {
     } else {
        currentView = VIEWS.STORE;
     }
-
   } else {
     currentView = VIEWS.HOME;
   }
@@ -586,8 +869,19 @@ function render() {
       app.innerHTML = getTemplate(currentView)
       initEffects()
       app.classList.remove('fade-out')
+      
+      // Handle hash scrolling for anchor links
+      const hash = window.location.hash;
+      if (hash) {
+        // Wait a tiny bit for the DOM to fully paint
+        setTimeout(() => {
+          const target = document.querySelector(hash);
+          if (target) target.scrollIntoView({ behavior: 'smooth' });
+        }, 50);
+      } else {
+        window.scrollTo(0, 0);
+      }
     }
-    window.scrollTo(0, 0)
   }, 400)
 }
 window.render = render;
@@ -729,6 +1023,30 @@ function initEffects() {
     })
   }, { threshold: 0.1 })
   document.querySelectorAll('.reveal, .scroll-reveal').forEach(el => observer.observe(el))
+
+  // Language toggle handler
+  document.querySelectorAll('.lang-option').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const newLang = e.target.dataset.lang
+      if (newLang && newLang !== getLang()) {
+        setLang(newLang)
+        render()
+      }
+    })
+  })
+
+  // IntersectionObserver for video play/pause (performance optimization)
+  const videoObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const video = entry.target
+      if (entry.isIntersecting) {
+        video.play().catch(() => {})
+      } else {
+        video.pause()
+      }
+    })
+  }, { threshold: 0.25 })
+  document.querySelectorAll('video').forEach(v => videoObserver.observe(v))
 
   // Comparison Slider
   document.querySelectorAll('.comparison-container').forEach(container => {

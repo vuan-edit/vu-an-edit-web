@@ -78,7 +78,7 @@ function getStoreFooter() {
       <p>© 2026 GeoData. Dữ liệu bản đồ cho Video Editor.</p>
       <div style="display:flex; gap:1.5rem; font-size:0.75rem; font-weight:700; text-transform:uppercase;">
         <a href="#store-pricing">Gói cước</a>
-        <a href="https://zalo.me/0967575313" target="_blank">Hỗ trợ Zalo</a>
+        <a href="https://zalo.me/0967575313" target="_blank" rel="noopener noreferrer">Hỗ trợ Zalo</a>
       </div>
     </footer>
   `
@@ -423,7 +423,7 @@ function getStoreCheckoutTemplate() {
           <div id="payment-status-message" style="text-align:center; margin-bottom: 1rem; display:none;">
             <p style="color:var(--color-accent); font-weight:700;"><i class="bi bi-check-lg"></i> Đã nhận thanh toán! Đang chuyển hướng...</p>
           </div>
-          <a href="https://zalo.me/0967575313" target="_blank" class="plan-btn" style="background:transparent; color:#fff; border-color:#444; text-align:center; font-size:0.8rem;">Gặp sự cố? Liên hệ Admin qua Zalo</a>
+          <a href="https://zalo.me/0967575313" target="_blank" rel="noopener noreferrer" class="plan-btn" style="background:transparent; color:#fff; border-color:#444; text-align:center; font-size:0.8rem;">Gặp sự cố? Liên hệ Admin qua Zalo</a>
           <div style="margin-top: 1.5rem; text-align:center;">
             <a href="#store-pricing" style="color:var(--color-subtle); font-size:0.85rem; text-decoration:underline;"><i class="bi bi-arrow-left"></i> Đổi gói khác</a>
           </div>
