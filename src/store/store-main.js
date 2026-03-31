@@ -8,13 +8,13 @@ let hasInitialFetched = false
 const CACHE_KEY = 'vuanedit_products_cache'
 const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
-async function fetchProductsFromSupabase() {
+async function fetchProductsFromSupabase(forceRefresh = false) {
   if (isLoadingProducts) return
   isLoadingProducts = true
   try {
     // P6: Check session cache first
     const cached = sessionStorage.getItem(CACHE_KEY)
-    if (cached) {
+    if (cached && !forceRefresh) {
       const { data: cachedData, timestamp } = JSON.parse(cached)
       if (Date.now() - timestamp < CACHE_TTL) {
         allProducts = cachedData
@@ -23,6 +23,10 @@ async function fetchProductsFromSupabase() {
         window.dispatchEvent(new CustomEvent('vuanedit:render'))
         return
       }
+    }
+
+    if (forceRefresh) {
+      sessionStorage.removeItem(CACHE_KEY);
     }
 
     const { data, error } = await supabase
@@ -1066,7 +1070,7 @@ async function initAdminLogic() {
       document.getElementById('admin-zoom-level').value = 'none';
       formModeTitle.textContent = 'Thêm sản phẩm mới';
       btnSubmit.textContent = 'Tải Lên Store'; btnCancel.style.display = 'none';
-      fetchProductsFromSupabase()
+      fetchProductsFromSupabase(true)
     } catch (err) { alert('Lỗi: ' + err.message); btnSubmit.textContent = id ? 'Cập nhật' : 'Tải Lên Store'; }
   }
 }
@@ -1148,7 +1152,7 @@ async function loadAdminProductList() {
             btn.innerText = 'Lỗi'; 
             btn.disabled = false;
         } else { 
-            fetchProductsFromSupabase(); 
+            fetchProductsFromSupabase(true); 
             loadAdminProductList(); 
         }
       }
