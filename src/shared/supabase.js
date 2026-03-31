@@ -9,7 +9,24 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 // Official Supabase Client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Provide a safe initialization that doesn't crash the script if env variables are missing
+let supabaseClient;
+try {
+    if (supabaseUrl && supabaseAnonKey) {
+        supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
+    } else {
+        // Mock client to avoid crashing on import, though features won't work
+        supabaseClient = {
+            from: () => ({ select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: 'Supabase keys missing' }) }) }), order: () => Promise.resolve({ data: [], error: 'Supabase keys missing' }) }),
+            auth: { getUser: () => Promise.resolve({ data: { user: null } }), signInWithPassword: () => Promise.resolve({ error: 'Supabase keys missing' }), onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }) }
+        };
+    }
+} catch (e) {
+    console.error("[Supabase] Failed to initialize:", e);
+    supabaseClient = {}; // Final fallback
+}
+
+export const supabase = supabaseClient;
 
 // --- HYBRID HELPERS ---
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';

@@ -240,10 +240,10 @@ function getAnalyticsShowcase(data) {
     // Map max height to 90 so it doesn't touch the very top
     const y = 100 - (h * 0.9);
     return `${x},${y}`;
-  }).join(' L ');
+  });
   
-  const polygonPoints = `0,100 L ${points} L 100,100`;
-  const pathD = `M 0,${100 - (data.chartBars[0] * 0.9)} L ${points}`;
+  const polygonPoints = `0,100 ${points.join(' ')} 100,100`; 
+  const pathD = `M 0,${100 - (data.chartBars[0] * 0.9)} L ${points.join(' L ')}`;
 
   // X Axis Labels
   const labels = data.chartLabels || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
@@ -933,20 +933,34 @@ function render(e) {
 
   setTimeout(() => {
     if (app) {
-      app.innerHTML = getTemplate(currentView)
-      initEffects()
-      app.classList.remove('fade-out')
-      
-      // Handle hash scrolling for anchor links
-      const currentHash = window.location.hash;
-      if (currentHash) {
-        // Wait a tiny bit for the DOM to fully paint
-        setTimeout(() => {
-          const target = document.querySelector(currentHash);
-          if (target) target.scrollIntoView({ behavior: 'smooth' });
-        }, 50);
-      } else {
-        window.scrollTo(0, 0);
+      try {
+        app.innerHTML = getTemplate(currentView)
+        initEffects()
+      } catch (err) {
+        console.error("[Render Error] Failed to update view:", err);
+        // Fallback UI if initialization crashes
+        app.innerHTML = `
+          <div style="padding: 10vh 2rem; text-align: center;">
+            <h1 style="color:red;">Error</h1>
+            <p>Something went wrong while loading the page.</p>
+            <p style="font-size:0.8rem; color:#888;">${err.message}</p>
+            <a href="/" style="color:var(--color-accent); text-decoration:underline;">Try going home</a>
+          </div>
+        `;
+      } finally {
+        app.classList.remove('fade-out')
+        
+        // Handle hash scrolling for anchor links
+        const currentHash = window.location.hash;
+        if (currentHash) {
+          // Wait a tiny bit for the DOM to fully paint
+          setTimeout(() => {
+            const target = document.querySelector(currentHash);
+            if (target) target.scrollIntoView({ behavior: 'smooth' });
+          }, 50);
+        } else {
+          window.scrollTo(0, 0);
+        }
       }
     }
   }, 400)

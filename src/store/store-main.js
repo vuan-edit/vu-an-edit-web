@@ -839,8 +839,8 @@ async function checkAuthForNav() {
         
         try {
           const fileName = product.file_url.split('/').pop();
-          // Gọi Edge Function để lấy Signed URL từ Cloudflare R2
-          const { data, error } = await supabase.functions.invoke('get-r2-url', {
+          // Gọi Edge Function để lấy Link bảo mật từ Bunny Storage
+          const { data, error } = await supabase.functions.invoke('get-bunny-url', {
             body: { path: fileName }
           });
           
@@ -851,7 +851,7 @@ async function checkAuthForNav() {
             throw new Error(data?.error || 'Không lấy được link tải.');
           }
         } catch (err) {
-          console.error('Lỗi tải file R2:', err);
+          console.error('Lỗi tải file Bunny:', err);
           alert('Có lỗi xảy ra khi lấy link tải: ' + err.message);
         } finally {
           btn.innerText = originalText;
@@ -980,37 +980,31 @@ async function initAdminLogic() {
       if (fileInput.files.length > 0) {
           const file = fileInput.files[0];
           
-          // Direct Upload to Cloudflare R2 via Edge Function Signed URL
-          // Lọc ký tự đặc biệt để đảm bảo URL an toàn trên R2
+          // Direct Upload to Bunny Storage via Edge Function (Proxy)
           const cleanName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
           const fileName = `${Date.now()}_${cleanName}`;
           const fileType = file.type || 'application/octet-stream';
 
           try {
-              console.log("[Store Admin] Đang xin cấp quyền Upload từ R2...");
-              const { data, error } = await supabase.functions.invoke('get-r2-upload-url', {
-                  body: { path: fileName, contentType: fileType }
+              console.log("[Store Admin] Đang tải file lên Bunny Storage...");
+              const { data, error } = await supabase.functions.invoke('upload-to-bunny', {
+                  body: file,
+                  headers: { 
+                    'x-file-path': fileName, 
+                    'Content-Type': fileType 
+                  }
               });
               
               if (error) throw error;
-              if (!data || !data.url) throw new Error("Không thể lấy Link bảo mật R2.");
+              if (data && data.error) throw new Error(data.error);
               
-              console.log("[Store Admin] Đang đẩy file trực tiếp lên R2...");
-              const uploadRes = await fetch(data.url, {
-                  method: 'PUT',
-                  body: file,
-                  headers: { 'Content-Type': fileType }
-              });
-              
-              if (!uploadRes.ok) throw new Error('Up file lỗi. Mã: ' + uploadRes.status);
-              
-              // Lưu filename tinh gọn, khi download hệ thống sẽ gọi Edge Function ghép prefix R2
+              // Lưu filename tinh gọn, khi download hệ thống sẽ gọi Edge Function ghép prefix Bunny
               file_path = fileName;
               file_url = fileName;
               console.log("[Store Admin] Upload thành công:", fileName);
           } catch (err) {
-              console.error("[Store Admin] Lỗi Upload R2:", err.message);
-              throw new Error("Lỗi tải lên R2: " + err.message);
+              console.error("[Store Admin] Lỗi Upload Bunny:", err.message);
+              throw new Error("Lỗi tải lên Bunny Storage: " + err.message);
           }
       } else if (!file_url && !id) {
           throw new Error("Vui lòng tải lên file dữ liệu hoặc cung cấp Link URL.");
