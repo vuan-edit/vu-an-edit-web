@@ -444,78 +444,101 @@ function getCourseTemplate() {
       </section>
 
       <div class="container">
-        <!-- PHASE 1: AE CẤP TỐC -->
-        <div class="course-phase reveal">
-          <div class="phase-title">${t('course_phase1_title')}</div>
-          <div class="session-list">
-            <div class="session-item">
-              <div class="session-name">${t('course_session1_name')}</div>
-              <div class="session-desc">${t('course_session1_desc')}</div>
+        <div class="accordion-container reveal">
+          <!-- PHASE 1: AE CẤP TỐC -->
+          <details class="accordion-item" open>
+            <summary class="accordion-title">
+              <span>${t('course_phase1_title')}</span>
+              <span class="accordion-icon"></span>
+            </summary>
+            <div class="accordion-content session-list">
+              <div class="session-item">
+                <div class="session-name">${t('course_session1_name')}</div>
+                <div class="session-desc">${t('course_session1_desc')}</div>
+              </div>
+              <div class="session-item">
+                <div class="session-name">${t('course_session2_name')}</div>
+                <div class="session-desc">${t('course_session2_desc')}</div>
+              </div>
+              <div class="session-item">
+                <div class="session-name">${t('course_session3_name')}</div>
+                <div class="session-desc">${t('course_session3_desc')}</div>
+              </div>
+              <div class="session-item">
+                <div class="session-name">${t('course_session4_name')}</div>
+                <div class="session-desc">${t('course_session4_desc')}</div>
+              </div>
             </div>
-            <div class="session-item">
-              <div class="session-name">${t('course_session2_name')}</div>
-              <div class="session-desc">${t('course_session2_desc')}</div>
-            </div>
-            <div class="session-item">
-              <div class="session-name">${t('course_session3_name')}</div>
-              <div class="session-desc">${t('course_session3_desc')}</div>
-            </div>
-          </div>
-        </div>
+          </details>
 
-        <!-- PHASE 2: GEOLAYERS 3 -->
-        <div class="course-phase reveal">
-          <div class="phase-title">${t('course_phase2_title')}</div>
-          <div class="session-list">
-            <div class="session-item">
-              <div class="session-name">${t('course_session4_name')}</div>
-              <div class="session-desc">${t('course_session4_desc')}</div>
+          <!-- PHASE 2: GEOLAYERS 3 -->
+          <details class="accordion-item">
+            <summary class="accordion-title">
+              <span>${t('course_phase2_title')}</span>
+              <span class="accordion-icon"></span>
+            </summary>
+            <div class="accordion-content session-list">
+              <div class="session-item">
+                <div class="session-name">${t('course_session5_name')}</div>
+                <div class="session-desc">${t('course_session5_desc')}</div>
+              </div>
+              <div class="session-item">
+                <div class="session-name">${t('course_session6_name')}</div>
+                <div class="session-desc">${t('course_session6_desc')}</div>
+              </div>
+              <div class="session-item">
+                <div class="session-name">${t('course_session7_name')}</div>
+                <div class="session-desc">${t('course_session7_desc')}</div>
+              </div>
+              <div class="session-item">
+                <div class="session-name">${t('course_session8_name')}</div>
+                <div class="session-desc">${t('course_session8_desc')}</div>
+              </div>
+              <div class="session-item">
+                <div class="session-name">${t('course_session9_name')}</div>
+                <div class="session-desc">${t('course_session9_desc')}</div>
+              </div>
+              <div class="session-item">
+                <div class="session-name">${t('course_session10_name')}</div>
+                <div class="session-desc">${t('course_session10_desc')}</div>
+              </div>
+              <div class="session-item">
+                <div class="session-name">${t('course_session11_name')}</div>
+                <div class="session-desc">${t('course_session11_desc')}</div>
+              </div>
             </div>
-            <div class="session-item">
-              <div class="session-name">${t('course_session5_name')}</div>
-              <div class="session-desc">${t('course_session5_desc')}</div>
-            </div>
-            <div class="session-item">
-              <div class="session-name">${t('course_session6_name')}</div>
-              <div class="session-desc">${t('course_session6_desc')}</div>
-            </div>
-            <div class="session-item">
-              <div class="session-name">${t('course_session7_name')}</div>
-              <div class="session-desc">${t('course_session7_desc')}</div>
-            </div>
-            <div class="session-item">
-              <div class="session-name">${t('course_session8_name')}</div>
-              <div class="session-desc">${t('course_session8_desc')}</div>
-            </div>
-          </div>
-        </div>
+          </details>
 
-        <!-- PHASE 3: CONTENT VIRAL -->
-        <div class="course-phase reveal">
-          <div class="phase-title">${t('course_phase3_title')}</div>
-          <div class="session-list">
-            <div class="session-item">
-              <div class="session-name">${t('course_session9_name')}</div>
-              <div class="session-desc">${t('course_session9_desc')}</div>
+          <!-- PHASE 3: CONTENT VIRAL -->
+          <details class="accordion-item">
+            <summary class="accordion-title">
+              <span>${t('course_phase3_title')}</span>
+              <span class="accordion-icon"></span>
+            </summary>
+            <div class="accordion-content session-list">
+              <div class="session-item">
+                <div class="session-name">${t('course_session12_name')}</div>
+                <div class="session-desc">${t('course_session12_desc')}</div>
+              </div>
+              <div class="session-item">
+                <div class="session-name">${t('course_session13_name')}</div>
+                <div class="session-desc">${t('course_session13_desc')}</div>
+              </div>
             </div>
-            <div class="session-item">
-              <div class="session-name">${t('course_session10_name')}</div>
-              <div class="session-desc">${t('course_session10_desc')}</div>
-            </div>
-          </div>
+          </details>
         </div>
 
         <!-- PRICING TABLE -->
         <section class="pricing-section reveal">
-          <h2 class="hover-word">${wrapWords(t('pricing_table_title'))}</h2>
-          <div class="pricing-table-wrapper">
+          <h2 class="hover-word" style="text-align: center;">${wrapWords(t('pricing_table_title'))}</h2>
+          <div class="pricing-table-wrapper" style="text-align: center;">
             <table class="pricing-table">
               <thead>
                 <tr>
-                  <th>${t('pricing_col_package')}</th>
-                  <th>${t('pricing_col_sessions')}</th>
-                  <th>${t('pricing_col_format')}</th>
-                  <th>${t('pricing_col_price')}</th>
+                  <th style="text-align: center;">${t('pricing_col_package')}</th>
+                  <th style="text-align: center;">${t('pricing_col_sessions')}</th>
+                  <th style="text-align: center;">${t('pricing_col_format')}</th>
+                  <th style="text-align: center;">${t('pricing_col_price')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -549,7 +572,7 @@ function getCourseTemplate() {
                   <td>${t('pricing_package_full_combo_format')}</td>
                   <td class="price">${t('pricing_package_full_combo_price')}</td>
                 </tr>
-                <tr>
+                <tr class="highlight-1on1">
                   <td>${t('pricing_package_1on1_title')}</td>
                   <td>${t('pricing_package_1on1_sessions')}</td>
                   <td>${t('pricing_package_1on1_format')}</td>
@@ -558,7 +581,41 @@ function getCourseTemplate() {
               </tbody>
             </table>
           </div>
-          <p style="margin-top: 2rem; font-size: 0.8rem; color: var(--color-subtle);">${t('pricing_note')}</p>
+          <p style="margin-top: 2rem; font-size: 0.8rem; color: var(--color-subtle); text-align: center;">${t('pricing_note')}</p>
+        </section>
+
+        <!-- FAQ SECTION -->
+        <section class="faq-section reveal" style="margin-top: 3rem;">
+          <h2 class="hover-word" style="text-align: center; margin-bottom: 2rem;">${wrapWords(t('faq_title'))} <span style="color:var(--color-accent)">${t('faq_tag')}</span></h2>
+          <div class="accordion-container" style="max-width: 800px; margin: 0 auto;">
+            <details class="accordion-item" open>
+              <summary class="accordion-title">
+                <span>${t('faq_q1')}</span>
+                <span class="accordion-icon"></span>
+              </summary>
+              <div class="accordion-content">
+                ${t('faq_a1')}
+              </div>
+            </details>
+            <details class="accordion-item">
+              <summary class="accordion-title">
+                <span>${t('faq_q2')}</span>
+                <span class="accordion-icon"></span>
+              </summary>
+              <div class="accordion-content">
+                ${t('faq_a2')}
+              </div>
+            </details>
+            <details class="accordion-item">
+              <summary class="accordion-title">
+                <span>${t('faq_q3')}</span>
+                <span class="accordion-icon"></span>
+              </summary>
+              <div class="accordion-content">
+                ${t('faq_a3')}
+              </div>
+            </details>
+          </div>
         </section>
 
         <div class="course-cta reveal">
@@ -833,7 +890,7 @@ function getTemplate(view) {
 }
 
 // --- RENDER ---
-function render() {
+function render(e) {
   const path = window.location.pathname;
   const hash = window.location.hash;
   
@@ -862,6 +919,16 @@ function render() {
   }
 
   const app = document.querySelector('#app')
+  const isSilentRender = e && e.type === 'vuanedit:render'
+
+  if (isSilentRender) {
+    if (app) {
+      app.innerHTML = getTemplate(currentView)
+      initEffects()
+    }
+    return;
+  }
+
   if (app) app.classList.add('fade-out')
 
   setTimeout(() => {
@@ -871,11 +938,11 @@ function render() {
       app.classList.remove('fade-out')
       
       // Handle hash scrolling for anchor links
-      const hash = window.location.hash;
-      if (hash) {
+      const currentHash = window.location.hash;
+      if (currentHash) {
         // Wait a tiny bit for the DOM to fully paint
         setTimeout(() => {
-          const target = document.querySelector(hash);
+          const target = document.querySelector(currentHash);
           if (target) target.scrollIntoView({ behavior: 'smooth' });
         }, 50);
       } else {
@@ -887,6 +954,7 @@ function render() {
 window.render = render;
 window.addEventListener('hashchange', render);
 window.addEventListener('popstate', render);
+window.addEventListener('vuanedit:render', render);
 // Injects a global video background with parallax
 function injectBackground() {
   if (document.querySelector('.site-video-background')) return;
