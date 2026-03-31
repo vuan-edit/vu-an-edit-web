@@ -997,36 +997,43 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // --- EFFECTS ---
+// Initialize effects
 function initEffects() {
   const dot = document.querySelector('.cursor-dot')
   const outline = document.querySelector('.cursor-outline')
+  const isTouchDevice = !window.matchMedia('(hover: hover)').matches;
 
-  // Custom cursor
+  // Custom cursor (Disable on mobile for performance and better UX)
   if (dot && outline) {
-    window.onmousemove = (e) => {
-      const posX = e.clientX
-      const posY = e.clientY
-      dot.style.transform = `translate(${posX - 3}px, ${posY - 3}px)`
-      outline.animate({
-        transform: `translate(${posX - 18}px, ${posY - 18}px)`
-      }, { duration: 450, fill: 'forwards' })
+    if (isTouchDevice) {
+      dot.style.display = 'none';
+      outline.style.display = 'none';
+    } else {
+      window.onmousemove = (e) => {
+        const posX = e.clientX
+        const posY = e.clientY
+        dot.style.transform = `translate(${posX - 3}px, ${posY - 3}px)`
+        outline.animate({
+          transform: `translate(${posX - 18}px, ${posY - 18}px)`
+        }, { duration: 450, fill: 'forwards' })
+      }
+      
+      // Expand cursor on interactive elements
+      document.querySelectorAll('a, button, .logo').forEach(el => {
+        el.onmouseenter = () => {
+          outline.style.width = '52px'
+          outline.style.height = '52px'
+          outline.style.borderColor = '#b4fd00'
+          dot.style.backgroundColor = '#b4fd00'
+        }
+        el.onmouseleave = () => {
+          outline.style.width = '36px'
+          outline.style.height = '36px'
+          outline.style.borderColor = '#fff'
+          dot.style.backgroundColor = '#fff'
+        }
+      })
     }
-
-    // Expand cursor on interactive elements
-    document.querySelectorAll('a, button, .logo').forEach(el => {
-      el.onmouseenter = () => {
-        outline.style.width = '52px'
-        outline.style.height = '52px'
-        outline.style.borderColor = '#b4fd00'
-        dot.style.backgroundColor = '#b4fd00'
-      }
-      el.onmouseleave = () => {
-        outline.style.width = '36px'
-        outline.style.height = '36px'
-        outline.style.borderColor = '#fff'
-        dot.style.backgroundColor = '#fff'
-      }
-    })
   }
 
   // Mobile menu toggle
@@ -1055,47 +1062,83 @@ function initEffects() {
     }
   })
 
-  // Horizontal Scroll Effect for Hero
-  const heroContainer = document.querySelector('.hero-scroll-container')
-  const heroStrip = document.getElementById('hero-strip')
-  
-  if (heroContainer && heroStrip) {
-    let ticking = false
-    
-    const handleHeroScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const rect = heroContainer.getBoundingClientRect()
-          const viewportHeight = window.innerHeight
+  // --- HERO HORIZONTAL SCROLL MANAGER (SINGLETON) ---
+  // We use a singleton to prevent multiple listeners and "glitchy" overlays during re-renders.
+  if (!window.__VUAN_HERO_SCROLL__) {
+    window.__VUAN_HERO_SCROLL__ = {
+      initialized: false,
+      isIntersecting: false,
+      ticking: false,
+      
+      init() {
+        if (this.initialized) return;
+        this.initialized = true;
+        
+        console.log("VUAN_DEBUG: Hero Scroll Manager initialized (v2.3)");
+        
+        const handleScroll = () => {
+          // Double check intersection inside the handler
+          if (this.ticking) return;
           
-          // Use a more robust scroll progress calculation
-          // Starts scrolling when the container's top hits the top of the viewport
-          // Ends scrolling when the container's bottom hits the bottom of the viewport
-          const totalScrollable = rect.height - viewportHeight
-          let scrolled = -rect.top
-          
-          let progress = scrolled / totalScrollable
-          if (progress < 0) progress = 0
-          if (progress > 1) progress = 1
-          
-          // Calculate the correct translation to show all items
-          // translateX = -(stripWidth - viewportWidth) * progress
-          const stripWidth = heroStrip.scrollWidth
-          const viewportWidth = window.innerWidth
-          const maxTranslate = Math.max(0, stripWidth - viewportWidth)
-          
-          const translateX = progress * maxTranslate
-          heroStrip.style.transform = `translateX(${-translateX}px)`
-          
-          ticking = false
-        })
-        ticking = true
+          this.ticking = true;
+          window.requestAnimationFrame(() => {
+            const container = document.querySelector('.hero-scroll-container');
+            const strip = document.getElementById('hero-strip');
+            
+            if (container && strip) {
+              const rect = container.getBoundingClientRect();
+              const containerHeight = container.offsetHeight;
+              const viewportHeight = window.innerHeight;
+              
+              // getBoundingClientRect is the most robust way to calculate progress on mobile
+              // Starts when rect.top is 0, ends when rect.top reaches -(containerHeight - viewportHeight)
+              const totalScrollable = containerHeight - viewportHeight;
+              
+              // Robust viewport-relative calculation
+              let progress = -rect.top / totalScrollable;
+              progress = Math.max(0, Math.min(1, progress));
+              
+              const stripWidth = strip.scrollWidth;
+              const viewportWidth = window.innerWidth;
+              const maxTranslate = Math.max(0, stripWidth - viewportWidth);
+              
+              const translateX = progress * maxTranslate;
+              strip.style.transform = `translate3d(${-translateX}px, 0, 0)`;
+            }
+            this.ticking = false;
+          });
+        };
+        
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('resize', handleScroll, { passive: true });
+        this.handler = handleScroll;
+        
+        // Use IntersectionObserver to toggle logic only when needed
+        const observer = new IntersectionObserver((entries) => {
+          this.isIntersecting = entries[0].isIntersecting;
+          if (this.isIntersecting) handleScroll();
+        }, { threshold: 0 });
+        
+        this.observer = observer;
+      },
+      
+      update(container) {
+        if (this.observer && container) {
+          this.observer.disconnect();
+          this.observer.observe(container);
+          console.log("VUAN_DEBUG: Hero references updated (robust v2.3)");
+          // Force an immediate update
+          if (this.handler) this.handler();
+        }
       }
-    }
-    
-    window.addEventListener('scroll', handleHeroScroll, { passive: true })
-    window.addEventListener('resize', handleHeroScroll, { passive: true })
-    handleHeroScroll()
+    };
+  }
+
+  // Initialize and update references
+  window.__VUAN_HERO_SCROLL__.init();
+  const heroContainer = document.querySelector('.hero-scroll-container');
+  if (heroContainer) {
+    window.__VUAN_HERO_SCROLL__.update(heroContainer);
   }
 
   // Scroll reveal

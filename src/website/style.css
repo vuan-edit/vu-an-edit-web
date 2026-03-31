@@ -91,6 +91,8 @@
 html {
   scroll-behavior: smooth;
   background-color: #000; /* Base dark layer */
+  width: 100%;
+  overflow-x: clip; /* Modern fix: hide horizontal overflow without breaking sticky */
 }
 
 body {
@@ -103,8 +105,14 @@ body {
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
   width: 100%;
+  overflow-x: clip; /* Support for modern browsers */
+  position: relative;
+}
+
+main {
+  width: 100%;
+  position: relative;
 }
 
 /* ============================================================
@@ -371,10 +379,13 @@ section {
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100svh; /* More stable on mobile during address bar shifts */
   width: 100%;
+  max-width: 100vw;
   overflow: hidden;
   display: flex;
   align-items: center;
+  will-change: transform, top;
 }
 
 .hero-horizontal-strip {
@@ -382,6 +393,8 @@ section {
   gap: 6rem; /* Increased gap for a more premium, spaced-out feel */
   padding: 0;
   will-change: transform;
+  transform: translate3d(0, 0, 0); /* Force GPU acceleration */
+  backface-visibility: hidden;
 }
 
 .hero-item {
@@ -2627,6 +2640,8 @@ section {
 .contact-detail-value {
   font-size: 1.15rem;
   font-weight: 800;
+  word-break: break-word;
+  max-width: 100%;
 }
 
 .contact-detail-value a {
