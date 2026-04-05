@@ -130,9 +130,29 @@ function getHomeTemplate() {
       <section class="hero-scroll-container">
         <div class="hero-sticky-wrapper">
           <div class="hero-horizontal-strip" id="hero-strip">
-            <!-- First Item: Centered Title -->
+            <!-- First Item: Centered Title + CTA -->
             <div class="hero-item hero-text-item">
               <h1 class="hover-word">${wrapWords(t('hero_line1'))}<br>${wrapWords(t('hero_line2'))}</h1>
+              <p class="hero-subtitle">${t('hero_sub')}</p>
+              <div class="hero-cta-group">
+                <a href="/courses/" class="hero-cta-btn">${t('hero_cta')}</a>
+              </div>
+              <div class="hero-stats-bar">
+                <div class="hero-stat-item">
+                  <span class="hero-stat-number">${t('hero_stats_views')}</span>
+                  <span class="hero-stat-label">${t('hero_stats_views_label')}</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat-item">
+                  <span class="hero-stat-number">${t('hero_stats_students')}</span>
+                  <span class="hero-stat-label">${t('hero_stats_students_label')}</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat-item">
+                  <span class="hero-stat-number">${t('hero_stats_channels')}</span>
+                  <span class="hero-stat-label">${t('hero_stats_channels_label')}</span>
+                </div>
+              </div>
             </div>
             <!-- Subsequent Items: Local Videos -->
             ${videoCards}
@@ -141,13 +161,38 @@ function getHomeTemplate() {
         </div>
       </section>
 
-      <!-- ABOUT -->
+      <!-- SOCIAL PROOF BAR -->
+      <section class="social-proof-section">
+        <div class="container">
+          <div class="social-proof-inner reveal">
+            <p class="social-proof-label">${t('social_proof_title')}</p>
+            <div class="social-proof-channels">
+              <div class="social-proof-channel">
+                <div class="sp-channel-icon"><i class="bi bi-tiktok"></i></div>
+                <div class="sp-channel-info">
+                  <h3>${t('social_proof_channel1')}</h3>
+                  <p>${t('social_proof_channel1_stat')}</p>
+                </div>
+              </div>
+              <div class="social-proof-channel">
+                <div class="sp-channel-icon" style="border-color:#ea4335;"><i class="bi bi-tiktok"></i></div>
+                <div class="sp-channel-info">
+                  <h3>${t('social_proof_channel2')}</h3>
+                  <p>${t('social_proof_channel2_stat')}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT (compact) -->
       <section class="about-section">
         <div class="container">
           <div class="about-inner">
             <div class="about-text reveal">
               <h2 class="hover-word">${wrapWords(t('about_title'))}</h2>
-              <p style="margin-top:1.5rem; line-height:1.8; max-width: 600px;">${hw(t('about_desc'))}</p></p>
+              <p style="margin-top:1.5rem; line-height:1.8; max-width: 600px;">${hw(t('about_desc'))}</p>
               
               <div class="project-icon-group">
                 <a href="/projects/#finpath" class="project-icon-btn">
@@ -166,16 +211,7 @@ function getHomeTemplate() {
         </div>
       </section>
 
-      <!-- DATA SECTION -->
-      <section class="data-section">
-        <div class="container">
-          <div class="reveal" style="max-width:680px;">
-            <h2 class="hover-word">${wrapWords(t('data_title'))}</h2>
-            <p style="margin-top:1.5rem;">${hw(t('data_desc'))}</p>
-          </div>
-        </div>
-      </section>
-
+      <!-- COURSE PROMO -->
       <section class="course-promo-section reveal">
         <div class="video-montage-container">
           ${montageData.map((item, idx) => `
@@ -205,12 +241,64 @@ function getHomeTemplate() {
         </div>
       </section>
 
+      <!-- TESTIMONIALS -->
+      <section class="testimonials-section">
+        <div class="container">
+          <h2 class="hover-word reveal" style="text-align:center; margin-bottom:3rem;">${wrapWords(t('testimonials_title'))}</h2>
+          <div class="testimonials-grid">
+            <div class="testimonial-card reveal">
+              <div class="testimonial-quote"><i class="bi bi-quote"></i></div>
+              <p class="testimonial-text">${t('testimonial_1_text')}</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">${t('testimonial_1_name').charAt(0)}</div>
+                <div>
+                  <h4>${t('testimonial_1_name')}</h4>
+                  <p>${t('testimonial_1_role')}</p>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-card reveal" style="animation-delay:0.1s;">
+              <div class="testimonial-quote"><i class="bi bi-quote"></i></div>
+              <p class="testimonial-text">${t('testimonial_2_text')}</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">${t('testimonial_2_name').charAt(0)}</div>
+                <div>
+                  <h4>${t('testimonial_2_name')}</h4>
+                  <p>${t('testimonial_2_role')}</p>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-card reveal" style="animation-delay:0.2s;">
+              <div class="testimonial-quote"><i class="bi bi-quote"></i></div>
+              <p class="testimonial-text">${t('testimonial_3_text')}</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">${t('testimonial_3_name').charAt(0)}</div>
+                <div>
+                  <h4>${t('testimonial_3_name')}</h4>
+                  <p>${t('testimonial_3_role')}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DATA SECTION -->
+      <section class="data-section">
+        <div class="container">
+          <div class="reveal" style="max-width:680px;">
+            <h2 class="hover-word">${wrapWords(t('data_title'))}</h2>
+            <p style="margin-top:1.5rem;">${hw(t('data_desc'))}</p>
+          </div>
+        </div>
+      </section>
+
       <!-- PRACTICE SECTION -->
       <section class="practice-section">
         <div class="container">
           <div class="reveal" style="max-width:720px;">
             <h2 class="hover-word">${wrapWords(t('practice_title'))}</h2>
-            <p style="margin-top:1.5rem;">${hw(t('practice_desc'))}</p></p>
+            <p style="margin-top:1.5rem;">${hw(t('practice_desc'))}</p>
           </div>
         </div>
       </section>
