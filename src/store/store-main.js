@@ -1,5 +1,5 @@
 import './store-style.css'
-import { supabase, getCurrentUser, signIn, signUp, signOut, getLocalFileUrl, LOCAL_API_URL } from '../shared/supabase.js'
+import { supabase, getCurrentUser, signIn, signUp, signOut } from '../shared/supabase.js'
 import { wrapWords, hw } from '../shared/utils.js'
 
 let allProducts = []
@@ -53,9 +53,6 @@ async function fetchProductsFromSupabase(forceRefresh = false) {
 
 function getStoreNav() {
   return `
-    <div class="cursor-dot"></div>
-    <div class="cursor-outline"></div>
-
     <header class="site-header reveal">
       <div class="store-nav-brand" data-store-nav="">
         Geo<span>Data</span>
@@ -127,19 +124,7 @@ function getStoreHomeTemplate() {
         </div>
       </section>
 
-      <!-- GeoExtractor Software Promo Banner -->
-      <div class="container reveal" style="margin: 4vh auto;">
-        <div style="background: transparent; border: 1.5px solid var(--color-accent); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(180, 253, 0, 0.05);">
-          <div style="padding: 4rem; flex: 1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
-             <div style="display:inline-block; padding: 0.3rem 0.8rem; background:var(--color-accent); color:#000; font-size:0.75rem; font-weight:900; text-transform:uppercase; border-radius:4px; margin-bottom:1.5rem;">Phần Mềm Độc Quyền</div>
-             <h2 style="font-size: 2.8rem; margin-bottom: 1.5rem; color: #fff;">Phần mềm <span style="color:var(--color-accent);">GeoExtractor</span></h2>
-             <p style="color:var(--color-subtle); max-width:650px; margin-bottom: 2.5rem; line-height: 1.7;">
-               Trích xuất dữ liệu bản đồ OpenStreetMap (Tòa nhà, Sông hồ, Đường bộ, Quốc gia) trực tiếp trên máy tính.<br>Tải xuống định dạng GeoJSON hoặc KML chỉ với 1 click. Phần mềm desktop sẽ sớm ra mắt!
-             </p>
-             <span class="plan-btn" style="background:#333; color:var(--color-accent); border-color:#444; padding: 1rem 3rem; width: auto; font-size: 1rem; font-weight: 800; cursor:default;"><i class="bi bi-clock-history"></i> Sắp Ra Mắt</span>
-          </div>
-        </div>
-      </div>
+
 
       <section class="container" style="padding: 6vh 2rem;">
         <div style="display:flex; justify-content:space-between; align-items:flex-end;">
@@ -451,23 +436,6 @@ function getStoreAdminTemplate() {
             <button class="filter-btn active" data-target="admin-tab-upload" id="btn-tab-upload">Thêm Dữ Liệu</button>
             <button class="filter-btn" data-target="admin-tab-products">Danh Sách Dữ Liệu</button>
             <button class="filter-btn" data-target="admin-tab-users">Thành Viên</button>
-            <button class="filter-btn" data-target="admin-tab-config" id="btn-tab-config">Cấu hình Tunnel</button>
-          </div>
-
-          <div id="admin-tab-config" class="admin-tab-content" style="display: none; background: #111; border: 1.5px solid var(--color-border); padding: 3rem;">
-            <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Cấu hình Cloudflare Tunnel</h2>
-            <p style="color:var(--color-subtle); margin-bottom: 2rem;">Cập nhật địa chỉ Tunnel để toàn bộ website tự động nhận diện dữ liệu từ máy tính của bạn.</p>
-            
-            <div class="form-group">
-                <label class="form-label">Địa chỉ Tunnel hiện tại</label>
-                <div style="display:flex; gap:1rem;">
-                    <input type="url" id="admin-config-tunnel-url" class="form-input" placeholder="https://xxx.trycloudflare.com">
-                    <button id="btn-save-tunnel" class="plan-btn" style="width:auto; padding:0.5rem 2rem; background:var(--color-accent); color:#000;">Lưu cấu hình</button>
-                </div>
-                <p style="font-size:0.75rem; color:#888; margin-top:0.8rem;">
-                    * Sau khi lưu, toàn bộ người dùng truy cập web sẽ tự động kết nối tới máy chủ của bạn mà không cần dùng Console.
-                </p>
-            </div>
           </div>
           
           <div id="admin-tab-upload" class="admin-tab-content active" style="background: #111; border: 1.5px solid var(--color-border); padding: 3rem;">
@@ -509,22 +477,11 @@ function getStoreAdminTemplate() {
                 <label class="form-label">Ảnh Thumbnail (URL)</label>
                 <input type="url" id="admin-thumb" class="form-input" placeholder="https://example.com/image.jpg" required>
               </div>
-              <div class="form-group" style="display:flex; gap:1rem; align-items:flex-end;">
-                <div style="flex:1;">
-                  <label class="form-label">File Dữ Liệu (Tải lên để đồng bộ GeoExtractor)</label>
+              <div class="form-group">
+                <div>
+                  <label class="form-label">File Dữ Liệu</label>
                   <input type="file" id="admin-file-upload" class="form-input" accept=".geojson,.json,.kml,.zip">
                   <input type="url" id="admin-file-url" class="form-input" placeholder="Hoặc dán Link URL nếu không tải lên (tùy chọn)" style="margin-top:8px; font-size:12px; background:#111;">
-                </div>
-                <div style="width:250px;">
-                  <label class="form-label">Tích hợp GeoExtractor</label>
-                  <select id="admin-zoom-level" class="form-input" style="background:#222; color:#fff;">
-                    <option value="none">Không đồng bộ Tool</option>
-                    <option value="2">Quốc Gia (Zoom 2-8)</option>
-                    <option value="4">Tỉnh Thành (Zoom 9-11)</option>
-                    <option value="6">Quận Huyện (Zoom 12-13)</option>
-                    <option value="8">Phường Xã (Zoom 14-15)</option>
-                    <option value="16">Tòa nhà (Zoom 16+)</option>
-                  </select>
                 </div>
               </div>
               <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
@@ -594,9 +551,8 @@ function getStoreAdminTemplate() {
             </div>
           </div>
           
-          <div style="margin-top: 3rem; display:flex; justify-content:space-between; align-items:center; border-top:1px solid #333; padding-top:2rem;">
+          <div style="margin-top: 3rem; border-top:1px solid #333; padding-top:2rem;">
             <a href="#store-dashboard" style="color:var(--color-subtle); text-decoration:underline; font-size:0.85rem;"><i class="bi bi-arrow-left"></i> Về Dashboard</a>
-            <span style="background:#222; border:1px solid #444; color:#888; padding:10px 20px; font-size:0.85rem; font-weight:700; border-radius:4px;"><i class="bi bi-clock-history"></i> GeoExtractor — Sẽ ra mắt dưới dạng phần mềm riêng</span>
           </div>
         </div>
       </section>
@@ -934,7 +890,7 @@ async function initAdminLogic() {
       const target = btn.dataset.target; tabContents.forEach(tab => { tab.style.display = tab.id === target ? 'block' : 'none' })
       if (target === 'admin-tab-users') loadUserList()
       if (target === 'admin-tab-products') loadAdminProductList()
-      if (target === 'admin-tab-config') loadTunnelConfig()
+
     }
   })
   const form = document.getElementById('admin-upload-form'); const btnCancel = document.getElementById('btn-admin-cancel');
@@ -1036,38 +992,9 @@ async function initAdminLogic() {
         if (error) throw error;
       }
 
-      // GeoExtractor Integration
-      const zoomVal = document.getElementById('admin-zoom-level').value;
-      if (zoomVal !== 'none' || file_path) {
-          const { data: existingLayer } = await supabase.from('geodata_layers').select('id, file_path').eq('product_id', productId).single();
-          let targetFilePath = file_path || (existingLayer ? existingLayer.file_path : null);
-          
-          // If no new upload and layer doesn't exist yet, extract path from existing file_url
-          if (!targetFilePath && file_url && file_url.includes('/geodata/')) {
-              targetFilePath = file_url.split('/geodata/')[1];
-          }
-          
-          if (zoomVal !== 'none' && targetFilePath) {
-              if (existingLayer) {
-                  await supabase.from('geodata_layers').update({ zoom_min: parseInt(zoomVal), file_path: targetFilePath, name: productData.title }).eq('id', existingLayer.id);
-              } else {
-                  await supabase.from('geodata_layers').insert([{
-                      name: productData.title,
-                      category: 'store',
-                      zoom_min: parseInt(zoomVal),
-                      file_path: targetFilePath,
-                      product_id: productId
-                  }]);
-              }
-          } else if (zoomVal === 'none' && existingLayer) {
-              await supabase.from('geodata_layers').delete().eq('id', existingLayer.id);
-          }
-      }
-
       alert(id ? 'Cập nhật thành công!' : 'Thêm sản phẩm thành công!')
       form.reset(); document.getElementById('admin-id').value = ''; 
       document.getElementById('admin-file-url').value = '';
-      document.getElementById('admin-zoom-level').value = 'none';
       formModeTitle.textContent = 'Thêm sản phẩm mới';
       btnSubmit.textContent = 'Tải Lên Store'; btnCancel.style.display = 'none';
       fetchProductsFromSupabase(true)
@@ -1268,45 +1195,5 @@ async function loadUserList() {
   } catch (err) { tbody.innerHTML = `<tr><td colspan="4" style="padding:2rem 0; text-align:center; color:#e74c3c;">Lỗi: ${err.message}<br><small>Hãy chạy SQL trong Supabase Dashboard để tạo bảng profiles.</small></td></tr>` }
 }
 
-async function loadTunnelConfig() {
-    const input = document.getElementById('admin-config-tunnel-url');
-    const btnSave = document.getElementById('btn-save-tunnel');
-    if (!input || !btnSave) return;
 
-    input.value = 'Đang tải...';
-    input.disabled = true;
 
-    try {
-        const { data, error } = await supabase.from('app_config').select('value').eq('key', 'tunnel_url').single();
-        if (data) {
-            input.value = data.value;
-        } else {
-            input.value = '';
-        }
-    } catch (err) {
-        console.error("Lỗi load tunnel config:", err);
-    } finally {
-        input.disabled = false;
-    }
-
-    btnSave.onclick = async () => {
-        const newUrl = input.value.trim();
-        if (!newUrl) return alert("Vui lòng nhập URL.");
-        
-        btnSave.textContent = '...';
-        btnSave.disabled = true;
-
-        try {
-            const { error } = await supabase.from('app_config').upsert({ key: 'tunnel_url', value: newUrl, updated_at: new Date().toISOString() });
-            if (error) throw error;
-            alert("✓ Đã cập nhật Tunnel URL thành công!");
-            localStorage.setItem('vuanedit_api_url', newUrl);
-            window.location.reload(); 
-        } catch (err) {
-            alert("Lỗi: " + err.message);
-        } finally {
-            btnSave.textContent = 'Lưu cấu hình';
-            btnSave.disabled = false;
-        }
-    }
-}

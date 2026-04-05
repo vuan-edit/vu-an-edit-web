@@ -32,9 +32,6 @@ function hw(text) {
 function getHeader() {
   const lang = getLang()
   return `
-    <div class="cursor-dot"></div>
-    <div class="cursor-outline"></div>
-
     <header class="site-header reveal">
       <div class="logo" data-nav="">
         <img src="/logo_brand.svg" alt="Vũ An - Video Editor & Content Creator">
@@ -1087,42 +1084,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- EFFECTS ---
 // Initialize effects
 function initEffects() {
-  const dot = document.querySelector('.cursor-dot')
-  const outline = document.querySelector('.cursor-outline')
-  const isTouchDevice = !window.matchMedia('(hover: hover)').matches;
-
-  // Custom cursor (Disable on mobile for performance and better UX)
-  if (dot && outline) {
-    if (isTouchDevice) {
-      dot.style.display = 'none';
-      outline.style.display = 'none';
-    } else {
-      window.onmousemove = (e) => {
-        const posX = e.clientX
-        const posY = e.clientY
-        dot.style.transform = `translate(${posX - 3}px, ${posY - 3}px)`
-        outline.animate({
-          transform: `translate(${posX - 18}px, ${posY - 18}px)`
-        }, { duration: 450, fill: 'forwards' })
-      }
-      
-      // Expand cursor on interactive elements
-      document.querySelectorAll('a, button, .logo').forEach(el => {
-        el.onmouseenter = () => {
-          outline.style.width = '52px'
-          outline.style.height = '52px'
-          outline.style.borderColor = '#b4fd00'
-          dot.style.backgroundColor = '#b4fd00'
-        }
-        el.onmouseleave = () => {
-          outline.style.width = '36px'
-          outline.style.height = '36px'
-          outline.style.borderColor = '#fff'
-          dot.style.backgroundColor = '#fff'
-        }
-      })
-    }
-  }
 
   // Mobile menu toggle
   const menuBtn = document.querySelector('.mobile-menu-btn')
